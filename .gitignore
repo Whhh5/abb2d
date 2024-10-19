@@ -3,3 +3,6 @@ Library/
 Logs/
 Abb2d.sln
 Temp/
+*.csproj
+.vs/
+obj/
