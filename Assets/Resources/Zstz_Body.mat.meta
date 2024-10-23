@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: d0d3e4aff1192dd4f835ef07501c0b78
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: '{"$type":"System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object,
+    mscorlib]], mscorlib","MATERIL_INFO_FLAG":"{\"MaterialGUID\":\"d0d3e4aff1192dd4f835ef07501c0b78\",\"ShaderName\":\"BCFeatures/ToonCharacter\"}"}'
+  assetBundleName: 
+  assetBundleVariant: 

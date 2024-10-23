@@ -1,0 +1,366 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Zstz_Hair
+  m_Shader: {fileID: 4800000, guid: 770b8632a2b884941a0ba03b05eb3adf, type: 3}
+  m_ValidKeywords:
+  - LIGHT_MAP_ON
+  - METAL_ON
+  - SHADOW_RAMP_ON
+  - _VFX_NONE
+  m_InvalidKeywords:
+  - COOL_SHADOW_COLOR_ON
+  - ENABLE_RIM
+  - LIGHTMAP_COLOR_AO_ON
+  - MATERIAL2_ON
+  - VERTEX_COLOR_AO_ON
+  - _CHARACTERAMBIENTLIGHTON_ON
+  - _CHARTYPE_HAIR
+  - _USEVERTEXRAMPWIDTH_ON
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BaseMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CharacterAmbientSensorTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CubeMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DiffuseTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DissolveMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _FaceMapTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _FresnelMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _IceBumpTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _LightMapTex:
+        m_Texture: {fileID: 2800000, guid: 15210b11adede794fa4295e39d4a4f07, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MTMap:
+        m_Texture: {fileID: 2800000, guid: d75e07de8fd50664d94d12076e2b164b, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: d62ef2ba0da49ea4d8a4039837b0379f, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Mask01:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Mask02:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NoiseTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _PackedShadowRampTex:
+        m_Texture: {fileID: 2800000, guid: cb0ad44834d4aac4c9f952ff73f7216b, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SpecGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TillingNormal:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TriplanarTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _AlphaClip: 0
+    - _Blend: 0
+    - _BumpOffsetHeight: 0.35
+    - _BumpScale: 1
+    - _BumpTexIntensity: 1
+    - _CharacterAmbientBrightness: 1
+    - _CharacterAmbientLightOn: 1
+    - _CharacterAmbientLightRatio: 0
+    - _CharacterAmbientSensorForceShadowOn: 0
+    - _CharacterAmbientSensorShadowOn: 0
+    - _CharacterColorTone: 0
+    - _CharacterMainLightBrightness: 1
+    - _CharacterMainLightRatio: 1
+    - _CharacterPointLightWholeIntensity: 0
+    - _ClearCoatMask: 0
+    - _ClearCoatSmoothness: 0
+    - _ClipPlaneWorld: 0
+    - _CubeMapBrightness: 1.5
+    - _CubeMapIntensity: 0.3
+    - _Cull: 2
+    - _CullMode: 2
+    - _Cutoff: 0.5
+    - _DebugMode: 6
+    - _DetailAlbedoMapScale: 1
+    - _DetailNormalMapScale: 1
+    - _DissolveAlpha: 0
+    - _DissolveEdgeColorScaler: 3
+    - _DissolveEdgeWidth: 0.9
+    - _DitherAlpha: 0
+    - _DstBlend: 0
+    - _ES_AvatarBackRimIntensity: 0.8
+    - _ES_AvatarFrontRimIntensity: 0.8
+    - _ES_AvatarRimWidth: 0.5
+    - _ES_AvatarRimWidthScale: 1
+    - _EmissionScaler: 1
+    - _EmissionScaler1: 1
+    - _EmissionScaler2: 5.47
+    - _EmissionScaler3: 1
+    - _EmissionScaler4: 3.49
+    - _EmissionScaler5: 1
+    - _EmissionStrengthLerp: 0
+    - _EnableAlphaTest: 0
+    - _EnableBackUV: 0
+    - _EnableDebug: 0
+    - _EnableEffectMode: 0
+    - _EnableRim: 1
+    - _EnvironmentReflections: 1
+    - _FaceBlushStrength: 0
+    - _FaceMapRotateOffset: 0
+    - _FaceMapSoftness: 0.000001
+    - _FresnelMaskRange: 0.5
+    - _Fresnel_Power: 1.5
+    - _Fresnel_Scale: 0.7
+    - _FrozenEmissionStrength: 0.6
+    - _FrozenIntensity: 1
+    - _GlossMapScale: 0
+    - _Glossiness: 0
+    - _GlossyReflections: 0
+    - _HitColorFresnelPower: 0
+    - _HitColorScaler: 0
+    - _IgnoreArmatureCoord: 0
+    - _IsTriplanarSampler: 0
+    - _LightArea: 0.5
+    - _MTMapBrightness: -2.09
+    - _MTMapTileScale: 1
+    - _MTShininess: 10.6
+    - _MTSpecularAttenInShadow: 1
+    - _MTSpecularScale: 702
+    - _MainTexAlphaCutoff: 0
+    - _Mask01_Scale: 1
+    - _Mask01_USpeed: 1
+    - _Mask01_VSpeed: 1
+    - _Mask02_Scale: 1
+    - _Mask02_USpeed: 1
+    - _Mask02_VSpeed: 1
+    - _MaskFlowByWorld: 0
+    - _Metallic: 0
+    - _NoiseIntensity: 1
+    - _NoiseOffset: 1
+    - _NoiseTex_USpeed: 1
+    - _NoiseTex_VSpeed: 1
+    - _OcclusionStrength: 1
+    - _OutlineWidth: 0.03
+    - _OutlineWidth_: 0.03
+    - _OutlineZOffset: 0.5
+    - _Parallax: 0.005
+    - _QueueOffset: 0
+    - _ReceiveShadows: 1
+    - _ShadowRampWidth: 1
+    - _ShadowTransitionRange: 0.01
+    - _ShadowTransitionRange1: 0.01
+    - _ShadowTransitionRange2: 0.01
+    - _ShadowTransitionRange3: 0.01
+    - _ShadowTransitionRange4: 0.01
+    - _ShadowTransitionRange5: 0.01
+    - _ShadowTransitionSoftness: 0.5
+    - _ShadowTransitionSoftness1: 0.5
+    - _ShadowTransitionSoftness2: 0.5
+    - _ShadowTransitionSoftness3: 0.5
+    - _ShadowTransitionSoftness4: 0.5
+    - _ShadowTransitionSoftness5: 0.5
+    - _Shininess: 121
+    - _Shininess1: 70.71
+    - _Shininess2: 10
+    - _Shininess3: 10
+    - _Shininess4: 10
+    - _Shininess5: 10
+    - _Smoothness: 0.5
+    - _SmoothnessTextureChannel: 0
+    - _SpecMulti: 0.15
+    - _SpecMulti1: 0.2
+    - _SpecMulti2: 1
+    - _SpecMulti3: 1
+    - _SpecMulti4: 1
+    - _SpecMulti5: 1
+    - _SpecularHighlights: 1
+    - _SrcBlend: 1
+    - _Surface: 0
+    - _TextureBiasWhenDithering: 0
+    - _Transparency: 1
+    - _TriplanarTexTilling: 1
+    - _UseClipPlane: 0
+    - _UseCoolShadowColorOrTex: 1
+    - _UseEmission: 0
+    - _UseFaceTex: 0
+    - _UseFresnelMask: 0
+    - _UseLightMap: 1
+    - _UseLightMapColorAO: 1
+    - _UseMaterial2: 1
+    - _UseMaterial3: 0
+    - _UseMaterial4: 0
+    - _UseMaterial5: 0
+    - _UseMetalMap: 1
+    - _UseShadowRampTex: 1
+    - _UseShadowTransition: 0
+    - _UseVertexColorAO: 1
+    - _UseVertexRampWidth: 1
+    - _UsingDitherAlpha: 0
+    - _VFX: 0
+    - _WorkflowMode: 1
+    - _ZWrite: 1
+    m_Colors:
+    - _AmbientSensorUVs: {r: 0.075, g: 0.5, b: 0, a: 0}
+    - _AvatarLightDir: {r: 0, g: 0, b: 0, a: 0}
+    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _CharacterAmbientLightColor: {r: 1, g: 1, b: 1, a: 1}
+    - _CharacterMainLightColor: {r: 1, g: 1, b: 1, a: 1}
+    - _CharacterOverrideLightDir: {r: 0, g: 0, b: 0, a: 0}
+    - _CharacterOverrideLightDirInShadow: {r: 0, g: 0, b: 0, a: 0}
+    - _CharacterPointLightColor: {r: 1, g: 1, b: 1, a: 1}
+    - _ClipPlane: {r: 0, g: 0, b: 0, a: 0}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color1: {r: 1, g: 1, b: 1, a: 1}
+    - _Color2: {r: 1, g: 1, b: 1, a: 1}
+    - _Color3: {r: 1, g: 1, b: 1, a: 1}
+    - _Color4: {r: 1, g: 1, b: 1, a: 1}
+    - _Color5: {r: 0.7735849, g: 0.09852261, b: 0.09852261, a: 1}
+    - _CoolShadowMultColor: {r: 0, g: 0, b: 0, a: 0}
+    - _CoolShadowMultColor1: {r: 0, g: 0, b: 0, a: 0}
+    - _CoolShadowMultColor2: {r: 0, g: 0, b: 0, a: 0}
+    - _CoolShadowMultColor3: {r: 0, g: 0, b: 0, a: 0}
+    - _CoolShadowMultColor4: {r: 0, g: 0, b: 0, a: 0}
+    - _CoolShadowMultColor5: {r: 0, g: 0, b: 0, a: 0}
+    - _DiffuseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _DissolveEdgeColor: {r: 1, g: 0.09999997, b: 0.09999997, a: 1}
+    - _ES_AvatarBackRimColor: {r: 1, g: 1, b: 1, a: 1}
+    - _ES_AvatarFrontRimColor: {r: 1, g: 1, b: 1, a: 1}
+    - _ElementRimColor: {r: 0, g: 0, b: 0, a: 0}
+    - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
+    - _FaceBlushColor: {r: 0, g: 0, b: 0, a: 0}
+    - _FirstShadowMultColor: {r: 0, g: 0, b: 0, a: 0}
+    - _FirstShadowMultColor1: {r: 0, g: 0, b: 0, a: 0}
+    - _FirstShadowMultColor2: {r: 0, g: 0, b: 0, a: 0}
+    - _FirstShadowMultColor3: {r: 0, g: 0, b: 0, a: 0}
+    - _FirstShadowMultColor4: {r: 0, g: 0, b: 0, a: 0}
+    - _FirstShadowMultColor5: {r: 0, g: 0, b: 0, a: 0}
+    - _FresnelFlow: {r: 0, g: 0, b: 0, a: 0}
+    - _FresnelMaskColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Highlight_Color: {r: 0.53, g: 0.68, b: 1, a: 0}
+    - _HitColor: {r: 0, g: 0, b: 0, a: 0}
+    - _IceDarkColor: {r: 0.003, g: 0.005, b: 0.007, a: 0}
+    - _IceLightColor: {r: 0.24999997, g: 0.50999993, b: 0.68, a: 0}
+    - _MTMapDarkColor: {r: 0.9058824, g: 0.9058824, b: 0.9058824, a: 0}
+    - _MTMapLightColor: {r: 0.98039216, g: 0.9215687, b: 0.9215687, a: 1}
+    - _MTShadowMultiColor: {r: 0.75294125, g: 0.41960785, b: 0.19607842, a: 1}
+    - _MTSpecularColor: {r: 1, g: 1, b: 1, a: 1}
+    - _MainTexAlphaUse: {r: 0, g: 0, b: 2, a: 0}
+    - _Mask01_Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Mask02_Color: {r: 1, g: 1, b: 1, a: 1}
+    - _NormalIntensity: {r: 0.87, g: 0.315, b: 0.57, a: 0.004}
+    - _OutlineColor1: {r: 0.6226415, g: 0.41826165, b: 0.1262905, a: 0}
+    - _OutlineColor2: {r: 0.62352943, g: 0.41960788, b: 0.1254902, a: 1}
+    - _OutlineColor3: {r: 1, g: 0, b: 0, a: 0}
+    - _OutlineColor4: {r: 0.3773585, g: 0.1557101, b: 0.062299743, a: 0}
+    - _OutlineColor5: {r: 0.53773576, g: 0.37248898, b: 0.30184224, a: 0}
+    - _OutlineWidthAdjustScale: {r: 0.105, g: 0.245, b: 0.6, a: 1}
+    - _OutlineWidthAdjustZs: {r: 0.01, g: 2, b: 6, a: 1}
+    - _RimColor: {r: 1, g: 1, b: 1, a: 1}
+    - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
+    - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}
+  m_BuildTextureStacks: []
+--- !u!114 &1686035844457231191
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 5
