@@ -9,11 +9,11 @@ public class SamplePlayable: MonoBehaviour
     private PlayableGraphAdapter m_Graph;
     private void OnDestroy()
     {
-        m_Graph.Initialization(m_Anim);
+        PlayableGraphAdapter.OnDestroy(m_Graph);
+        m_Graph = null;
     }
     private void Awake()
     {
-        
     }
     private void Start()
     {
@@ -25,7 +25,9 @@ public class SamplePlayable: MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Q))
         {
-
+            m_Graph = PlayableGraphAdapter.Create(m_Anim);
+            var clipAdapter = PlayableClipAdapter.Create(m_Graph, EnLoadTarget.Anim_Rest_idle);
+            m_Graph.Connect(clipAdapter);
         }
         if (Input.GetKeyDown(KeyCode.W))
         {

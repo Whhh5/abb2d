@@ -5,7 +5,19 @@ using UnityEngine.Playables;
 
 public class PlayableMixerAdapter : PlayableAdapter
 {
-    public override IPlayable GetPlayable()
+    public override EnClassType ClassType => throw new System.NotImplementedException();
+
+    public override void ConnectInputTo(PlayableAdapter playableAdapter, int portID)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public override void ConnectOutputTo(int portID, PlayableAdapter playableAdapter)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public override ScriptPlayable<AdapterPlayable> GetPlayable()
     {
         throw new System.NotImplementedException();
     }

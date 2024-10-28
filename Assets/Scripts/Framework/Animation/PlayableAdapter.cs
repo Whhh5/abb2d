@@ -8,7 +8,19 @@ public abstract class PlayableAdapter: IGamePool
 {
     public abstract EnClassType ClassType { get; }
 
-    public abstract void Initialization(PlayableGraphAdapter graph);
+    public static void Destroy(PlayableAdapter layerMaskAdapter)
+    {
+        layerMaskAdapter.OnDestroy();
+        GameUtil.PushClass(layerMaskAdapter);
+    }
+    public virtual void Initialization(PlayableGraphAdapter graph)
+    {
+
+    }
+    public virtual void OnDestroy()
+    {
+
+    }
     public abstract ScriptPlayable<AdapterPlayable> GetPlayable();
     public abstract void ConnectInputTo(PlayableAdapter playableAdapter, int portID);
     public abstract void ConnectOutputTo(int portID, PlayableAdapter playableAdapter);

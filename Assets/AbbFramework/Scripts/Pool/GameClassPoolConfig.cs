@@ -5,6 +5,9 @@ public enum EnClassType
 {
     GameCfgInfo,
     GameObjPool,
+
+    PlayableGraphAdapter,
+    PlayableClipAdapter,
     PlayableLayerMixerAdapter,
 }
 public class GameClassPoolConfig

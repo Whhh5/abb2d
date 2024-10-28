@@ -22,6 +22,13 @@ public class LoadMgr : Singleton<LoadMgr>
         var obj = await LoadAsync(path);
         return obj as T;
     }
+    public T Load<T>(EnLoadTarget loadTarget)
+        where T : Object
+    {
+        var path = LoadConfig.Instance.GetTargetPath(loadTarget);
+        var obj = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(path);
+        return obj as T;
+    }
     public void Unload<T>(T target)
     {
         

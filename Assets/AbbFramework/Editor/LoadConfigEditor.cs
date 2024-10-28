@@ -13,6 +13,7 @@ public class LoadConfigEditor : MonoBehaviour
     {
         {"prefab", "Pre_" },
         {"sprite", "Sp_" },
+        {"animation", "Anim_" },
     };
     private static string[] m_SearchPaths = new string[]
     {
@@ -40,14 +41,14 @@ public class LoadConfigEditor : MonoBehaviour
                     var assetPath = AssetDatabase.GUIDToAssetPath(guid);
                     var name = Path.GetFileNameWithoutExtension(assetPath);
                     var targetType = $"{item.Value}{name}";
-                    targetStr += "\t" + targetType + ",";
+                    targetStr += "\n\t" + targetType + ",";
 
                     if (Enum.TryParse<EnLoadTarget>(targetType, out var result))
                     {
                         itemList.Add(new()
                         {
                             LoadTarget = result,
-                            Path = assetPath.Replace("Assets/", ""),
+                            Path = assetPath,//.Replace("Assets/Resources/", ""),
                         });
                     }
                 }
