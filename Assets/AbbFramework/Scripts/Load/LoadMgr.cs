@@ -10,7 +10,10 @@ public class LoadMgr : Singleton<LoadMgr>
     //private Dictionary<EnLoadTarget, >
     public async UniTask<Object> LoadAsync(string assetPath)
     {
-        return await Resources.LoadAsync(assetPath);
+        //await UniTask.DelayFrame(2);
+        //var asset = UnityEditor.AssetDatabase.LoadAssetAtPath<Object>(assetPath);
+        var asset = await Resources.LoadAsync(assetPath);
+        return asset;
     }
     public async UniTask<T> LoadAsync<T>(EnLoadTarget loadTarget)
         where T : Object

@@ -4,7 +4,7 @@ using Cysharp.Threading.Tasks;
 
 public class GameUtil : Singleton<GameUtil>
 {
-    public T PullClass<T>()
+    public static T PullClass<T>()
         where T : class, IGamePool, new()
     {
         var result = new T();
@@ -12,7 +12,7 @@ public class GameUtil : Singleton<GameUtil>
         result.OnPull();
         return result;
     }
-    public void PushClass<T>(T classData)
+    public static void PushClass<T>(T classData)
         where T : class, IGamePool
     {
         classData.OnPush();
