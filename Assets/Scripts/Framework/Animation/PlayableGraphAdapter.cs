@@ -29,6 +29,7 @@ public class PlayableGraphAdapter: IGamePool
     }
     private PlayableGraph m_Graph = default;
     private PlayableLayerMixerAdapter m_LayerMixerPlayable;
+    public ScriptPlayable<AdapterPlayable> layerMixer => m_LayerMixerPlayable.GetPlayable();
     private Dictionary<EnAnimLayer, PlayableAdapter> m_LayerAdapter = new();
 
     public void OnDestroy()
@@ -41,11 +42,10 @@ public class PlayableGraphAdapter: IGamePool
     public void Initialization(Animator anim)
     {
         m_Graph = PlayableGraph.Create($"{anim.name}");
-        m_Graph.SetTimeUpdateMode(DirectorUpdateMode.GameTime);
+        m_Graph.SetTimeUpdateMode(DirectorUpdateMode.Manual);
         var output = AnimationPlayableOutput.Create(m_Graph, $"{anim.name}-output", anim);
         m_LayerMixerPlayable = PlayableLayerMixerAdapter.Create(this);
         output.SetSourcePlayable(m_LayerMixerPlayable.GetPlayable());
-        m_Graph.Play();
     }
     public void Connect(EnAnimLayer layer, PlayableAdapter playable)
     {
@@ -69,5 +69,25 @@ public class PlayableGraphAdapter: IGamePool
     public PlayableGraph GetGraph()
     {
         return m_Graph;
+    }
+    public void UpdtaeGraphEvaluate()
+    {
+        m_Graph.Evaluate(Time.deltaTime);
+    }
+    public bool IsPlaying()
+    {
+        return m_Graph.IsPlaying();
+    }
+    public void PlayGraph()
+    {
+        m_Graph.Play();
+    }
+    public void StopGraph()
+    {
+        m_Graph.Stop();
+    }
+    public void PauseGraph()
+    {
+        
     }
 }

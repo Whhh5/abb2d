@@ -3,8 +3,44 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Animations;
+using Unity.Collections;
 
-public abstract class PlayableAdapter: IGamePool
+public struct AnimJob : IAnimationJob
+{
+    public NativeArray<TransformStreamHandle> handles;
+    public float weight;
+    public void ProcessAnimation(AnimationStream stream)
+    {
+        var hum = stream.AsHuman();
+        var stream1 = stream.GetInputStream(0);
+        var stream2 = stream.GetInputStream(1);
+
+        foreach (var handle in handles)
+        {
+            var pos1 = handle.GetLocalPosition(stream1);
+            var pos2 = handle.GetLocalPosition(stream2);
+            var pos = Vector3.Lerp(pos1, pos2, weight);
+            handle.SetLocalPosition(stream, pos);
+
+            var angle1 = handle.GetLocalRotation(stream1);
+            var angle2 = handle.GetLocalRotation(stream2);
+            var angle = Quaternion.Slerp(angle1, angle2, weight);
+            handle.SetLocalRotation(stream, angle);
+        }
+
+        //hum.SolveIK();
+    }
+
+    public void ProcessRootMotion(AnimationStream stream)
+    {
+        var stream1 = stream.GetInputStream(0);
+        var stream2 = stream.GetInputStream(1);
+
+        stream.velocity = Vector3.Lerp(stream1.rootMotionPosition, stream2.rootMotionPosition, weight);
+        stream.angularVelocity = Vector3.Lerp(stream1.angularVelocity, stream2.angularVelocity, weight);
+    }
+}
+public abstract class PlayableAdapter : IGamePool
 {
     public abstract EnClassType ClassType { get; }
 
@@ -15,6 +51,9 @@ public abstract class PlayableAdapter: IGamePool
     }
     public virtual void Initialization(PlayableGraphAdapter graph)
     {
+        //var job = new AnimJob();
+        //var animPlayable = AnimationScriptPlayable.Create<AnimJob>(graph.GetGraph(), job, 0);
+        //animPlayable.SetProcessInputs(false);
 
     }
     public virtual void OnDestroy()
