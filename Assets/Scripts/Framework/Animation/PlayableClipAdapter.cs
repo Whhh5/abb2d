@@ -1,12 +1,13 @@
 using UnityEngine.Playables;
 using UnityEngine.Animations;
+using UnityEngine.PlayerLoop;
 
 public class PlayableClipAdapter : PlayableAdapter
 {
     public static PlayableClipAdapter Create(PlayableGraphAdapter graph, EnLoadTarget clipTarget)
     {
         var clipAdapter = GameUtil.PullClass<PlayableClipAdapter>();
-        clipAdapter.Initialization(graph);
+        clipAdapter.InitClip(graph, clipTarget);
         return clipAdapter;
     }
     public override EnClassType ClassType => EnClassType.PlayableClipAdapter;
@@ -26,7 +27,12 @@ public class PlayableClipAdapter : PlayableAdapter
     }
     public override void Initialization(PlayableGraphAdapter graph)
     {
-        var clip = AnimMgr.Instance.GetClip(EnLoadTarget.Anim_Rest_idle);
+        base.Initialization(graph);
+    }
+    public void InitClip(PlayableGraphAdapter graph, EnLoadTarget clipTarget)
+    {
+        Initialization(graph);
+        var clip = AnimMgr.Instance.GetClip(clipTarget);
         m_ClipPlayable = AnimationClipPlayable.Create(graph.GetGraph(), clip);
         m_Playable = ScriptPlayable<AdapterPlayable>.Create(graph.GetGraph(), 0);
         m_Playable.AddInput(m_ClipPlayable, 0, 1);

@@ -15,7 +15,7 @@ public enum EnAnimLayer
 }
 public class PlayableGraphAdapter: IGamePool
 {
-    public EnClassType ClassType => throw new System.NotImplementedException();
+    public EnClassType ClassType => EnClassType.PlayableGraphAdapter;
 
     public static PlayableGraphAdapter Create(Animator animator)
     {

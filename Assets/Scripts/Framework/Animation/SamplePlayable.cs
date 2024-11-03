@@ -29,9 +29,9 @@ public class SamplePlayable: MonoBehaviour
             var clipAdapter = PlayableClipAdapter.Create(m_Graph, EnLoadTarget.Anim_Rest_idle);
             m_Graph.Connect(clipAdapter);
         }
-        if (Input.GetKeyDown(KeyCode.W))
+        if (Input.GetKeyDown(KeyCode.A))
         {
-
+            
         }
     }
 }
