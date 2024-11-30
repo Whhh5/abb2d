@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public abstract class GameObjPool : MonoBehaviour
+public class ABBUnityPool : Singleton<ABBUnityPool>
 {
+	
 }
 

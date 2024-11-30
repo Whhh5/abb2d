@@ -6,7 +6,7 @@ public class AnimMgr : Singleton<AnimMgr>
 {
 	public AnimationClip GetClip(EnLoadTarget clipTarget)
 	{
-		var clip = LoadMgr.Instance.Load<AnimationClip>(clipTarget);
+		var clip = ABBLoadMgr.Instance.Load<AnimationClip>(clipTarget);
 
 		return clip;
 	}

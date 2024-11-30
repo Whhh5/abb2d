@@ -6,11 +6,10 @@ public class PlayableClipAdapter : PlayableAdapter
 {
     public static PlayableClipAdapter Create(PlayableGraphAdapter graph, EnLoadTarget clipTarget)
     {
-        var clipAdapter = GameUtil.PullClass<PlayableClipAdapter>();
+        var clipAdapter = GameUtil.GetClass<PlayableClipAdapter>();
         clipAdapter.InitClip(graph, clipTarget);
         return clipAdapter;
     }
-    public override EnClassType ClassType => EnClassType.PlayableClipAdapter;
     private AnimationClipPlayable m_ClipPlayable;
     private ScriptPlayable<AdapterPlayable> m_Playable;
     public override void OnDestroy()

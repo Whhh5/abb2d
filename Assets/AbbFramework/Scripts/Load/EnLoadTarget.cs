@@ -1,6 +1,5 @@
 public enum EnLoadTarget
 {
-
 	Pre_TestPrefab,
 	Anim_Accelerate,
 	Anim_Accelerate_01,

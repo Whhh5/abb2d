@@ -13,19 +13,18 @@ public enum EnAnimLayer
     Layer3,
     EnumCount,
 }
-public class PlayableGraphAdapter: IGamePool
+public class PlayableGraphAdapter : IGamePool
 {
-    public EnClassType ClassType => EnClassType.PlayableGraphAdapter;
 
     public static PlayableGraphAdapter Create(Animator animator)
     {
-        var data = GameUtil.PullClass<PlayableGraphAdapter>();
+        var data = GameUtil.GetClass<PlayableGraphAdapter>();
         data.Initialization(animator);
         return data;
     }
     public static void OnDestroy(PlayableGraphAdapter graph)
     {
-        GameUtil.PushClass(graph);
+        GameUtil.RecycleClass(graph);
     }
     private PlayableGraph m_Graph = default;
     private PlayableLayerMixerAdapter m_LayerMixerPlayable;

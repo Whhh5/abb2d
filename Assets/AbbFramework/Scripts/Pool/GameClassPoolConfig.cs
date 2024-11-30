@@ -1,15 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public enum EnClassType
-{
-    GameCfgInfo,
-    GameObjPool,
+//public enum EnClassType
+//{
+//    GameCfgInfo,
+//    GameObjPool,
 
-    PlayableGraphAdapter,
-    PlayableClipAdapter,
-    PlayableLayerMixerAdapter,
-}
+//    PlayableGraphAdapter,
+//    PlayableClipAdapter,
+//    PlayableLayerMixerAdapter,
+
+//    LoadData,
+//    EventData,
+//}
 public class GameClassPoolConfig
 {
 	

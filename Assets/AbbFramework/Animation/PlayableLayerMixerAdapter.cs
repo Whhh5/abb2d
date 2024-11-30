@@ -9,14 +9,13 @@ public class PlayableLayerMixerAdapter : PlayableAdapter
 {
     public static PlayableLayerMixerAdapter Create(PlayableGraphAdapter graph)
     {
-        var data = GameUtil.PullClass<PlayableLayerMixerAdapter>();
+        var data = GameUtil.GetClass<PlayableLayerMixerAdapter>();
         data.Initialization(graph);
         return data;
     }
     private AnimationLayerMixerPlayable m_LayerMixer;
     private ScriptPlayable<AdapterPlayable> m_Adapter;
 
-    public override EnClassType ClassType => EnClassType.PlayableLayerMixerAdapter;
     public override void OnDestroy()
     {
         m_LayerMixer.Destroy();

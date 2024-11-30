@@ -3,25 +3,23 @@ using System.Collections;
 
 public interface IGamePool
 {
-    public EnClassType ClassType { get; }
-    public bool Constructor()
+    public void Constructor()
     {
-        return true;
     }
 
-    public bool OnPull()
+    public void OnPull()
     {
-        return true;
+
     }
 
-    public bool OnPush()
+    public void OnRecycle()
     {
-        return true;
+
     }
 
-    public bool Release()
+    public void Release()
     {
-        return true;
+
     }
 }
 

@@ -114,7 +114,7 @@ public class GameManager : MonoBehaviour
     private void OnDestroy()
     {
         // ֹͣ start
-        Debug.Log(" --------------------- ֹͣ Start -----------------------");
+        Debug.Log(" --------------------- ֹͣ OnDisable -----------------------");
         m_CurInitSatge &= ~EManagerFuncType.OnEnableAsync;
         if (m_ManagerList.TryGetValue(EManagerFuncType.OnEnableAsync, out var list))
         {
@@ -123,9 +123,9 @@ public class GameManager : MonoBehaviour
                 item.OnDisable();
             }
         }
-        Debug.Log(" --------------------- ֹͣ Start ��� -----------------------");
+        Debug.Log(" --------------------- ֹͣ OnDisable ��� -----------------------");
         // ֹͣ awake
-        Debug.Log(" --------------------- ֹͣ Awake -----------------------");
+        Debug.Log(" --------------------- ֹͣ Destroy -----------------------");
         m_CurInitSatge &= ~EManagerFuncType.AwakeAsync;
         if (m_ManagerList.TryGetValue(EManagerFuncType.AwakeAsync, out list))
         {
@@ -134,7 +134,7 @@ public class GameManager : MonoBehaviour
                 item.Destroy();
             }
         }
-        Debug.Log(" --------------------- ֹͣ Awake ��� -----------------------");
+        Debug.Log(" --------------------- ֹͣ Destroy ��� -----------------------");
     }
     private void Update()
     {

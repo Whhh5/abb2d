@@ -42,12 +42,11 @@ public struct AnimJob : IAnimationJob
 }
 public abstract class PlayableAdapter : IGamePool
 {
-    public abstract EnClassType ClassType { get; }
 
     public static void Destroy(PlayableAdapter layerMaskAdapter)
     {
         layerMaskAdapter.OnDestroy();
-        GameUtil.PushClass(layerMaskAdapter);
+        GameUtil.RecycleClass(layerMaskAdapter);
     }
     public virtual void Initialization(PlayableGraphAdapter graph)
     {
@@ -65,6 +64,22 @@ public abstract class PlayableAdapter : IGamePool
     public abstract void ConnectOutputTo(int portID, PlayableAdapter playableAdapter);
     public virtual void ConnectTo(int outputPortID, ScriptPlayable<AdapterPlayable> toPlayable, int inputPortID)
     {
+        
+    }
 
+    public virtual void Constructor()
+    {
+    }
+
+    public virtual void OnPull()
+    {
+    }
+
+    public virtual void OnRecycle()
+    {
+    }
+
+    public virtual void Release()
+    {
     }
 }

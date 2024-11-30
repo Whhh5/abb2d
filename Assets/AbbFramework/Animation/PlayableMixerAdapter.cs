@@ -5,7 +5,6 @@ using UnityEngine.Playables;
 
 public class PlayableMixerAdapter : PlayableAdapter
 {
-    public override EnClassType ClassType => throw new System.NotImplementedException();
 
     public override void ConnectInputTo(PlayableAdapter playableAdapter, int portID)
     {
