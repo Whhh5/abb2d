@@ -10,9 +10,10 @@ public class LoadConfigEditor : MonoBehaviour
 {
     private static Dictionary<string, string> m_Suffix2NamePrefix = new()
     {
+        {"asset", "SO_" },
         {"prefab", "Pre_" },
-        {"sprite", "Sp_" },
-        {"animation", "Anim_" },
+        {"png", "Sp_" },
+        {"FBX", "Anim_" },
     };
     private static string[] m_SearchPaths = new string[]
     {
@@ -28,22 +29,26 @@ public class LoadConfigEditor : MonoBehaviour
         var targetList = new List<string>();
         foreach (var item in m_Suffix2NamePrefix)
         {
-            var assets = AssetDatabase.FindAssets($"t:{item.Key}", m_SearchPaths);
-            Debug.Log(assets.Length);
-
-            foreach (var guid in assets)
+            foreach (var searchPath in m_SearchPaths)
             {
-                var assetPath = AssetDatabase.GUIDToAssetPath(guid);
-                var name = Path.GetFileNameWithoutExtension(assetPath);
-                var targetType = $"{item.Value}{name}";
-                var index = targetList.Count;
-                targetList.Add(targetType);
-
-                itemList.Add(new()
+                var fullDir = ABBUtil.GetFullPathByUnityPath(searchPath);
+                var dirInfo = new DirectoryInfo(fullDir);
+                var fileList = dirInfo.GetFiles($"*.{item.Key}", SearchOption.AllDirectories);
+                foreach (var fileInfo in fileList)
                 {
-                    LoadTarget = (EnLoadTarget)index,
-                    Path = assetPath,
-                });
+                    var fullPath = fileInfo.FullName;
+                    var name = Path.GetFileNameWithoutExtension(fullPath);
+                    var unityPath = ABBUtil.GetUnityPathByFullPath(fullPath);
+                    var targetType = $"{item.Value}{name}";
+                    var index = targetList.Count;
+                    targetList.Add(targetType);
+
+                    itemList.Add(new()
+                    {
+                        LoadTarget = (EnLoadTarget)index,
+                        Path = unityPath,
+                    });
+                }
             }
         }
 
@@ -55,7 +60,7 @@ public class LoadConfigEditor : MonoBehaviour
     {
         var result = $"public enum EnLoadTarget" +
             $"\n{{";
-
+        result += $"\n\tNone = -1,";
         for (int i = 0; i < targetList.Count; i++)
         {
             result += $"\n\t{targetList[i]},";

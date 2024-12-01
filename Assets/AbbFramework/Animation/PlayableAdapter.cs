@@ -67,19 +67,19 @@ public abstract class PlayableAdapter : IGamePool
         
     }
 
-    public virtual void Constructor()
+    public virtual void PoolConstructor()
     {
     }
 
-    public virtual void OnPull()
+    public virtual void OnPoolGet()
     {
     }
 
-    public virtual void OnRecycle()
+    public virtual void OnPoolRecycle()
     {
     }
 
-    public virtual void Release()
+    public virtual void PoolRelease()
     {
     }
 }

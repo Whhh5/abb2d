@@ -70,29 +70,9 @@ public static class CustomUnityToolbar
     private static void GUILeft()
     {
         GUILayout.BeginHorizontal();
-        if (GUILayout.Button("可扩展"))
+        if (GUILayout.Button("Update Load Target"))
         {
-            Debug.Log(typeof(BaseType));
-            Debug.Log(baseType.GetType());
-            var childType = new ChildType();
-            Debug.Log(typeof(ChildType));
-            baseType = childType;
-            Debug.Log(typeof(BaseType));
-            baseType = childType;
-            Debug.Log(baseType.GetType());
-
-            var time = DateTime.Now;
-            for (int i = 0; i < 10000000; i++)
-            {
-                var type = typeof(BaseType);
-            }
-            Debug.Log((DateTime.Now - time).TotalMilliseconds);
-            time = DateTime.Now;
-            for (int i = 0; i < 10000000; i++)
-            {
-                var type = baseType.GetType();
-            }
-            Debug.Log((DateTime.Now - time).TotalMilliseconds);
+            LoadConfigEditor.CreateLoadConfigJson();
         }
         GUILayout.EndHorizontal();
     }
@@ -103,8 +83,25 @@ public static class CustomUnityToolbar
     private static void GUIRight()
     {
         GUILayout.BeginHorizontal();
-        if (GUILayout.Button("可扩展"))
-        { }
+        if (GUILayout.Button("Create Camera"))
+        {
+            CameraMgr.Instance.CreateCamera();
+        }
+        if (GUILayout.Button("Create Map"))
+        {
+            var mapDataSO = ABBLoadMgr.Instance.Load<MapDataSO>(EnLoadTarget.SO_MapDataSO);
+            MapMgr.Instance.CreateMap(mapDataSO);
+        }
+        if (GUILayout.Button("Create Player"))
+        {
+            var mapDataSO = ABBLoadMgr.Instance.Load<MapDataSO>(EnLoadTarget.SO_MapDataSO);
+            PlayerMgr.Instance.CreatePlayerEntity(mapDataSO);
+        }
+        if (GUILayout.Button("Create Barrier"))
+        {
+            var mapDataSO = ABBLoadMgr.Instance.Load<MapDataSO>(EnLoadTarget.SO_MapDataSO);
+            BarrierEventMgr.Instance.CreateBarrier(mapDataSO);
+        }
         GUILayout.EndHorizontal();
     }
 }

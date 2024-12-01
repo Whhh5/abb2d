@@ -13,14 +13,6 @@ public class ABBLoadMgr : Singleton<ABBLoadMgr>
     {
         Editor,
     }
-    public enum EnLoadStatus
-    {
-        Start,
-        Loading,
-        Finish,
-        Failed,
-        Success,
-    }
     public class LoadData : IGamePool
     {
         private int m_ObjID = -1;
@@ -28,12 +20,12 @@ public class ABBLoadMgr : Singleton<ABBLoadMgr>
         public EnLoadStatus m_Status = EnLoadStatus.Start;
         private CancellationTokenSource m_TokenSource = null;
 
-        public void OnPull()
+        public void OnPoolGet()
         {
             m_TokenSource = new();
         }
 
-        public void OnRecycle()
+        public void OnPoolRecycle()
         {
             m_TokenSource.Cancel();
             m_TokenSource = null;

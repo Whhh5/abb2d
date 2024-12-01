@@ -26,9 +26,9 @@ public class GameClassPoolData<T> : ClassData
         else
         {
             result = new();
-            result.Constructor();
+            result.PoolConstructor();
         }
-        result.OnPull();
+        result.OnPoolGet();
         return result;
     }
 }

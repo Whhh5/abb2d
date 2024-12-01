@@ -20,7 +20,7 @@ public class GamePoolData
     {
         foreach (var item in m_List)
         {
-            item.Release();
+            item.PoolRelease();
         }
         m_List.Clear();
         m_TotalCount = 0;
@@ -34,7 +34,7 @@ public class GamePoolData
         if (m_Count == 0)
         {
             var obj = new T();
-            obj.Constructor();
+            obj.PoolConstructor();
             return obj;
         }
         else
@@ -85,7 +85,7 @@ public class GameUtil : Singleton<GameUtil>
             m_ClassPool.Add(type, list);
         }
         var result = list.Get<T>();
-        result.OnPull();
+        result.OnPoolGet();
         return result;
     }
     public static void RecycleClass<T>(T classData)
@@ -97,7 +97,7 @@ public class GameUtil : Singleton<GameUtil>
             ABBUtil.LogError($"recycle type no exist, {type}");
             return;
         }
-        classData.OnRecycle();
+        classData.OnPoolRecycle();
         list.Recycle(classData);
         if (list.TotalCount == 0)
         {
@@ -105,20 +105,6 @@ public class GameUtil : Singleton<GameUtil>
             m_ClassPool.Remove(type);
             m_GamePoolList.Add(list);
         }
-    }
-    public async UniTask<T> LoadGameobjectAsync<T>(EnLoadTarget loadTarget)
-        where T : GameObjPool
-    {
-        var obj = await ABBLoadMgr.Instance.LoadAsync<GameObject>(loadTarget);
-        var ins = GameObject.Instantiate(obj);
-        var com = ins.GetComponent<T>();
-        return com;
-    }
-    public void UnloadGameobject<T>(T target)
-        where T : GameObjPool
-    {
-        //LoadMgr.Instance.Unload(target);
-        GameObject.Destroy(target.gameObject);
     }
 }
 

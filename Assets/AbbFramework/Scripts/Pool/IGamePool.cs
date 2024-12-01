@@ -3,21 +3,21 @@ using System.Collections;
 
 public interface IGamePool
 {
-    public void Constructor()
+    public void PoolConstructor()
     {
     }
 
-    public void OnPull()
-    {
-
-    }
-
-    public void OnRecycle()
+    public void OnPoolGet()
     {
 
     }
 
-    public void Release()
+    public void OnPoolRecycle()
+    {
+
+    }
+
+    public void PoolRelease()
     {
 
     }

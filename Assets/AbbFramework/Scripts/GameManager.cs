@@ -4,24 +4,37 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
-public enum EManagerFuncType
+public enum EnManagerFuncType
 {
     None = 0,
     AwakeAsync = 1 << 0,
     OnEnableAsync = 1 << 1,
     Update = 1 << 2,
 }
+public enum EnGameStatus
+{
+    Start,
+    Playing,
+    Pause,
+
+}
+
 
 public class GameManager : MonoBehaviour
 {
-    private EManagerFuncType m_CurInitSatge = EManagerFuncType.None;
-    private Dictionary<EManagerFuncType, HashSet<Singleton>> m_ManagerList = new();
+    #region 生命周期管理
+    private EnManagerFuncType m_CurInitSatge = EnManagerFuncType.None;
+    private Dictionary<EnManagerFuncType, HashSet<Singleton>> m_ManagerList = new();
     private void SubManager(Singleton f_Manager)
     {
-        for (int i = (int)EManagerFuncType.None; i <= (int)EManagerFuncType.Update; i++)
+        if(f_Manager.GetType() == Type.GetType("ABBInputMgr"))
         {
-            var type = (EManagerFuncType)i;
-            if ((f_Manager.FuncType & type) == EManagerFuncType.None)
+
+        }
+        for (int i = 0; i < 3; i++)
+        {
+            var type = (EnManagerFuncType)(1 << i);
+            if ((f_Manager.FuncType & type) != type)
                 continue;
             if (!m_ManagerList.TryGetValue(type, out var list))
             {
@@ -38,8 +51,8 @@ public class GameManager : MonoBehaviour
         var instanceStr = "Instance";
         foreach (var assembly in hotUpdateAsss)
         {
-            if (assembly.GetName().Name != "AbbFramework")
-                continue;
+            //if (assembly.GetName().Name != "AbbFramework")
+            //    continue;
             var types = assembly.GetTypes();
             foreach (var type in types)
             {
@@ -68,7 +81,7 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log(" --------------------- start Awake -----------------------");
         // ���� awake
-        if (m_ManagerList.TryGetValue(EManagerFuncType.AwakeAsync, out var list))
+        if (m_ManagerList.TryGetValue(EnManagerFuncType.AwakeAsync, out var list))
         {
             var count = list.Count;
             UniTask[] tasks = new UniTask[count];
@@ -82,13 +95,13 @@ public class GameManager : MonoBehaviour
             }
             await UniTask.WhenAll(tasks);
         }
-        m_CurInitSatge |= EManagerFuncType.AwakeAsync;
+        m_CurInitSatge |= EnManagerFuncType.AwakeAsync;
         Debug.Log(" --------------------- ��ʼ�� Awake end -----------------------");
 
 
         // ���� start
         Debug.Log(" --------------------- start Start -----------------------");
-        if (m_ManagerList.TryGetValue(EManagerFuncType.OnEnableAsync, out list))
+        if (m_ManagerList.TryGetValue(EnManagerFuncType.OnEnableAsync, out list))
         {
             var count = list.Count;
             UniTask[] tasks = new UniTask[count];
@@ -102,7 +115,7 @@ public class GameManager : MonoBehaviour
             }
             await UniTask.WhenAll(tasks);
         }
-        m_CurInitSatge |= EManagerFuncType.OnEnableAsync;
+        m_CurInitSatge |= EnManagerFuncType.OnEnableAsync;
         Debug.Log(" ---------------------  Start end -----------------------");
 
 
@@ -115,8 +128,8 @@ public class GameManager : MonoBehaviour
     {
         // ֹͣ start
         Debug.Log(" --------------------- ֹͣ OnDisable -----------------------");
-        m_CurInitSatge &= ~EManagerFuncType.OnEnableAsync;
-        if (m_ManagerList.TryGetValue(EManagerFuncType.OnEnableAsync, out var list))
+        m_CurInitSatge &= ~EnManagerFuncType.OnEnableAsync;
+        if (m_ManagerList.TryGetValue(EnManagerFuncType.OnEnableAsync, out var list))
         {
             foreach (var item in list)
             {
@@ -126,8 +139,8 @@ public class GameManager : MonoBehaviour
         Debug.Log(" --------------------- ֹͣ OnDisable ��� -----------------------");
         // ֹͣ awake
         Debug.Log(" --------------------- ֹͣ Destroy -----------------------");
-        m_CurInitSatge &= ~EManagerFuncType.AwakeAsync;
-        if (m_ManagerList.TryGetValue(EManagerFuncType.AwakeAsync, out list))
+        m_CurInitSatge &= ~EnManagerFuncType.AwakeAsync;
+        if (m_ManagerList.TryGetValue(EnManagerFuncType.AwakeAsync, out list))
         {
             foreach (var item in list)
             {
@@ -138,12 +151,12 @@ public class GameManager : MonoBehaviour
     }
     private void Update()
     {
-        if ((m_CurInitSatge & EManagerFuncType.OnEnableAsync) == EManagerFuncType.None)
+        if ((m_CurInitSatge & EnManagerFuncType.OnEnableAsync) == EnManagerFuncType.None)
         {
             return;
         }
         // ���� update
-        if (m_ManagerList.TryGetValue(EManagerFuncType.Update, out var list))
+        if (m_ManagerList.TryGetValue(EnManagerFuncType.Update, out var list))
         {
             foreach (var item in list)
             {
@@ -151,8 +164,5 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-
-
-
-
+    #endregion
 }

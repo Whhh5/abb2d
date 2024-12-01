@@ -51,10 +51,10 @@ public static class ABBUtil
 		return m_SceneChangeToken;
     }
 
-	private static int m_TempKey = int.MinValue;
+	private static int m_TempKey = 0;
 	public static int GetTempKey()
 	{
-		return m_TempKey++;
+		return ++m_TempKey;
 	}
 
 
@@ -81,5 +81,11 @@ public static class ABBUtil
         var path = Path.GetRelativePath(GetUnityRootPath(), fullPath);
 		return path;
     }
+
+
+	public static float GetTimeDelta()
+	{
+		return Time.deltaTime;
+	}
 }
 

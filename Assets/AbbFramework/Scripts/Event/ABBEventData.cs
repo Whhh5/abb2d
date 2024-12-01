@@ -10,7 +10,7 @@ public class ABBEventData : IGamePool
 
     private Dictionary<int, Dictionary<int, HashSet<IABBEventExecute>>> m_EventList = new();
 
-    public void OnRecycle()
+    public void OnPoolRecycle()
     {
         m_Count = 0;
         m_EventList.Clear();

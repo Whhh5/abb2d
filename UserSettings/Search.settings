@@ -9,12 +9,6 @@ onBoardingDoNotAskAgain = true
 showPackageIndexes = false
 showStatusBar = false
 scopes = {
-	"last_search.DA949528" = "script code"
-	"OpenInspectorPreview.DA949528" = "0"
-	"currentGroup.DA949528" = "all"
-	"last_search.66F56946" = "unsa"
-	"OpenInspectorPreview.66F56946" = "0"
-	"currentGroup.66F56946" = "all"
 }
 providers = {
 	find = {
@@ -27,19 +21,24 @@ providers = {
 		priority = 100
 		defaultAction = null
 	}
-	store = {
+	asset = {
 		active = true
-		priority = 100
+		priority = 25
 		defaultAction = null
 	}
 	packages = {
-		active = true
+		active = false
 		priority = 90
 		defaultAction = null
 	}
-	profilermarkers = {
+	store = {
 		active = false
 		priority = 100
+		defaultAction = null
+	}
+	log = {
+		active = false
+		priority = 210
 		defaultAction = null
 	}
 	adb = {
@@ -52,14 +51,9 @@ providers = {
 		priority = 50
 		defaultAction = null
 	}
-	asset = {
-		active = true
-		priority = 25
-		defaultAction = null
-	}
-	log = {
+	profilermarkers = {
 		active = false
-		priority = 210
+		priority = 100
 		defaultAction = null
 	}
 }
@@ -74,7 +68,7 @@ showSavedSearchPanel = false
 hideTabs = false
 expandedQueries = [
 ]
-queryBuilder = false
+queryBuilder = true
 ignoredProperties = "id;name;classname;imagecontentshash"
 helperWidgetCurrentArea = "all"
 disabledIndexers = ""

@@ -4,7 +4,7 @@ using Cysharp.Threading.Tasks;
 
 public abstract class Singleton
 {
-    public virtual EManagerFuncType FuncType => EManagerFuncType.AwakeAsync | EManagerFuncType.OnEnableAsync;
+    public virtual EnManagerFuncType FuncType => EnManagerFuncType.AwakeAsync | EnManagerFuncType.OnEnableAsync;
     public virtual async UniTask AwakeAsync()
     {
         await UniTask.DelayFrame(1);
