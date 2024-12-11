@@ -26,7 +26,7 @@ public class SamplePlayable: MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            m_Graph = PlayableGraphAdapter.Create(m_Anim);
+            //m_Graph = PlayableGraphAdapter.Create(m_Anim);
             //var clipAdapter = PlayableClipAdapter.Create(m_Graph, EnLoadTarget.Anim_Rest_walk);
             //m_Graph.Connect(clipAdapter);
 

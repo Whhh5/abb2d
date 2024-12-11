@@ -70,41 +70,6 @@ public class GamePoolData
 }
 public class GameUtil : Singleton<GameUtil>
 {
-    private static Dictionary<Type, GamePoolData> m_ClassPool = new();
-    private static List<GamePoolData> m_GamePoolList = new(10);
-    public static T GetClass<T>()
-        where T : class, IGamePool, new()
-    {
-        var type = typeof(T);
-        if (!m_ClassPool.TryGetValue(type, out var list))
-        {
-            list = m_GamePoolList.Count == 0
-                    ? new()
-                    : m_GamePoolList[^1];
-            list.SetType(type);
-            m_ClassPool.Add(type, list);
-        }
-        var result = list.Get<T>();
-        result.OnPoolGet();
-        return result;
-    }
-    public static void RecycleClass<T>(T classData)
-        where T : class, IGamePool
-    {
-        var type = classData.GetType();
-        if (!m_ClassPool.TryGetValue(type, out var list))
-        {
-            ABBUtil.LogError($"recycle type no exist, {type}");
-            return;
-        }
-        classData.OnPoolRecycle();
-        list.Recycle(classData);
-        if (list.TotalCount == 0)
-        {
-            list.Clear();
-            m_ClassPool.Remove(type);
-            m_GamePoolList.Add(list);
-        }
-    }
+    
 }
 

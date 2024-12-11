@@ -7,7 +7,7 @@ public sealed class GameClassPoolMgr : Singleton<GameClassPoolMgr>
 {
     private Dictionary<Type, object> m_DicClassPool = new();
     private GameClassPoolData<T> GetClassPoolData<T>(Type type)
-        where T: class, IGamePool, new()
+        where T: class, IGamePool
     {
         if (!m_DicClassPool.TryGetValue(type, out var poolData))
         {
@@ -22,13 +22,19 @@ public sealed class GameClassPoolMgr : Singleton<GameClassPoolMgr>
     {
         var type = typeof(T);
         var poolData = GetClassPoolData<T>(type);
-        var data = poolData.Pull();
+        if (!poolData.TryPull(out var data))
+        {
+            data = new T();
+            data.PoolConstructor();
+        }
+        data.OnPoolGet();
         return data;
     }
     public void Push<T>(T classData)
-        where T : class, IGamePool, new()
+        where T : class, IGamePool
     {
         var type = typeof(T);
+        classData.OnPoolRecycle();
         var poolData = GetClassPoolData<T>(type);
         poolData.Push(classData);
     }

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using Unity.Plastic.Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using Newtonsoft.Json;
 
 public class ABBLoadMgr : Singleton<ABBLoadMgr>
 {
@@ -164,7 +164,7 @@ public class ABBLoadMgr : Singleton<ABBLoadMgr>
         where T : Object
     {
         var loader = GetLoader();
-        var objID = await loader.LoadAssetAsync(assPath, tokenSource);
+        var objID = await loader.LoadAssetAsync<T>(assPath, tokenSource);
         return objID;
     }
     public async UniTask<T> LoadAsync<T>(EnLoadTarget loadTarget)
@@ -203,7 +203,7 @@ public class ABBLoadMgr : Singleton<ABBLoadMgr>
             loadData.SetLoadStatus(EnLoadStatus.Loading);
             var path = GetAssetPath(loadTarget);
             var loader = GetLoader();
-            var objID = loader.LoadAsset(path);
+            var objID = loader.LoadAsset<T>(path);
             if (objID < 0)
             {
                 loadData.SetLoadStatus(EnLoadStatus.Failed);
@@ -222,16 +222,16 @@ public class ABBLoadMgr : Singleton<ABBLoadMgr>
     }
     public void Unload(EnLoadTarget loadTarget)
     {
-        if(!ContainsLoadData(loadTarget))
+        if (!ContainsLoadData(loadTarget))
         {
             ABBUtil.LogError("unload no exist");
             return;
         }
         var loadData = GetLoadData(loadTarget);
         loadData.CancelRef();
-        if(loadData.GetRefCount() == 0)
+        if (loadData.GetRefCount() == 0)
         {
-            if(loadData.IsStatus(EnLoadStatus.Success))
+            if (loadData.IsStatus(EnLoadStatus.Success))
             {
                 var objID = loadData.GetObjID();
                 // 对资源进行处理, 卸载资源，卸载 assetbundle

@@ -1,17 +1,18 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Playables;
 
-public class PlayerEntityData: EntityData
+public class PlayerEntityData : Entity3DData
 {
     private PlayerEntity m_PlayerEntity => m_Entity as PlayerEntity;
+    public override EnLoadTarget LoadTarget => EnLoadTarget.Pre_PlayerEntity;
 
-    public int m_Num = 0;
-    public int Num => m_Num;
+
     public override void OnPoolRecycle()
     {
-        m_Num = 0;
         base.OnPoolRecycle();
     }
     public override void OnGOCreate()
@@ -19,37 +20,34 @@ public class PlayerEntityData: EntityData
         base.OnGOCreate();
         CameraMgr.Instance.SetLookAtTran(m_GOID);
     }
-    public void SetNum(int num)
+    public override void OnGODestroy()
     {
-        m_Num = num;
-        if (m_IsLoadSuccess)
-            m_PlayerEntity.SetNum();
+        CameraMgr.Instance.ClearLookAt();
+        base.OnGODestroy();
     }
-    public void IncrementMove(Vector3 value)
-    {
-        if (!m_IsLoadSuccess)
-            return;
-        m_PlayerEntity.IncrementMove(value);
-    }
+
+    #region rigidbody
+
+    #endregion
+
 }
-public class PlayerEntity : Entity
+public class PlayerEntity : Entity3D, IEntity3DCCCom
 {
-    private PlayerEntityData m_PlayerData => m_EntityData as PlayerEntityData;
+    private PlayerEntityData m_PlayerData = null;
     [SerializeField]
-    private TextMeshPro m_TMP = null;
-    [SerializeField]
-    private CharacterController m_ChaCol = null;
+    private CharacterController m_CharacterController = null;
+    public override void OnUnload()
+    {
+        m_PlayerData = null;
+        base.OnUnload();
+    }
     public override void LoadCompeletion()
     {
         base.LoadCompeletion();
-        SetNum();
+        m_PlayerData = m_EntityData as PlayerEntityData;
     }
-    public void SetNum()
+    public CharacterController GetCC()
     {
-        m_TMP.text = m_PlayerData.Num.ToString();
-    }
-    public void IncrementMove(Vector3 value)
-    {
-        m_ChaCol.Move(value);
+        return m_CharacterController;
     }
 }

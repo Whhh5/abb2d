@@ -22,6 +22,7 @@ public enum EnGameStatus
 
 public class GameManager : MonoBehaviour
 {
+    private int m_GameManagerGoID = -1;
     #region 生命周期管理
     private EnManagerFuncType m_CurInitSatge = EnManagerFuncType.None;
     private Dictionary<EnManagerFuncType, HashSet<Singleton>> m_ManagerList = new();
@@ -119,10 +120,7 @@ public class GameManager : MonoBehaviour
         Debug.Log(" ---------------------  Start end -----------------------");
 
 
-        //// �������������
-        //ILoadPrefabAsync.LoadAsync(GManager.MainCamera);
-        //// ������Ϸui
-        //ILoadPrefabAsync.LoadAsync(GManager.UGUIManager);
+        m_GameManagerGoID = await ABBGOMgr.Instance.CreateGOAsync(EnLoadTarget.Pre_GameManager, null);
     }
     private void OnDestroy()
     {
@@ -148,6 +146,8 @@ public class GameManager : MonoBehaviour
             }
         }
         Debug.Log(" --------------------- ֹͣ Destroy ��� -----------------------");
+        //ABBGOMgr.Instance.DestroyGO(m_GameManagerGoID);
+        m_GameManagerGoID = -1;
     }
     private void Update()
     {

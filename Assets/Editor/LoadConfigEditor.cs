@@ -14,11 +14,13 @@ public class LoadConfigEditor : MonoBehaviour
         {"prefab", "Pre_" },
         {"png", "Sp_" },
         {"FBX", "Anim_" },
+        {"anim", "Anim_" },
     };
     private static string[] m_SearchPaths = new string[]
     {
         "Assets/Abbresources",
         "Assets/Resources",
+        "Assets/AbbFramework",
     };
     private static string m_ConfigJsonPath => ABBUtil.GetFullPathByUnityPath(GlobalConfig.LoadConfigRecordsJson);
     private static string m_EnLoadTargetPath => ABBUtil.GetFullPathByUnityPath(GlobalConfig.LoadTargetEnum);

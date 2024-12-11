@@ -4,6 +4,8 @@ using System.Text;
 using System.Threading;
 using System.IO;
 using UnityEditor.Connect;
+using System;
+using Random = UnityEngine.Random;
 
 public static class ABBUtil
 {
@@ -86,6 +88,16 @@ public static class ABBUtil
 	public static float GetTimeDelta()
 	{
 		return Time.deltaTime;
-	}
+    }
+    public static float GetGameTimeSeconds()
+    {
+        return Time.time;
+    }
+    public static float GetSystemTimeSeconds()
+	{
+        var dtFrom = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+        var time = (DateTime.Now - dtFrom).TotalSeconds;
+		return (float)time;
+    }
 }
 

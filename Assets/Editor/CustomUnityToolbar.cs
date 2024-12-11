@@ -83,24 +83,15 @@ public static class CustomUnityToolbar
     private static void GUIRight()
     {
         GUILayout.BeginHorizontal();
-        if (GUILayout.Button("Create Camera"))
+        if (GUILayout.Button("Clear"))
         {
-            CameraMgr.Instance.CreateCamera();
         }
-        if (GUILayout.Button("Create Map"))
+        if (GUILayout.Button("Camera"))
         {
-            var mapDataSO = ABBLoadMgr.Instance.Load<MapDataSO>(EnLoadTarget.SO_MapDataSO);
-            MapMgr.Instance.CreateMap(mapDataSO);
+            
         }
-        if (GUILayout.Button("Create Player"))
+        if (GUILayout.Button("Level1"))
         {
-            var mapDataSO = ABBLoadMgr.Instance.Load<MapDataSO>(EnLoadTarget.SO_MapDataSO);
-            PlayerMgr.Instance.CreatePlayerEntity(mapDataSO);
-        }
-        if (GUILayout.Button("Create Barrier"))
-        {
-            var mapDataSO = ABBLoadMgr.Instance.Load<MapDataSO>(EnLoadTarget.SO_MapDataSO);
-            BarrierEventMgr.Instance.CreateBarrier(mapDataSO);
         }
         GUILayout.EndHorizontal();
     }

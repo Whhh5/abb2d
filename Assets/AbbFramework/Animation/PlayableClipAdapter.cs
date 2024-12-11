@@ -1,49 +1,63 @@
 using UnityEngine.Playables;
 using UnityEngine.Animations;
 using UnityEngine.PlayerLoop;
+using UnityEngine;
 
 public class PlayableClipAdapter : PlayableAdapter
 {
-    public static PlayableClipAdapter Create(PlayableGraphAdapter graph, EnLoadTarget clipTarget)
+    public static PlayableClipAdapter Create(int entityID, PlayableGraphAdapter graph, EnLoadTarget clipTarget)
     {
-        var clipAdapter = GameUtil.GetClass<PlayableClipAdapter>();
+        var clipAdapter = GameClassPoolMgr.Instance.Pull<PlayableClipAdapter>();
+        clipAdapter.Initialization(entityID, graph);
         clipAdapter.InitClip(graph, clipTarget);
         return clipAdapter;
     }
     private AnimationClipPlayable m_ClipPlayable;
     private ScriptPlayable<AdapterPlayable> m_Playable;
+    private EnLoadTarget m_ClipTarget = EnLoadTarget.None;
     public override void OnDestroy()
     {
-        m_ClipPlayable.Destroy();
-        m_Playable.Destroy();
-        AnimMgr.Instance.RecycleClip(EnLoadTarget.Pre_TestPrefab);
+        AnimMgr.Instance.RecycleClip(m_ClipTarget);
         base.OnDestroy();
+        m_ClipTarget = EnLoadTarget.None;
+        m_Playable.Destroy();
+        m_ClipPlayable.Destroy();
     }
 
     public override ScriptPlayable<AdapterPlayable> GetPlayable()
     {
         return m_Playable;
     }
-    public override void Initialization(PlayableGraphAdapter graph)
+    public override void Initialization(int entityID, PlayableGraphAdapter graph)
     {
-        base.Initialization(graph);
+        base.Initialization(entityID, graph);
     }
     public void InitClip(PlayableGraphAdapter graph, EnLoadTarget clipTarget)
     {
-        Initialization(graph);
         var clip = AnimMgr.Instance.GetClip(clipTarget);
+        m_ClipTarget = clipTarget;
         m_ClipPlayable = AnimationClipPlayable.Create(graph.GetGraph(), clip);
         m_Playable = ScriptPlayable<AdapterPlayable>.Create(graph.GetGraph(), 0);
         m_Playable.AddInput(m_ClipPlayable, 0, 1);
     }
-    public override void ConnectInputTo(PlayableAdapter playableAdapter, int portID)
+    public override float GetUnitTime()
     {
-        throw new System.NotImplementedException();
+        return m_ClipPlayable.GetAnimationClip().length;
     }
-
-    public override void ConnectOutputTo(int portID, PlayableAdapter playableAdapter)
+    public override bool IsLoop()
     {
-        playableAdapter.GetPlayable().ConnectInput(0, m_Playable, 0);
+        //return base.IsLoop();
+        switch (m_ClipTarget)
+        {
+            case EnLoadTarget.Anim_Attack_01:
+            case EnLoadTarget.Anim_Attack_02:
+            case EnLoadTarget.Anim_Attack_03:
+            case EnLoadTarget.Anim_Attack_04:
+            case EnLoadTarget.Anim_Attack_05:
+            case EnLoadTarget.Anim_Attack_06:
+                return false;
+            default:
+                return true;
+        }
     }
-
 }

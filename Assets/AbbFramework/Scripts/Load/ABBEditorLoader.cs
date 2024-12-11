@@ -19,9 +19,10 @@ public class ABBEditorLoader : IABBAssetLoader
         return result;
     }
 
-    public int LoadAsset(string assetPath)
+    public int LoadAsset<T>(string assetPath)
+        where T : Object
     {
-        var obj = UnityEditor.AssetDatabase.LoadAssetAtPath<Object>(assetPath);
+        var obj = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(assetPath);
 #if UNITY_EDITOR
         if (obj == null)
             return -1;
@@ -30,9 +31,10 @@ public class ABBEditorLoader : IABBAssetLoader
         return key;
     }
 
-    public async UniTask<int> LoadAssetAsync(string assetPath, CancellationTokenSource cancellation)
+    public async UniTask<int> LoadAssetAsync<T>(string assetPath, CancellationTokenSource cancellation)
+        where T : Object
     {
-        var obj = UnityEditor.AssetDatabase.LoadAssetAtPath<Object>(assetPath);
+        var obj = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(assetPath);
         var delay = ABBUtil.GetRange(1,3);
         await UniTask.DelayFrame(delay, cancellationToken: cancellation.Token);
 #if UNITY_EDITOR
