@@ -1,14 +1,10 @@
 ﻿<Properties StartupConfiguration="{823EDFE3-A1E5-4E33-A7BB-76AEB235C153}|Default">
-  <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
-  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.ItemProperties.ExcelTools PreferredExecutionTarget="MonoDevelop.Default" />
   <MultiItemStartupConfigurations />
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.Workbench ActiveDocument="ExcelTools/ExcelTools.cs">
     <Files>
-      <File FileName="ExcelTools/Program.cs" Line="29" Column="36" />
+      <File FileName="ExcelTools/Program.cs" />
       <File FileName="ExcelTools/ExcelTools.cs" Line="114" Column="14" />
-      <File FileName="ExcelTools/EmptyClass.cs" Line="16" Column="39" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -20,20 +16,11 @@
           </Node>
         </State>
       </Pad>
-      <Pad Id="MonoDevelop.Debugger.WatchPad">
-        <State>
-          <Value>i</Value>
-          <Value>this</Value>
-          <Value>$"m_Arr{type}"</Value>
-          <Value>dicFiledInfo.GetType()</Value>
-          <Value>item.GetUnitTime()</Value>
-          <Value>item.GetTime()</Value>
-          <Value>item.GetPlayTime()</Value>
-          <Value>GetPlaySchedule01()</Value>
-        </State>
-      </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.ItemProperties.ExcelTools PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>
