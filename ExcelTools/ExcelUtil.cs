@@ -2,6 +2,7 @@
 using OfficeOpenXml;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Text;
 
 namespace ExcelTools
 {
@@ -33,6 +34,7 @@ namespace ExcelTools
             //constructorIL.Emit(OpCodes.Ldstr, "Hello, World!");
             //constructorIL.Emit(OpCodes.Call, typeof(Console).GetMethod("WriteLine", new Type[] { typeof(string) }));
             constructorIL.Emit(OpCodes.Ret);
+            classBuilder.AddInterfaceImplementation(typeof(ICfg));
 
             for (int i = 0; i < fieldNameList.Count; i++)
             {
@@ -71,6 +73,42 @@ namespace ExcelTools
                 "string[]" => typeof(string[]),
                 _ => null,
             };
+        }
+        public static string CreateCshapFileContent(string name, string csDesc, List<string> fieldList, List<string> fieldTypeList, List<string> descList)
+        {
+            var strBuilder = new StringBuilder("");
+            strBuilder.AppendLine($"// {csDesc}");
+            strBuilder.AppendLine($"public class {name} : ICfg");
+            strBuilder.AppendLine("{");
+            strBuilder.AppendLine($"\tprivate {name}() {{}}");
+
+            for (int i = 0; i < fieldList.Count; i++)
+            {
+                var fieldName = fieldList[i];
+                var typeStr = fieldTypeList[i];
+                var fieldType = Key2Type(typeStr);
+                var descStr = descList[i];
+                if (string.IsNullOrEmpty(fieldName) || fieldType == null)
+                {
+                    Console.Error.WriteLine($"生成类字段失败 name:{fieldName}, typeStr:{typeStr}, type:{fieldType}");
+                    continue;
+                }
+                strBuilder.AppendLine($"\t// {descStr}");
+                strBuilder.AppendLine($"\tpublic readonly {fieldType} {fieldName};");
+            }
+
+            strBuilder.AppendLine("}");
+            var result = strBuilder.ToString();
+            return result;
+        }
+        public static string CreateICfgFileContent()
+        {
+            var strBuilder = new StringBuilder("");
+            strBuilder.AppendLine("public interface ICfg");
+            strBuilder.AppendLine("{");
+            strBuilder.AppendLine("}");
+            var result = strBuilder.ToString();
+            return result;
         }
     }
 }
