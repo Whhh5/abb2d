@@ -270,4 +270,9 @@ public enum EnLoadTarget
 	Anim_Wizard_Jump,
 	Anim_Wizard_LookUp,
 	Anim_Wizard_Run,
+    Pre_AtkNumEntity,
+    Pre_MonsterEntity,
+    Pre_DrawBox,
+    Pre_DrawSphere,
+    Pre_EffectAttack5,
 }
