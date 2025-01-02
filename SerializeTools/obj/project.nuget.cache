@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "/7MNg0uMDm0w6ftnwKkxwS5cYqYwFnR6sIPTjbPE+kawyfqG2bY6/6MOBz5n9AOVSCNEW6aDOQdXzr1/+dO+Sg==",
+  "success": true,
+  "projectFilePath": "/Users/wangjiahao/Documents/MyProject/SerializeTools/SerializeTools/SerializeTools.csproj",
+  "expectedPackageFiles": [
+    "/Users/wangjiahao/.nuget/packages/microsoft.aspnetcore.app.ref/6.0.31/microsoft.aspnetcore.app.ref.6.0.31.nupkg.sha512",
+    "/Users/wangjiahao/.nuget/packages/microsoft.netcore.app.host.osx-arm64/6.0.31/microsoft.netcore.app.host.osx-arm64.6.0.31.nupkg.sha512",
+    "/Users/wangjiahao/.nuget/packages/microsoft.netcore.app.ref/6.0.31/microsoft.netcore.app.ref.6.0.31.nupkg.sha512"
+  ],
+  "logs": []
+}

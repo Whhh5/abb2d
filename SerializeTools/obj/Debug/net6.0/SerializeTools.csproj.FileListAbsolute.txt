@@ -1,0 +1,15 @@
+/Users/wangjiahao/Documents/MyProject/SerializeTools/SerializeTools/bin/Debug/net6.0/SerializeTools
+/Users/wangjiahao/Documents/MyProject/SerializeTools/SerializeTools/bin/Debug/net6.0/SerializeTools.deps.json
+/Users/wangjiahao/Documents/MyProject/SerializeTools/SerializeTools/bin/Debug/net6.0/SerializeTools.runtimeconfig.json
+/Users/wangjiahao/Documents/MyProject/SerializeTools/SerializeTools/bin/Debug/net6.0/SerializeTools.dll
+/Users/wangjiahao/Documents/MyProject/SerializeTools/SerializeTools/bin/Debug/net6.0/SerializeTools.pdb
+/Users/wangjiahao/Documents/MyProject/SerializeTools/SerializeTools/obj/Debug/net6.0/SerializeTools.csproj.AssemblyReference.cache
+/Users/wangjiahao/Documents/MyProject/SerializeTools/SerializeTools/obj/Debug/net6.0/SerializeTools.GeneratedMSBuildEditorConfig.editorconfig
+/Users/wangjiahao/Documents/MyProject/SerializeTools/SerializeTools/obj/Debug/net6.0/SerializeTools.AssemblyInfoInputs.cache
+/Users/wangjiahao/Documents/MyProject/SerializeTools/SerializeTools/obj/Debug/net6.0/SerializeTools.AssemblyInfo.cs
+/Users/wangjiahao/Documents/MyProject/SerializeTools/SerializeTools/obj/Debug/net6.0/SerializeTools.csproj.CoreCompileInputs.cache
+/Users/wangjiahao/Documents/MyProject/SerializeTools/SerializeTools/obj/Debug/net6.0/SerializeTools.dll
+/Users/wangjiahao/Documents/MyProject/SerializeTools/SerializeTools/obj/Debug/net6.0/refint/SerializeTools.dll
+/Users/wangjiahao/Documents/MyProject/SerializeTools/SerializeTools/obj/Debug/net6.0/SerializeTools.pdb
+/Users/wangjiahao/Documents/MyProject/SerializeTools/SerializeTools/obj/Debug/net6.0/SerializeTools.genruntimeconfig.cache
+/Users/wangjiahao/Documents/MyProject/SerializeTools/SerializeTools/obj/Debug/net6.0/ref/SerializeTools.dll
