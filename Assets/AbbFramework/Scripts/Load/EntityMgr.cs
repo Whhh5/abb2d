@@ -28,6 +28,7 @@ public class EntityMgr : Singleton<EntityMgr>
         var entityData = GameClassPoolMgr.Instance.Pull<T>();
         entityData.SetEntityID(entityID);
         entityData.SetLoadStatus(EnLoadStatus.Start);
+        entityData.Create();
         m_EntityDataMap.Add(entityID, entityData);
         return entityID;
     }
@@ -35,7 +36,10 @@ public class EntityMgr : Singleton<EntityMgr>
     {
         if (!m_EntityDataMap.TryGetValue(entityID, out var entityData))
             return;
+        if (entityData.IsLoadSuccess)
+            UnloadEntity(entityID);
         m_EntityDataMap.Remove(entityID);
+        entityData.Destroy();
         GameClassPoolMgr.Instance.Push(entityData);
     }
     public async void LoadEntity(int entityID)
@@ -44,10 +48,17 @@ public class EntityMgr : Singleton<EntityMgr>
         if (entityData.LoadStatus != EnLoadStatus.Start)
             return;
         entityData.SetLoadStatus(EnLoadStatus.Loading);
+        var loadKey = entityID;
+        entityData.SetLoadKey(loadKey);
         var goID = await ABBGOMgr.Instance.CreateGOAsync(entityData.LoadTarget, entityData.ParentTran);
         if (goID < 0)
         {
             entityData.SetLoadStatus(EnLoadStatus.Failed);
+            return;
+        }
+        if (loadKey != entityData.LoadKey)
+        {
+            ABBGOMgr.Instance.DestroyGO(goID);
             return;
         }
         entityData.SetLoadStatus(EnLoadStatus.Success);
@@ -65,12 +76,17 @@ public class EntityMgr : Singleton<EntityMgr>
         if (entityData.IsLoadSuccess)
         {
             entityData.EntityGO.OnUnload();
+            entityData.OnGODestroy();
             ABBGOMgr.Instance.DestroyGO(entityData.GOID);
             entityData.SetGOID(-1);
             entityData.SetIsLoadSuccess(false);
         }
-        entityData.OnGODestroy();
         entityData.SetLoadStatus(EnLoadStatus.Start);
+        entityData.SetLoadKey(-1);
+    }
+    public int EntityID2RoleID(int m_EntityID)
+    {
+        return 1;
     }
 }
 

@@ -99,5 +99,17 @@ public static class ABBUtil
         var time = (DateTime.Now - dtFrom).TotalSeconds;
 		return (float)time;
     }
+    public static Quaternion Dir2Quaternion(Vector3 dir)
+    {
+        // 将方向向量转换为角度
+        Vector3 eulerAngles = dir.normalized * Mathf.Rad2Deg;
+
+        // 转换为欧拉角
+        eulerAngles.x = 0; // Mathf.Clamp(eulerAngles.x, -90f, 90f);
+        eulerAngles.y = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg;
+        eulerAngles.z = 0f;
+
+        return Quaternion.Euler(eulerAngles);
+    }
 }
 

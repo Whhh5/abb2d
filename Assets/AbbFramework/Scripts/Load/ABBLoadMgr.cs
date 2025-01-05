@@ -79,10 +79,10 @@ public class ABBLoadMgr : Singleton<ABBLoadMgr>
             return m_RefCount;
         }
     }
-    private Dictionary<EnLoadTarget, LoadData> m_LoadCache = new();
+    private Dictionary<int, LoadData> m_LoadDataCache = new();
     private Dictionary<EnLoaderType, IABBAssetLoader> m_LoaderList = new();
     private CancellationTokenSource m_LoadTokenSource = new();
-    private Dictionary<EnLoadTarget, LoadConfigItem> m_DicPrefabPath = new();
+    private Dictionary<int, LoadConfigItem> m_DicPrefabPath = new();
 
     public override async UniTask OnEnableAsync()
     {
@@ -98,12 +98,6 @@ public class ABBLoadMgr : Singleton<ABBLoadMgr>
         await base.AwakeAsync();
         RegisterLoader<ABBEditorLoader>(EnLoaderType.Editor);
 
-        var str = await LoadAsync<TextAsset>(GlobalConfig.LoadConfigRecordsJson);
-        var target = JsonConvert.DeserializeObject<List<LoadConfigItem>>(str.text);
-        foreach (var item in target)
-        {
-            m_DicPrefabPath.Add(item.LoadTarget, item);
-        }
     }
     private void RegisterLoader<T>(EnLoaderType loadType)
         where T : IABBAssetLoader, new()
@@ -115,11 +109,11 @@ public class ABBLoadMgr : Singleton<ABBLoadMgr>
     {
         m_LoaderList.Remove(loadType);
     }
-    private string GetAssetPath(EnLoadTarget target)
+    private bool ContainsLoadData(int assetID)
     {
-        if (!m_DicPrefabPath.TryGetValue(target, out var data))
-            return null;
-        return data.Path;
+        if (!m_LoadDataCache.ContainsKey(assetID))
+            return false;
+        return true;
     }
     private IABBAssetLoader GetLoader(EnLoaderType loadType)
     {
@@ -128,35 +122,39 @@ public class ABBLoadMgr : Singleton<ABBLoadMgr>
     private IABBAssetLoader GetLoader()
     {
 #if UNITY_EDITOR
+        //return new ABBEditorLoader();
         return GetLoader(EnLoaderType.Editor);
 #else
         return null;
 #endif
     }
-    private LoadData GetLoadData(EnLoadTarget loadTarget)
+    private LoadData GetLoadData(int assetID)
     {
-        if (!m_LoadCache.TryGetValue(loadTarget, out var loadData))
+        if (!m_LoadDataCache.TryGetValue(assetID, out var loadData))
         {
             loadData = GameClassPoolMgr.Instance.Pull<LoadData>();
-            m_LoadCache.Add(loadTarget, loadData);
+            m_LoadDataCache.Add(assetID, loadData);
         }
         return loadData;
     }
-    private bool ContainsLoadData(EnLoadTarget loadTarget)
+    private void RemoveLoadData(int assetID)
     {
-        var result = m_LoadCache.ContainsKey(loadTarget);
-        return result;
-    }
-    private void RemoveLoadData(EnLoadTarget loadTarget)
-    {
-        var loadData = GetLoadData(loadTarget);
+        var loadData = GetLoadData(assetID);
         GameClassPoolMgr.Instance.Push(loadData);
-        m_LoadCache.Remove(loadTarget);
+        m_LoadDataCache.Remove(assetID);
     }
     private async UniTask<T> LoadAsync<T>(string assPath)
         where T : Object
     {
         var objID = await LoadAsync<T>(assPath, m_LoadTokenSource);
+        var asset = GetLoader().GetObject(objID);
+        return asset as T;
+    }
+    public async UniTask<T> LoadAsync<T>(EnLoadTarget loadTarget)
+        where T : Object
+    {
+        var assCfg = GameSchedule.Instance.GetAssetCfg0((int)loadTarget);
+        var objID = await LoadAsync<T>(assCfg.strPath, m_LoadTokenSource);
         var asset = GetLoader().GetObject(objID);
         return asset as T;
     }
@@ -167,47 +165,21 @@ public class ABBLoadMgr : Singleton<ABBLoadMgr>
         var objID = await loader.LoadAssetAsync<T>(assPath, tokenSource);
         return objID;
     }
-    public async UniTask<T> LoadAsync<T>(EnLoadTarget loadTarget)
-        where T : Object
-    {
-        var loadData = GetLoadData(loadTarget);
-        if (loadData.IsStatus(EnLoadStatus.Start))
-        {
-            loadData.SetLoadStatus(EnLoadStatus.Loading);
-            var path = GetAssetPath(loadTarget);
-            var objID = await LoadAsync<Object>(path, loadData.GetTokenSource());
-            if (objID < 0)
-            {
-                loadData.SetLoadStatus(EnLoadStatus.Failed);
-                ABBUtil.LogError($"load failed, target: {loadTarget}, path: {path}");
-            }
-            else
-            {
-                loadData.SetLoadStatus(EnLoadStatus.Success);
-                loadData.SetObjID(objID);
-            }
-        }
-        if (!loadData.IsLoadFinish())
-            await UniTask.WaitUntil(loadData.IsLoadFinish);
-        if (!loadData.IsStatus(EnLoadStatus.Success))
-            return null;
-        var obj = loadData.GetObj<T>();
-        return obj;
-    }
-    public T Load<T>(EnLoadTarget loadTarget)
+    public T Load<T>(int assetID)
            where T : Object
     {
-        var loadData = GetLoadData(loadTarget);
+        var assetCfg = GameSchedule.Instance.GetAssetCfg0(assetID);
+        var loadData = GetLoadData(assetID);
         if (loadData.IsStatus(EnLoadStatus.Start))
         {
             loadData.SetLoadStatus(EnLoadStatus.Loading);
-            var path = GetAssetPath(loadTarget);
             var loader = GetLoader();
+            var path = assetCfg.strPath;
             var objID = loader.LoadAsset<T>(path);
             if (objID < 0)
             {
                 loadData.SetLoadStatus(EnLoadStatus.Failed);
-                ABBUtil.LogError($"load failed, target: {loadTarget}, path: {path}");
+                ABBUtil.LogError($"load failed, assetID: {assetID}, path: {path}");
             }
             else
             {
@@ -222,12 +194,16 @@ public class ABBLoadMgr : Singleton<ABBLoadMgr>
     }
     public void Unload(EnLoadTarget loadTarget)
     {
-        if (!ContainsLoadData(loadTarget))
+        Unload((int)loadTarget);
+    }
+    public void Unload(int assetID)
+    {
+        if (!ContainsLoadData(assetID))
         {
             ABBUtil.LogError("unload no exist");
             return;
         }
-        var loadData = GetLoadData(loadTarget);
+        var loadData = GetLoadData(assetID);
         loadData.CancelRef();
         if (loadData.GetRefCount() == 0)
         {
@@ -238,7 +214,7 @@ public class ABBLoadMgr : Singleton<ABBLoadMgr>
                 var loader = GetLoader();
                 loader.UnloadAsset(objID);
             }
-            RemoveLoadData(loadTarget);
+            RemoveLoadData(assetID);
         }
     }
 }

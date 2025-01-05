@@ -3,7 +3,8 @@ using System.Collections;
 
 public class LoadConfigItem
 {
-    public EnLoadTarget LoadTarget;
-    public string Path;
+    public string enName;
+    public int assetID;
+    public string path;
 }
 

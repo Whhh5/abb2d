@@ -1,0 +1,11 @@
+﻿// AssetCfg
+public class AssetCfg : ICfg
+{
+	private AssetCfg() {}
+	// id
+	[Newtonsoft.Json.JsonProperty()] public readonly System.Int32 nAssetID;
+	// 枚举名称
+	[Newtonsoft.Json.JsonProperty()] public readonly System.String enName;
+	// 路径
+	[Newtonsoft.Json.JsonProperty()] public readonly System.String strPath;
+}

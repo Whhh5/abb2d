@@ -46,11 +46,27 @@ public class CameraMgr : SingletonMono<CameraMgr>
     {
         m_LookAtData = null;
     }
+    public Camera GetMainCamera()
+    {
+        return m_MainCamera;
+    }
     public Vector3 GetCameraWorldPos()
     {
         if (m_MainCamera == null)
             return Vector3.zero;
         return m_MainCamera.transform.position;
+    }
+    public Vector3 GetCameraForward()
+    {
+        return m_MainCamera.transform.forward;
+    }
+    public Vector3 GetCameraRight()
+    {
+        return m_MainCamera.transform.right;
+    }
+    public Vector3 GetCameraUp()
+    {
+        return m_MainCamera.transform.up;
     }
 
     private void Update()

@@ -2,18 +2,17 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class GameClassPoolData<T> : ClassData
-    where T : class, IGamePool
+public class GameClassPoolData : ClassData
 {
     //public static EnClassType ClassType => EnClassType.GameClassPoolData;
     private int m_UseCount = 0;
-    private List<T> m_ListClass = new(GlobalConfig.Int5);
+    private List<IGamePool> m_ListClass = new(GlobalConfig.Int5);
 
-    public void Push(T classType)
+    public void Push(IGamePool classType)
     {
         m_ListClass.Add(classType);
     }
-    public bool TryPull(out T result)
+    public bool TryPull(out IGamePool result)
     {
         result = null;
         if (m_ListClass.Count == 0)

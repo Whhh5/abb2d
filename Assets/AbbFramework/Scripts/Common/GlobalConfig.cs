@@ -6,6 +6,7 @@ public class GlobalConfig
 {
     public const string LoadConfigRecordsJson = "Assets/Resources/Config/LoadConfigrecords.txt";
     public const string LoadTargetEnum = "Assets/AbbFramework/Scripts/Load/EnLoadTarget.cs";
+    public const string CfgRootPath = "Assets/Abbresources/GameCfgJson";
     public const int IntM1 = -1;
     public const int Int0 = 0;
     public const int Int1 = 1;
@@ -13,4 +14,11 @@ public class GlobalConfig
     public const int Int3 = 3;
     public const int Int4 = 4;
     public const int Int5 = 5;
+    public const float Float1 = 1f;
+    public const float Float02 = 0.2f;
+    public const float Float04 = 0.4f;
+    public const float Float05 = 0.5f;
+    public const float Float08 = 0.8f;
+    public const float Float095 = 0.95f;
+    public const float Float099 = 0.99f;
 }
