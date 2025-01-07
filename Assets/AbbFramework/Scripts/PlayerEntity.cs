@@ -11,9 +11,9 @@ public class PlayerEntityData : Entity3DData
     public override EnLoadTarget LoadTarget => EnLoadTarget.Pre_PlayerEntity;
 
 
-    public override void OnPoolRecycle()
+    public override void OnPoolDestroy()
     {
-        base.OnPoolRecycle();
+        base.OnPoolDestroy();
     }
     public override void OnGOCreate()
     {

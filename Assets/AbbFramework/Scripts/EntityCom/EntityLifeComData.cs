@@ -5,15 +5,27 @@ public sealed class EntityLifeComData : IEntity3DComData
     private int m_HealthPoint = -1;
     private int m_MaxHealthPoint = -1;
 
-    public void AddCom(Entity3DData entity3DData)
+    public void OnPoolInit(CustomPoolData customData)
     {
     }
 
-    public void RemomveCom()
+    public void OnPoolDestroy()
     {
     }
 
     public void OnCreateGO(Entity3D entity)
+    {
+    }
+
+    public void PoolConstructor()
+    {
+    }
+
+    public void OnPoolEnable()
+    {
+    }
+
+    public void PoolRelease()
     {
     }
 
@@ -54,5 +66,4 @@ public sealed class EntityLifeComData : IEntity3DComData
     {
         return m_HealthPoint == 0;
     }
-
 }

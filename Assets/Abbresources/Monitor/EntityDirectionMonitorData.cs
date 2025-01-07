@@ -16,6 +16,29 @@ public class EntityDirectionMonitorData : IEntityMonitorEntity, IUpdate
 {
     private Entity3DData m_Entity3DData = null;
     private Vector3 m_LastPos = Vector3.zero;
+
+    public void OnPoolDestroy()
+    {
+        m_Entity3DData = null;
+        m_LastPos = Vector3.zero;
+    }
+
+    public void OnPoolEnable()
+    {
+    }
+
+    public  void OnPoolInit(CustomPoolData userData)
+    {
+    }
+
+    public void PoolConstructor()
+    {
+    }
+
+    public void PoolRelease()
+    {
+    }
+
     public void StartMonitor(Entity3DData entityeDData)
     {
         m_Entity3DData = entityeDData;

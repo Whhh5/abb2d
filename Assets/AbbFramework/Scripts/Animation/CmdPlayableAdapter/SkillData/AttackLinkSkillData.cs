@@ -6,6 +6,32 @@ public class AttackLinkSkillData : ISkillData
 {
     protected List<AttackLinkItemData> m_DataList = new();
     protected Dictionary<EnBuff, int[]> m_BuffList = new();
+
+    public void OnPoolDestroy()
+    {
+        foreach (var item in m_DataList)
+        {
+            GameClassPoolMgr.Instance.Push(item);
+        }
+        m_DataList.Clear();
+        m_BuffList.Clear();
+    }
+
+    public void PoolConstructor()
+    {
+    }
+
+    public  void OnPoolInit(CustomPoolData userData)
+    {
+    }
+
+    public void OnPoolEnable()
+    {
+    }
+
+    public void PoolRelease()
+    {
+    }
     public void InitData(int[] data)
     {
         var arrIndex = 0;
@@ -43,16 +69,6 @@ public class AttackLinkSkillData : ISkillData
     public void RemoveAttackData(int index)
     {
         m_DataList.RemoveAt(index);
-    }
-    public void DestroyData()
-    {
-        foreach (var item in m_DataList)
-        {
-            item.Destroy();
-            GameClassPoolMgr.Instance.Push(item);
-        }
-        m_DataList.Clear();
-        m_BuffList.Clear();
     }
     public int GetCount()
     {

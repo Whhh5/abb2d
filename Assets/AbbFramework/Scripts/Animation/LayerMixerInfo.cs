@@ -1,7 +1,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Playables;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
+
+public class LayerMixerInfoUserData : CustomPoolData
+{
+    public EnAnimLayer layer;
+    public ScriptPlayable<AdapterPlayable> layerAdapter;
+    public override void OnPoolDestroy()
+    {
+        layerAdapter = default;
+        layer = EnAnimLayer.None;
+    }
+}
 public class LayerMixerInfo : IGamePool
 {
     private EnAnimLayer m_Layer = EnAnimLayer.None;
@@ -11,7 +23,7 @@ public class LayerMixerInfo : IGamePool
     public EnAnimLayerStatus m_Status = EnAnimLayerStatus.None;
     private Dictionary<int, PlayableAdapter> m_Port2Adapter = new();
 
-    public void OnPoolRecycle()
+    public void OnPoolDestroy()
     {
         m_Port2Adapter.Clear();
         m_Status = EnAnimLayerStatus.None;
@@ -20,15 +32,28 @@ public class LayerMixerInfo : IGamePool
         m_Layer = EnAnimLayer.None;
         m_UnuseIndex.Clear();
     }
+    public void PoolConstructor()
+    {
+    }
+
+    public void OnPoolInit(CustomPoolData userData)
+    {
+        var data = userData as LayerMixerInfoUserData;
+        m_LayerAdapter = data.layerAdapter;
+        m_Layer = data.layer;
+    }
+
+    public void OnPoolEnable()
+    {
+    }
+
+    public void PoolRelease()
+    {
+    }
     public int GetConnectCount()
     {
         var count = m_InputPortCount - m_UnuseIndex.Count;
         return count;
-    }
-    public void InitInfo(EnAnimLayer layer, ScriptPlayable<AdapterPlayable> layerAdapter)
-    {
-        m_LayerAdapter = layerAdapter;
-        m_Layer = layer;
     }
     private int GetInputPort()
     {
@@ -106,4 +131,5 @@ public class LayerMixerInfo : IGamePool
         var result = m_Port2Adapter.ContainsKey(portID);
         return result;
     }
+
 }

@@ -6,17 +6,17 @@ public abstract class UIWindowData : UIEntityData
 {
     public abstract EnUIWindowType WindowType { get; }
     
-    public override void OnPoolRecycle()
+    public override void OnPoolDestroy()
     {
-        base.OnPoolRecycle();
+        base.OnPoolDestroy();
     }
     public override void OnGOCreate()
     {
         base.OnGOCreate();
     }
-    public override void OnPoolGet()
+    public override void OnPoolInit(CustomPoolData userData)
     {
-        base.OnPoolGet();
+        base.OnPoolInit(userData);
     }
     public override void OnGODestroy()
     {

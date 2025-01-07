@@ -7,11 +7,11 @@ public class LayerMixerCmdPlayableAdapter : CmdPlayableAdapter
     {
         base.OnDestroy();
     }
-    protected override void Initialization(PlayableGraphAdapter graph, IPlayableAdapterCustomData customData)
+    public override void OnPoolInit(CustomPoolData userData)
     {
-        base.Initialization(graph, customData);
+        base.OnPoolInit(userData);
 
-        m_CurPlayableAdater = graph.CreateClipPlayableAdapter(81);
+        m_CurPlayableAdater = m_Graph.CreateClipPlayableAdapter(81);
         AddConnectRootAdapter(m_CurPlayableAdater);
     }
     public override EnAnimLayer GetOutputLayer()

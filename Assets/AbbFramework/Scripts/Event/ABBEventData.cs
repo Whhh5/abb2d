@@ -10,14 +10,28 @@ public class ABBEventData : IGamePool
 
     private Dictionary<int, Dictionary<int, HashSet<IABBEventExecute>>> m_EventList = new();
 
-    public void OnPoolRecycle()
+    public void OnPoolDestroy()
     {
         m_Count = 0;
         m_EventList.Clear();
     }
-    public void SetEventType(EnABBEvent eventType)
+
+    public void PoolConstructor()
     {
-        m_EventType = eventType;
+    }
+
+    public void OnPoolInit(CustomPoolData userData)
+    {
+        var data = userData as ABBEventDataData;
+        m_EventType = data.abbevent;
+    }
+
+    public void OnPoolEnable()
+    {
+    }
+
+    public void PoolRelease()
+    {
     }
     public void AddEvent(int sourceID, int typeID, IABBEventExecute eventExecute)
     {

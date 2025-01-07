@@ -10,6 +10,16 @@ public interface IPlayableAdapterCustomData: IGamePool
 {
     //public void OnPoolRecycle();
 }
+public class PlayableAdapterData : CustomPoolData, IGamePool
+{
+    public PlayableGraphAdapter graph = null;
+    public IPlayableAdapterCustomData customData = null;
+    public override void OnPoolDestroy()
+    {
+        graph = null;
+        customData = null;
+    }
+}
 public struct AnimJob : IAnimationJob
 {
     public NativeArray<TransformStreamHandle> handles;
@@ -56,8 +66,12 @@ public abstract class PlayableAdapter : IGamePool
     public static T Create<T>(PlayableGraphAdapter graph, IPlayableAdapterCustomData customData)
         where T : PlayableAdapter, new()
     {
-        var adapter = GameClassPoolMgr.Instance.Pull<T>();
-        adapter.Initialization(graph, customData);
+        var userData = GameClassPoolMgr.Instance.Pull<PlayableAdapterData>();
+        userData.graph = graph;
+        userData.customData = customData;
+        var adapter = GameClassPoolMgr.Instance.Pull<T>(userData);
+
+        GameClassPoolMgr.Instance.Push(userData);
         return adapter;
     }
     public static void Destroy(PlayableAdapter adapter)
@@ -78,16 +92,32 @@ public abstract class PlayableAdapter : IGamePool
         m_IsValid = false;
         m_Graph = null;
     }
-    protected virtual void Initialization(PlayableGraphAdapter graph, IPlayableAdapterCustomData customData)
+    public virtual void OnPoolInit(CustomPoolData userData)
     {
-        m_IsValid = true;
-        m_Graph = graph;
-        m_MainPlayable = ScriptPlayable<AdapterPlayable>.Create(graph.GetGraph(), GlobalConfig.Int0);
-        m_MainPlayable.GetBehaviour().Initialization(this);
-        //var job = new AnimJob();
-        //var animPlayable = AnimationScriptPlayable.Create<AnimJob>(graph.GetGraph(), job, 0);
-        //animPlayable.SetProcessInputs(false);
+        var data = userData as PlayableAdapterData;
 
+        m_IsValid = true;
+        m_Graph = data.graph;
+        m_MainPlayable = ScriptPlayable<AdapterPlayable>.Create(m_Graph.GetGraph(), GlobalConfig.Int0);
+        m_MainPlayable.GetBehaviour().Initialization(this);
+
+    }
+    public virtual void PoolConstructor()
+    {
+
+    }
+
+    public void OnPoolEnable()
+    {
+        
+    }
+
+    public virtual void OnPoolDestroy()
+    {
+    }
+
+    public virtual void PoolRelease()
+    {
     }
     public virtual PlayableAdapter GetMainPlayableAdapter()
     {
@@ -159,6 +189,12 @@ public abstract class PlayableAdapter : IGamePool
     public virtual EnAnimLayer GetOutputLayer()
     {
         return EnAnimLayer.Layer1;
+    }
+    // 是否播放结束
+    public virtual bool IsPlayEnd()
+    {
+        var isEnd = GetPlaySchedule01() == 1;
+        return isEnd;
     }
 
     /// <summary>
@@ -248,22 +284,7 @@ public abstract class PlayableAdapter : IGamePool
     public virtual void ProcessFrame(Playable playable, FrameData info, object playerData)
     {
     }
-    public virtual void PoolConstructor()
-    {
 
-    }
-
-    public virtual void OnPoolGet()
-    {
-    }
-
-    public virtual void OnPoolRecycle()
-    {
-    }
-
-    public virtual void PoolRelease()
-    {
-    }
     // 显式转换从double到Fahrenheit    
     //public static explicit operator Playable(PlayableAdapter playable)
     //{

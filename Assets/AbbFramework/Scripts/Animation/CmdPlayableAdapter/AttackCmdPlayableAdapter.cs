@@ -5,6 +5,27 @@ using UnityEngine.Playables;
 public class AttackCmdPlayableAdapterData : IPlayableAdapterCustomData
 {
     public int[] arrParams;
+
+    public void OnPoolDestroy()
+    {
+        arrParams = null;
+    }
+
+    public void OnPoolEnable()
+    {
+    }
+
+    public void OnPoolInit(CustomPoolData userData)
+    {
+    }
+
+    public void PoolConstructor()
+    {
+    }
+
+    public void PoolRelease()
+    {
+    }
 }
 public class AttackCmdPlayableAdapter : CmdPlayableAdapter
 {
@@ -15,7 +36,6 @@ public class AttackCmdPlayableAdapter : CmdPlayableAdapter
     private int m_PortID = -1;
     protected override void OnDestroy()
     {
-        m_LinkData.DestroyData();
         GameClassPoolMgr.Instance.Push(m_LinkData);
         m_LinkData = null;
         
@@ -34,11 +54,13 @@ public class AttackCmdPlayableAdapter : CmdPlayableAdapter
     {
         return m_CurClipAdapter.GetUnitTime();
     }
-    protected override void Initialization(PlayableGraphAdapter graph, IPlayableAdapterCustomData customData)
+    public override void OnPoolInit(CustomPoolData userData)
     {
-        base.Initialization(graph, customData);
+        base.OnPoolInit(userData);
 
-        var data = customData as AttackCmdPlayableAdapterData;
+        var playableData = userData as PlayableAdapterData;
+        var data = playableData.customData as AttackCmdPlayableAdapterData;
+
         m_LinkData = GameClassPoolMgr.Instance.Pull<AttackLinkSkillData>();
         var arrParams = data.arrParams;
         m_LinkData.InitData(arrParams);
@@ -55,14 +77,14 @@ public class AttackCmdPlayableAdapter : CmdPlayableAdapter
     {
         base.ExecuteCmd();
         m_LinkData.OnEnable(m_Graph);
-        curAttackData.OnEnable();
+        curAttackData.OnEnable(m_Graph);
 
         var param = GameClassPoolMgr.Instance.Pull<EntityMoveDownBuffParams>();
         param.value = -0.8f;
     }
     public override void RemoveCmd()
     {
-        curAttackData.OnDisable();
+        curAttackData.OnDisable(m_Graph);
         m_LinkData.OnDisable(m_Graph);
 
         base.RemoveCmd();
@@ -88,9 +110,9 @@ public class AttackCmdPlayableAdapter : CmdPlayableAdapter
 
     private void SetAttackIndex(int index)
     {
-        curAttackData.OnDisable();
+        curAttackData.OnDisable(m_Graph);
         m_Index = index;
-        curAttackData.OnEnable();
+        curAttackData.OnEnable(m_Graph);
         var fromAdapter = m_CurClipAdapter;
         var toAdapter = m_Graph.CreateClipPlayableAdapter(curAttackData.clipID);
 
@@ -116,7 +138,7 @@ public class AttackCmdPlayableAdapter : CmdPlayableAdapter
         if (curAttackData.ScheduleEventCount > 0)
         {
             var curAttackItem = curAttackData.GetCurScheduleItem();
-            if (GetPlaySchedule01() > curAttackItem.GetEnterSchedule())
+            if (GetPlaySchedule01() >= curAttackItem.GetEnterSchedule())
             {
                 if (!curAttackItem.GetIsEffect())
                 {

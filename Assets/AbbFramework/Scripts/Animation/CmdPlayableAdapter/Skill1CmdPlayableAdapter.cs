@@ -14,10 +14,10 @@ public class Skill1CmdPlayableAdapter : CmdPlayableAdapter
         m_ClipList = null;
         m_Index = -1;
     }
-    protected override void Initialization(PlayableGraphAdapter graph, IPlayableAdapterCustomData customData)
+    public override void OnPoolInit(CustomPoolData userData)
     {
-        base.Initialization(graph, customData);
-        var roleID = Entity3DMgr.Instance.EntityID2RoleID(graph.GetEntityID());
+        base.OnPoolInit(userData);
+        var roleID = Entity3DMgr.Instance.EntityID2RoleID(m_Graph.GetEntityID());
         m_ClipList = AnimMgr.Instance.GetSkill1AnimClipList(roleID);
         m_Index = 0;
         m_SkillClipAdapteer = m_Graph.CreateClipPlayableAdapter(m_ClipList[m_Index]);

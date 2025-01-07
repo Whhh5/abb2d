@@ -19,6 +19,12 @@ public sealed class GameClassPoolMgr : Singleton<GameClassPoolMgr>
     public T Pull<T>()
         where T : class, IGamePool, new()
     {
+        var data = Pull<T>(null);
+        return data;
+    }
+    public T Pull<T>(CustomPoolData userData)
+        where T : class, IGamePool, new()
+    {
         var type = typeof(T);
         var poolData = GetClassPoolData(type);
         if (!poolData.TryPull(out var data))
@@ -26,14 +32,14 @@ public sealed class GameClassPoolMgr : Singleton<GameClassPoolMgr>
             data = new T();
             data.PoolConstructor();
         }
-        data.OnPoolGet();
+        data.OnPoolInit(userData);
         return data as T;
     }
     public void Push<T>(T classData)
         where T : class, IGamePool
     {
         var type = classData.GetType();
-        classData.OnPoolRecycle();
+        classData.OnPoolDestroy();
         var poolData = GetClassPoolData(type);
         poolData.Push(classData);
     }

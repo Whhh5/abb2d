@@ -8,12 +8,12 @@ public class PlayableBehaviourAdapter : PlayableBehaviour, IGamePool
     {
     }
 
-    public virtual void OnPoolGet()
+    public void OnPoolInit(CustomPoolData userData)
     {
 
     }
 
-    public virtual void OnPoolRecycle()
+    public virtual void OnPoolDestroy()
     {
 
     }
@@ -21,6 +21,10 @@ public class PlayableBehaviourAdapter : PlayableBehaviour, IGamePool
     public virtual void PoolRelease()
     {
 
+    }
+
+    public void OnPoolEnable()
+    {
     }
 }
 

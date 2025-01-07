@@ -12,12 +12,12 @@ public class TeleportCmdPlayableAdapter : CmdPlayableAdapter
         m_PlayableAdapter = null;
         m_ClipList = null;
     }
-    protected override void Initialization(PlayableGraphAdapter graph, IPlayableAdapterCustomData customData)
+    public override void OnPoolInit(CustomPoolData userData)
     {
-        base.Initialization(graph, customData);
-        var roleID = Entity3DMgr.Instance.EntityID2RoleID(graph);
+        base.OnPoolInit(userData);
+        var roleID = Entity3DMgr.Instance.EntityID2RoleID(m_Graph);
         m_ClipList = AnimMgr.Instance.GetTeleportAnimClipList(roleID);
-        m_PlayableAdapter = graph.CreateClipPlayableAdapter(m_ClipList[0]);
+        m_PlayableAdapter = m_Graph.CreateClipPlayableAdapter(m_ClipList[0]);
         AddConnectRootAdapter(m_PlayableAdapter);
         SetSpeed(2);
     }

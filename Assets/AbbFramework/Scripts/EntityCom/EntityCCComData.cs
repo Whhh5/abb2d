@@ -30,7 +30,19 @@ public class EntityCCComData : IEntity3DComData, IUpdate
     // 旋转
     private float m_RotationSpeed = 1f;
     private bool m_IsCanRotation = true;
-    public void RemomveCom()
+
+    public void PoolConstructor()
+    {
+    }
+
+    public void OnPoolEnable()
+    {
+    }
+
+    public void PoolRelease()
+    {
+    }
+    public void OnPoolDestroy()
     {
         m_Entity3DData = null;
     }
@@ -42,9 +54,10 @@ public class EntityCCComData : IEntity3DComData, IUpdate
         m_Tran = null;
     }
 
-    public void AddCom(Entity3DData entity3DData)
+    public void OnPoolInit(CustomPoolData customData)
     {
-        m_Entity3DData = entity3DData;
+        var data = customData as Entity3DComDataData;
+        m_Entity3DData = data.entity3DData;
 
     }
 

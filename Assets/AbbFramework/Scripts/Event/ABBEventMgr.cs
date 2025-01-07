@@ -3,6 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
+public class ABBEventDataData : CustomPoolData
+{
+    public EnABBEvent abbevent;
+    public override void OnPoolDestroy()
+    {
+        abbevent = EnABBEvent.EVENTDEFAULT;
+    }
+}
 public class ABBEventMgr : Singleton<ABBEventMgr>
 {
     private Dictionary<EnABBEvent, ABBEventData> m_ActionList = new();
@@ -13,8 +21,10 @@ public class ABBEventMgr : Singleton<ABBEventMgr>
     {
         if (!m_ActionList.TryGetValue(ev, out var evData))
         {
+            var data = GameClassPoolMgr.Instance.Pull<ABBEventDataData>();
+            data.abbevent = ev;
             evData = GameClassPoolMgr.Instance.Pull<ABBEventData>();
-            evData.SetEventType(ev);
+            GameClassPoolMgr.Instance.Push(data);
             m_ActionList.Add(ev, evData);
         }
         evData.AddEvent(sourceID, typeID, action);

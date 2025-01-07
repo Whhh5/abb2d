@@ -10,7 +10,7 @@ public class PhysicsOverlapCallbackCustomData : IPhysicsColliderCallbackCustomDa
     public int atkValue;
     public int entityID;
 }
-public class AttackLinkPhysicsItem : IPhysicsParams, IGamePool, IAttackLinkScheduleItem
+public class AttackLinkPhysicsItem : IPhysicsParams, IAttackLinkScheduleItem
 {
 
     public float atkSchedule;
@@ -21,6 +21,38 @@ public class AttackLinkPhysicsItem : IPhysicsParams, IGamePool, IAttackLinkSched
 
 
     private EnAtkLinkScheculeType m_ScheduleType = EnAtkLinkScheculeType.None;
+
+    public bool m_IsAtked = false;
+
+
+
+    public void OnPoolDestroy()
+    {
+        m_IsAtked = false;
+        atkSchedule = -1;
+        atkValue = -1;
+        physicsType = EnPhysicsType.Sphere;
+        physicsParams = null;
+        physicsResolve = null;
+        m_ScheduleType = EnAtkLinkScheculeType.None;
+
+    }
+    public void PoolConstructor()
+    {
+    }
+
+    public void OnPoolInit(CustomPoolData userData)
+    {
+    }
+
+    public void OnPoolEnable()
+    {
+    }
+
+    public void PoolRelease()
+    {
+    }
+
     public void SetScheduleType(EnAtkLinkScheculeType scheduleType)
     {
         m_ScheduleType = scheduleType;
@@ -54,7 +86,6 @@ public class AttackLinkPhysicsItem : IPhysicsParams, IGamePool, IAttackLinkSched
         m_IsAtked
             = false;
     }
-    public bool m_IsAtked = false;
 
     EnPhysicsType IPhysicsParams.GetPhysicsType()
     {

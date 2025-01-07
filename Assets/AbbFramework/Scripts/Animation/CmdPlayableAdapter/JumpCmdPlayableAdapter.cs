@@ -19,14 +19,14 @@ public class JumpCmdPlayableAdapter : CmdPlayableAdapter
         m_InputPort = -1;
     }
 
-    protected override void Initialization(PlayableGraphAdapter graph, IPlayableAdapterCustomData customData)
+    public override void OnPoolInit(CustomPoolData userData)
     {
-        base.Initialization(graph, customData);
-        var roleID = EntityMgr.Instance.EntityID2RoleID(graph.GetEntityID());
+        base.OnPoolInit(userData);
+        var roleID = EntityMgr.Instance.EntityID2RoleID(m_Graph.GetEntityID());
         m_JumpLinkAnim = AnimMgr.Instance.GetJumpAnimClipList(roleID);
 
         m_Index = 0;
-        m_ClipAdapter = graph.CreateClipPlayableAdapter(m_JumpLinkAnim[m_Index]);
+        m_ClipAdapter = m_Graph.CreateClipPlayableAdapter(m_JumpLinkAnim[m_Index]);
         m_InputPort = AddConnectRootAdapter(m_ClipAdapter);
     }
 

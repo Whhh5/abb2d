@@ -16,6 +16,30 @@ public class PlayableMixerAdapterData : IPlayableAdapterCustomData
     public PlayableAdapter to;
     public float time;
     public PlayableMixerCompleteAction complete;
+
+    public void OnPoolDestroy()
+    {
+        from = null;
+        to = null;
+        time = -1;
+        complete = null;
+    }
+
+    public void OnPoolEnable()
+    {
+    }
+
+    public void OnPoolInit(CustomPoolData userData)
+    {
+    }
+
+    public void PoolConstructor()
+    {
+    }
+
+    public void PoolRelease()
+    {
+    }
 }
 public class PlayableMixerAdapter : PlayableAdapter
 {
@@ -43,11 +67,12 @@ public class PlayableMixerAdapter : PlayableAdapter
         m_EndTime = 0;
         m_CompleteAction = null;
     }
-    protected override void Initialization(PlayableGraphAdapter graph, IPlayableAdapterCustomData customData)
+    public override void OnPoolInit(CustomPoolData userData)
     {
-        base.Initialization(graph, customData);
-        var data = (PlayableMixerAdapterData)customData;
-        m_MixerPlayable = AnimationMixerPlayable.Create(graph.GetGraph(), GlobalConfig.Int2);
+        base.OnPoolInit(userData);
+        var playableData = userData as PlayableAdapterData;
+        var data = (PlayableMixerAdapterData)playableData.customData;
+        m_MixerPlayable = AnimationMixerPlayable.Create(m_Graph.GetGraph(), GlobalConfig.Int2);
         AddConnectRootAdapter(m_MixerPlayable);
 
 

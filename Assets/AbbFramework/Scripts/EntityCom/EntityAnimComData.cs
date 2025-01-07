@@ -46,15 +46,29 @@ public class EntityAnimComData : IEntity3DComData, IUpdate
     private Dictionary<EnEntityCmdLevel, List<EnEntityCmd>> m_Level2Cmd = new();
 
     #region life
-    public void RemomveCom()
+    public void OnPoolDestroy()
     {
         m_Entity3D = null;
         m_EntityID = -1;
     }
-    public void AddCom(Entity3DData entity3DData)
+    public void OnPoolInit(CustomPoolData customData)
     {
-        m_EntityID = entity3DData.EntityID;
-        m_Entity3D = entity3DData;
+        var data = customData as Entity3DComDataData;
+        m_EntityID = data.entity3DData.EntityID;
+        m_Entity3D = data.entity3DData;
+
+    }
+
+    public void PoolConstructor()
+    {
+    }
+
+    public void OnPoolEnable()
+    {
+    }
+
+    public void PoolRelease()
+    {
     }
 
     public void OnDestroyGO()
@@ -246,11 +260,10 @@ public class EntityAnimComData : IEntity3DComData, IUpdate
             var item = m_NoLoopPlayableList[i];
             //var time = item.GetUnitTime();
             //var playTime = item.GetPlayTime();
-            if (item.GetPlaySchedule01() < 1)
+            if (!item.IsPlayEnd())
                 continue;
             i--;
             DisconnectLayerInput(item);
         }
     }
-
 }

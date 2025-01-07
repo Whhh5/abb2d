@@ -20,18 +20,30 @@ public class ABBLoadMgr : Singleton<ABBLoadMgr>
         public EnLoadStatus m_Status = EnLoadStatus.Start;
         private CancellationTokenSource m_TokenSource = null;
 
-        public void OnPoolGet()
+        public  void OnPoolInit(CustomPoolData userData)
         {
             m_TokenSource = new();
         }
 
-        public void OnPoolRecycle()
+        public void OnPoolDestroy()
         {
             m_TokenSource.Cancel();
             m_TokenSource = null;
             m_Status = EnLoadStatus.Start;
             m_ObjID = -1;
             m_RefCount = 0;
+        }
+
+        public void PoolConstructor()
+        {
+        }
+
+        public void OnPoolEnable()
+        {
+        }
+
+        public void PoolRelease()
+        {
         }
 
         public void SetObjID(int objID)

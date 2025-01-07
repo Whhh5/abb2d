@@ -7,6 +7,27 @@ using UnityEngine.Playables;
 public class IdleCmdPlayableAdapterData : IPlayableAdapterCustomData
 {
     public int[] arrClip;
+
+    public void OnPoolDestroy()
+    {
+        arrClip = null;
+    }
+
+    public void OnPoolEnable()
+    {
+    }
+
+    public void OnPoolInit(CustomPoolData userData)
+    {
+    }
+
+    public void PoolConstructor()
+    {
+    }
+
+    public void PoolRelease()
+    {
+    }
 }
 public class IdleCmdPlayableAdapter : CmdPlayableAdapter
 {
@@ -23,12 +44,14 @@ public class IdleCmdPlayableAdapter : CmdPlayableAdapter
         m_IdleAnimList = null;
         m_CurClipAdapter = null;
     }
-    protected override void Initialization(PlayableGraphAdapter graph, IPlayableAdapterCustomData customData)
+    public override void OnPoolInit(CustomPoolData userData)
     {
-        base.Initialization(graph, customData);
-        var data = customData as IdleCmdPlayableAdapterData;
+        base.OnPoolInit(userData);
+
+        var playableData = userData as PlayableAdapterData;
+        var data = playableData.customData as IdleCmdPlayableAdapterData;
         m_IdleAnimList = data.arrClip;
-        m_CurClipAdapter = graph.CreateClipPlayableAdapter(m_IdleAnimList[0]);
+        m_CurClipAdapter = playableData.graph.CreateClipPlayableAdapter(m_IdleAnimList[0]);
         AddConnectRootAdapter(m_CurClipAdapter, GlobalConfig.Int0, GlobalConfig.Int1);
     }
     public override float GetUnitTime()

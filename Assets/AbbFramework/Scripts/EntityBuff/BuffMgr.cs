@@ -21,32 +21,33 @@ public class BuffMgr : Singleton<BuffMgr>
         }
         return EnBuffType.None;
     }
-    public EntityBuffData CreateBuffData(EnBuff buff)
+    public EntityBuffData CreateBuffData(EnBuff buff, int entityID)
     {
         EntityBuffData buffData = null;
+        var data = GameClassPoolMgr.Instance.Pull<EntityBuffDataUserData>();
+        data.entityID = entityID;
+        data.buff = buff;
+
         switch (buff)
         {
             case EnBuff.NoMove:
-                buffData = GameClassPoolMgr.Instance.Pull<EntityNoMoveBuffData>();
+                buffData = GameClassPoolMgr.Instance.Pull<EntityNoMoveBuffData>(data);
                 break;
             case EnBuff.NoJump:
-                buffData = GameClassPoolMgr.Instance.Pull<EntityNoJumpBuffData>();
+                buffData = GameClassPoolMgr.Instance.Pull<EntityNoJumpBuffData>(data);
                 break;
             case EnBuff.MoveDown:
-                buffData = GameClassPoolMgr.Instance.Pull<EntityMoveDownBuffData>();
+                buffData = GameClassPoolMgr.Instance.Pull<EntityMoveDownBuffData>(data);
                 break;
             case EnBuff.NoRotation:
-                buffData = GameClassPoolMgr.Instance.Pull<EntityNoRotationBuffData>();
+                buffData = GameClassPoolMgr.Instance.Pull<EntityNoRotationBuffData>(data);
                 break;
             case EnBuff.NoGravity:
-                buffData = GameClassPoolMgr.Instance.Pull<EntityNoGravityBuffData>();
+                buffData = GameClassPoolMgr.Instance.Pull<EntityNoGravityBuffData>(data);
                 break;
             default:
                 break;
         }
-        var buffType = GetBuffType(buff);
-        buffData.SetBuff(buff);
-        buffData.SetBuffType(buffType);
         return buffData;
     }
     public void DestroyBuffData(EntityBuffData buffData)

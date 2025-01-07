@@ -17,18 +17,32 @@ public enum EnAnimLayer
     Layer3,
     EnumCount,
 }
+public class PlayableGraphAdapterUserData : CustomPoolData
+{
+    public int entityID;
+    public Animator anim;
+
+    public override void OnPoolDestroy()
+    {
+        entityID = -1;
+        anim = null;
+    }
+}
+
 public class PlayableGraphAdapter : IGamePool, IUpdate
 {
 
     public static PlayableGraphAdapter Create(int entityID, Animator animator)
     {
-        var data = GameClassPoolMgr.Instance.Pull<PlayableGraphAdapter>();
-        data.Initialization(entityID, animator);
-        return data;
+        var data = GameClassPoolMgr.Instance.Pull<PlayableGraphAdapterUserData>();
+        data.entityID = entityID;
+        data.anim = animator;
+            var playable = GameClassPoolMgr.Instance.Pull<PlayableGraphAdapter>(data);
+        GameClassPoolMgr.Instance.Push(data);
+        return playable;
     }
     public static void OnDestroy(PlayableGraphAdapter graph)
     {
-        graph.OnDestroy();
         GameClassPoolMgr.Instance.Push(graph);
     }
     public static implicit operator int(PlayableGraphAdapter adapter)
@@ -44,7 +58,28 @@ public class PlayableGraphAdapter : IGamePool, IUpdate
     private List<EnAnimLayer> m_ExistLayerList = new();
 
 
-    public void OnDestroy()
+    public void PoolConstructor()
+    {
+    }
+
+    public  void OnPoolInit(CustomPoolData userData)
+    {
+        var data = userData as PlayableGraphAdapterUserData;
+
+        m_EntityID = data.entityID;
+        m_Graph = PlayableGraph.Create($"custom-{data.anim.name}");
+        m_Graph.SetTimeUpdateMode(DirectorUpdateMode.GameTime);
+        var output = AnimationPlayableOutput.Create(m_Graph, $"{data.anim.name}-output", data.anim);
+        m_LayerMixerPlayable = AnimationLayerMixerPlayable.Create(m_Graph, (int)EnAnimLayer.EnumCount);
+        output.SetSourcePlayable(m_LayerMixerPlayable);
+        UpdateMgr.Instance.Registener(this);
+    }
+
+    public void OnPoolEnable()
+    {
+    }
+
+    public void OnPoolDestroy()
     {
         UpdateMgr.Instance.Unregistener(this);
         m_LayerMixerPlayable.Destroy();
@@ -54,15 +89,9 @@ public class PlayableGraphAdapter : IGamePool, IUpdate
         m_ExistLayerList.Clear();
         m_Layer2unusePortDic.Clear();
     }
-    private void Initialization(int entityID, Animator anim)
+
+    public void PoolRelease()
     {
-        m_EntityID = entityID;
-        m_Graph = PlayableGraph.Create($"custom-{anim.name}");
-        m_Graph.SetTimeUpdateMode(DirectorUpdateMode.GameTime);
-        var output = AnimationPlayableOutput.Create(m_Graph, $"{anim.name}-output", anim);
-        m_LayerMixerPlayable = AnimationLayerMixerPlayable.Create(m_Graph, (int)EnAnimLayer.EnumCount);
-        output.SetSourcePlayable(m_LayerMixerPlayable);
-        UpdateMgr.Instance.Registener(this);
     }
     private float GetLayerWeight(EnAnimLayer layer)
     {
@@ -151,9 +180,12 @@ public class PlayableGraphAdapter : IGamePool, IUpdate
     public LayerMixerInfo CreateLayerMixerInfo(EnAnimLayer layer)
     {
         var layerAdapter = ScriptPlayable<AdapterPlayable>.Create(m_Graph);
-        var info = GameClassPoolMgr.Instance.Pull<LayerMixerInfo>();
+        var infoUserData = GameClassPoolMgr.Instance.Pull<LayerMixerInfoUserData>();
+        infoUserData.layer = layer;
+        infoUserData.layerAdapter = layerAdapter;
+        var info = GameClassPoolMgr.Instance.Pull<LayerMixerInfo>(infoUserData);
+        GameClassPoolMgr.Instance.Push(infoUserData);
         m_Layer2unusePortDic.Add(layer, info);
-        info.InitInfo(layer, layerAdapter);
         m_LayerMixerPlayable.ConnectInput((int)layer, layerAdapter, GlobalConfig.Int0, GlobalConfig.Int0);
         var avatar = AnimMgr.Instance.GetLayerAvatar(layer);
         m_LayerMixerPlayable.SetLayerMaskFromAvatarMask((uint)layer, avatar);
@@ -263,4 +295,5 @@ public class PlayableGraphAdapter : IGamePool, IUpdate
         var playable = PlayableAdapter.Create<T>(this, customData);
         return playable;
     }
+
 }

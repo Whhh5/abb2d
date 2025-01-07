@@ -1,6 +1,6 @@
 ﻿using System;
 
-public interface IAttackLinkScheduleItem
+public interface IAttackLinkScheduleItem: IGamePool
 {
     public void SetScheduleType(EnAtkLinkScheculeType scheduleType);
     public EnAtkLinkScheculeType GetScheduleType();

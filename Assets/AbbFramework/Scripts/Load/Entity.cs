@@ -25,7 +25,7 @@ public abstract class EntityData : IGamePool
     public Transform ParentTran => m_ParentTran;
     protected Entity m_Entity = null;
     public Entity EntityGO => m_Entity;
-    public virtual void OnPoolRecycle()
+    public virtual void OnPoolDestroy()
     {
         m_EntityID
             = m_GOID
@@ -36,9 +36,21 @@ public abstract class EntityData : IGamePool
         m_WorldPos = Vector3.zero;
         m_ParentTran = null;
     }
-    public virtual void OnPoolGet()
+    public virtual void OnPoolInit(CustomPoolData userData)
     {
 
+    }
+
+    public void PoolConstructor()
+    {
+    }
+
+    public void OnPoolEnable()
+    {
+    }
+
+    public void PoolRelease()
+    {
     }
     public virtual void Create()
     {

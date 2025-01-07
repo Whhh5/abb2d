@@ -8,11 +8,43 @@ public enum EnBehaviourType
     [EditorFieldName("高度")]
     Height,
 }
-public class AttackLinkBehaviourItem : IAttackLinkScheduleItem, IGamePool
+public class AttackLinkBehaviourItemUserData : CustomPoolData
+{
+    public int count;
+    public override void OnPoolDestroy()
+    {
+    }
+}
+public class AttackLinkBehaviourItem : IAttackLinkScheduleItem
 {
     public float schedule;
     public EnBehaviourType behaviourType;
     public int[] arrPArams;
+
+
+    private bool m_IsEffect = false;
+    private EnAtkLinkScheculeType m_ScheduleType = EnAtkLinkScheculeType.None;
+    public void OnPoolDestroy()
+    {
+        arrPArams = null;
+        m_ScheduleType = EnAtkLinkScheculeType.None;
+        m_IsEffect = false;
+    }
+    public void PoolConstructor()
+    {
+    }
+
+    public void OnPoolInit(CustomPoolData userData)
+    {
+    }
+
+    public void OnPoolEnable()
+    {
+    }
+
+    public void PoolRelease()
+    {
+    }
     public void Init(int[] data, int arrCount, ref int startIndex)
     {
         var endIndex = startIndex + arrCount;
@@ -51,8 +83,6 @@ public class AttackLinkBehaviourItem : IAttackLinkScheduleItem, IGamePool
         m_IsEffect = false;
         m_ScheduleType = EnAtkLinkScheculeType.None;
     }
-    public bool m_IsEffect = false;
-    private EnAtkLinkScheculeType m_ScheduleType = EnAtkLinkScheculeType.None;
 
     public EnAtkLinkScheculeType GetScheduleType()
     {
@@ -67,4 +97,5 @@ public class AttackLinkBehaviourItem : IAttackLinkScheduleItem, IGamePool
     {
         m_ScheduleType = scheduleType;
     }
+
 }

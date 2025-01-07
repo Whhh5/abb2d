@@ -2,13 +2,39 @@
 using UnityEngine;
 
 
-public class AttackLinkBuffItem : IAttackLinkScheduleItem, IGamePool
+public class AttackLinkBuffItem : IAttackLinkScheduleItem
 {
     public float addSchedule;
     public int buffID;
     public int[] arrBuffParams;
 
     private EnAtkLinkScheculeType m_ScheduleType = EnAtkLinkScheculeType.None;
+
+    private bool m_IsEffect = false;
+    public void OnPoolDestroy()
+    {
+        addSchedule = -1;
+        buffID = -1;
+        arrBuffParams = null;
+        m_ScheduleType = EnAtkLinkScheculeType.None;
+        m_IsEffect = false;
+    }
+
+    public void PoolConstructor()
+    {
+    }
+
+    public void OnPoolInit(CustomPoolData userData)
+    {
+    }
+
+    public void OnPoolEnable()
+    {
+    }
+
+    public void PoolRelease()
+    {
+    }
     public void SetScheduleType(EnAtkLinkScheculeType scheduleType)
     {
         m_ScheduleType = scheduleType;
@@ -35,7 +61,6 @@ public class AttackLinkBuffItem : IAttackLinkScheduleItem, IGamePool
     {
         m_IsEffect = false;
     }
-    private bool m_IsEffect = false;
     public bool GetIsEffect()
     {
         return m_IsEffect;

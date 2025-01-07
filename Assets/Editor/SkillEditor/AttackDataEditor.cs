@@ -134,7 +134,15 @@ public class AttackDataEditor : AttackLinkItemData, IEditorItem
                 var name = EditorUtil.GetClassName(buffData);
                 EditorGUILayout.BeginVertical();
                 {
-                    EditorGUILayout.LabelField(name, GUILayout.Width(100));
+                    EditorGUILayout.BeginHorizontal();
+                    {
+                        EditorGUILayout.LabelField(name, GUILayout.Width(50));
+                        if (GUILayout.Button("❌", GUILayout.Width(50)))
+                        {
+                            m_BuffDataList.RemoveAt(i);
+                        }
+                    }
+                    EditorGUILayout.EndHorizontal();
                     EditorGUILayout.BeginHorizontal();
                     {
                         buffData.Draw();

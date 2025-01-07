@@ -3,6 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public class Entity3DComDataData : CustomPoolData
+{
+    public Entity3DData entity3DData = null;
+
+    public override void OnPoolDestroy()
+    {
+        entity3DData = null;
+    }
+}
 public abstract class Entity3DData<T> : Entity3DData
     where T : Entity3D
 {
@@ -74,9 +83,11 @@ public abstract class Entity3DData : EntityData
         var type = typeof(T);
         if (m_EntityComs.ContainsKey(type))
             return false;
-        var entityCom = GameClassPoolMgr.Instance.Pull<T>();
+        var data = GameClassPoolMgr.Instance.Pull<Entity3DComDataData>();
+        data.entity3DData = this;
+        var entityCom = GameClassPoolMgr.Instance.Pull<T>(data);
+        GameClassPoolMgr.Instance.Push(data);
         m_EntityComs.Add(type, entityCom);
-        entityCom.AddCom(this);
         if (m_IsLoadSuccess)
             entityCom.OnCreateGO(m_Entity3D);
         return true;
@@ -90,7 +101,7 @@ public abstract class Entity3DData : EntityData
         m_EntityComs.Remove(type);
         if (m_IsLoadSuccess)
             entityCom.OnDestroyGO();
-        entityCom.RemomveCom();
+        entityCom.OnPoolDestroy();
         GameClassPoolMgr.Instance.Push(entityCom);
         return true;
     }

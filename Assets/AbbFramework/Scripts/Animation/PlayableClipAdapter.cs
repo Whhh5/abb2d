@@ -6,9 +6,25 @@ using UnityEngine;
 public class PlayableClipAdapterData : IPlayableAdapterCustomData
 {
     public int clipID = -1;
-    public void OnPoolRecycle()
+    public void OnPoolDestroy()
     {
         clipID = -1;
+    }
+
+    public void OnPoolEnable()
+    {
+    }
+
+    public void OnPoolInit(CustomPoolData userData)
+    {
+    }
+
+    public void PoolConstructor()
+    {
+    }
+
+    public void PoolRelease()
+    {
     }
 }
 public class PlayableClipAdapter : PlayableAdapter
@@ -24,15 +40,16 @@ public class PlayableClipAdapter : PlayableAdapter
         m_ClipID = -1;
         m_ClipLength = -1;
     }
-    protected override void Initialization(PlayableGraphAdapter graph, IPlayableAdapterCustomData customData)
+    public override void OnPoolInit(CustomPoolData userData)
     {
-        base.Initialization(graph, customData);
-        var clipData = (PlayableClipAdapterData)customData;
+        base.OnPoolInit(userData);
+        var playableData = userData as PlayableAdapterData;
+        var clipData = (PlayableClipAdapterData)playableData.customData;
 
         m_ClipID = clipData.clipID;
         var clip = AnimMgr.Instance.GetClip(m_ClipID);
         m_ClipLength = clip.length;
-        m_ClipPlayable = AnimationClipPlayable.Create(graph.GetGraph(), clip);
+        m_ClipPlayable = AnimationClipPlayable.Create(m_Graph.GetGraph(), clip);
         AddConnectRootAdapter(m_ClipPlayable, GlobalConfig.Int0, GlobalConfig.Float1);
     }
     public override float GetPlayTime()

@@ -1,13 +1,38 @@
 ﻿using System;
 using UnityEngine;
 
-public class AttackLinkEffectItem : IEffectParams, IGamePool, IAttackLinkScheduleItem
+public class AttackLinkEffectItem : IEffectParams, IAttackLinkScheduleItem
 {
     public int effectID;
     public float schedule;
     public int[] effectParams;
 
     private EnAtkLinkScheculeType m_ScheduleType = EnAtkLinkScheculeType.None;
+    public bool m_IsEffect = false;
+
+    public void OnPoolDestroy()
+    {
+        effectID = -1;
+        schedule = -1;
+        effectParams = null;
+        m_ScheduleType = EnAtkLinkScheculeType.None;
+        m_IsEffect = false;
+    }
+    public void PoolConstructor()
+    {
+    }
+
+    public void OnPoolInit(CustomPoolData userData)
+    {
+    }
+
+    public void OnPoolEnable()
+    {
+    }
+
+    public void PoolRelease()
+    {
+    }
     public void SetScheduleType(EnAtkLinkScheculeType scheduleType)
     {
         m_ScheduleType = scheduleType;
@@ -35,7 +60,6 @@ public class AttackLinkEffectItem : IEffectParams, IGamePool, IAttackLinkSchedul
         m_IsEffect
             = false;
     }
-    public bool m_IsEffect = false;
 
     public int GetEffectID()
     {
@@ -79,4 +103,5 @@ public class AttackLinkEffectItem : IEffectParams, IGamePool, IAttackLinkSchedul
     {
         return schedule;
     }
+
 }

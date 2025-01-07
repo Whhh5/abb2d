@@ -14,16 +14,16 @@ public class JumpDownCmdPlayableAdapter : CmdPlayableAdapter
         m_Clipadapter = null;
         m_DownType = -1;
     }
-    protected override void Initialization(PlayableGraphAdapter graph, IPlayableAdapterCustomData customData)
+    public override void OnPoolInit(CustomPoolData userData)
     {
-        base.Initialization(graph, customData);
+        base.OnPoolInit(userData);
 
 
-        var roleID = EntityMgr.Instance.EntityID2RoleID(graph.GetEntityID());
+        var roleID = EntityMgr.Instance.EntityID2RoleID(m_Graph);
         m_JumpDownAnimList = AnimMgr.Instance.GetJumpDownAnimClipList(roleID);
 
 
-        var velocity = Entity3DMgr.Instance.GetEntityVerticalVelocity(graph.GetEntityID());
+        var velocity = Entity3DMgr.Instance.GetEntityVerticalVelocity(m_Graph);
         var isHeight = velocity < -10;
         SetDownType(isHeight ? 1 : 0);
     }

@@ -13,12 +13,13 @@ public class InjuredCmdPlayableAdapter : CmdPlayableAdapter
         m_CurPlayableAdapter = null;
         m_ClipIDList = null;
     }
-    protected override void Initialization(PlayableGraphAdapter graph, IPlayableAdapterCustomData customData)
+    public override void OnPoolInit(CustomPoolData userData)
     {
-        base.Initialization(graph, customData);
-        var roleID = EntityMgr.Instance.EntityID2RoleID(graph);
+        base.OnPoolInit(userData);
+
+        var roleID = EntityMgr.Instance.EntityID2RoleID(m_Graph);
         m_ClipIDList = AnimMgr.Instance.GetInjuredAnimClipList(roleID);
-        m_CurPlayableAdapter = graph.CreateClipPlayableAdapter(m_ClipIDList[0]);
+        m_CurPlayableAdapter = m_Graph.CreateClipPlayableAdapter(m_ClipIDList[0]);
         AddConnectRootAdapter(m_CurPlayableAdapter);
     }
     public override void ExecuteCmd()

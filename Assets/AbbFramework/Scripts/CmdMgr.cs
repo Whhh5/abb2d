@@ -47,6 +47,14 @@ public class CmdMgr : Singleton<CmdMgr>
                     GameClassPoolMgr.Instance.Push(customData);
                     return playable;
                 }
+            case 4:
+                {
+                    var customData = GameClassPoolMgr.Instance.Pull<Skill2CmdPlayableAdapterData>();
+                    customData.arrParams = skillCfg.arrParams;
+                    var playable = graph.Create<Skill2CmdPlayableAdapter>(customData);
+                    GameClassPoolMgr.Instance.Push(customData);
+                    return playable;
+                }
             default:
                 break;
         }

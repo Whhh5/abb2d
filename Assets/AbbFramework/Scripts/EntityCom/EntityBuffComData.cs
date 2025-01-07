@@ -6,17 +6,30 @@ public class EntityBuffComData : IEntity3DComData, IUpdate
     private Dictionary<EnBuffType, List<EnBuff>> m_BuffTypeDic = new();
     private Dictionary<EnBuff, EntityBuffData> m_BuffDic = new();
     private int m_EntityID = -1;
-    public void RemomveCom()
+    public void OnPoolDestroy()
     {
         UpdateMgr.Instance.Registener(this);
         m_BuffTypeDic.Clear();
         m_BuffDic.Clear();
         m_EntityID = -1;
     }
-    public void AddCom(Entity3DData entity3DData)
+    public void OnPoolInit(CustomPoolData customData)
     {
-        m_EntityID = entity3DData.EntityID;
+        var data = customData as Entity3DComDataData;
+        m_EntityID = data.entity3DData.EntityID;
         UpdateMgr.Instance.Registener(this);
+    }
+
+    public void PoolConstructor()
+    {
+    }
+
+    public void OnPoolEnable()
+    {
+    }
+
+    public void PoolRelease()
+    {
     }
 
     public void OnCreateGO(Entity3D entity)
@@ -40,7 +53,7 @@ public class EntityBuffComData : IEntity3DComData, IUpdate
     }
     public EntityBuffData CreateEntityBuffData(EnBuff buff)
     {
-        var buffData = BuffMgr.Instance.CreateBuffData(buff);
+        var buffData = BuffMgr.Instance.CreateBuffData(buff, m_EntityID);
         var buffType = buffData.GetBuffType();
         m_BuffDic.Add(buff, buffData);
         if (!m_BuffTypeDic.TryGetValue(buffType, out var list))
@@ -49,7 +62,6 @@ public class EntityBuffComData : IEntity3DComData, IUpdate
             m_BuffTypeDic.Add(buffType, list);
         }
         list.Add(buff);
-        buffData.Init(m_EntityID);
         return buffData;
     }
     public void RemoveEntityBuffData(EnBuff buff)

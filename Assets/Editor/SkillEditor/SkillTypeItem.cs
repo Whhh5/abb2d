@@ -19,4 +19,24 @@ public abstract class SkillTypeItem : IEditorItem, ISkillData
     public void InitEditor()
     {
     }
+
+    public void OnPoolDestroy()
+    {
+    }
+
+    public void OnPoolEnable()
+    {
+    }
+
+    public void OnPoolInit(CustomPoolData userData)
+    {
+    }
+
+    public void PoolConstructor()
+    {
+    }
+
+    public void PoolRelease()
+    {
+    }
 }

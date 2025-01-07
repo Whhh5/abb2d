@@ -100,6 +100,7 @@ public class SkillWindowEditor : EditorWindow
             1 => new AttackLinkDataEditor(),
             2 => new RandomClipGraoupSkillDataEditor(),
             3 => new SingletonClipSkillDataEditor(),
+            4 => new Skill2CmdPlayableAdapterDataEditor(),
             _ => null,
         };
     }
@@ -230,9 +231,10 @@ public class SkillWindowEditor : EditorWindow
                         };
                         GUIContent[] contents = new GUIContent[]
                         {
-                            new(){ text = "1"},
-                            new(){ text = "2"},
-                            new(){ text = "3"},
+                            new(){ text = "1"}, // 连击技能
+                            new(){ text = "2"}, // 随机播放
+                            new(){ text = "3"}, // 单动作播放
+                            new(){ text = "4"}, // 循环技能
                         };
                         EditorUtility.DisplayCustomMenu(rect, contents, 0, (object userData, string[] options, int selected) =>
                         {

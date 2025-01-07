@@ -4,9 +4,9 @@ public class EntityCmdPlayable : PlayableBehaviourAdapter
 {
     protected int m_EntityID = -1;
     protected PlayableGraphAdapter m_GraphAdapter = null;
-    public override void OnPoolRecycle()
+    public override void OnPoolDestroy()
     {
-        base.OnPoolRecycle();
+        base.OnPoolDestroy();
         m_EntityID = -1;
         m_GraphAdapter = null;
     }

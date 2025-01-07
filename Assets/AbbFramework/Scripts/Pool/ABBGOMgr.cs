@@ -3,14 +3,30 @@ using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 
-public class GOData:IGamePool
+public class GOData : IGamePool
 {
 	public EnLoadTarget loadTarget;
 	public GameObject go;
-	public void OnPoolRecycle()
+	public void OnPoolDestroy()
 	{
 		loadTarget = EnLoadTarget.None;
 		go = null;
+    }
+
+    public void OnPoolEnable()
+    {
+    }
+
+    public void OnPoolInit(CustomPoolData userData)
+    {
+    }
+
+    public void PoolConstructor()
+    {
+    }
+
+    public void PoolRelease()
+    {
     }
 }
 public class ABBGOMgr : Singleton<ABBGOMgr>
