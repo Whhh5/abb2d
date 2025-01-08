@@ -17,7 +17,7 @@ public class RunCmdPlayableAdapterData : IPlayableAdapterCustomData
     {
     }
 
-    public void OnPoolInit(CustomPoolData userData)
+    public void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
     {
     }
 
@@ -39,10 +39,11 @@ public class RunCmdPlayableAdapter : CmdPlayableAdapter
         m_RunAnimList = null;
         base.OnDestroy();
     }
-    public override void OnPoolInit(CustomPoolData userData)
+    public override void OnPoolInit<T>(ref T userData)
     {
-        base.OnPoolInit(userData);
-        var playableData = userData as PlayableAdapterData;
+        base.OnPoolInit(ref userData);
+        if (userData is not PlayableAdapterUserData playableData)
+            return;
         var runData = playableData.customData as RunCmdPlayableAdapterData;
         m_RunAnimList = runData.arrClip.Copy();
         m_CurClipAdapter = m_Graph.CreateClipPlayableAdapter(m_RunAnimList[0]);

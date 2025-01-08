@@ -20,7 +20,7 @@ public class ABBLoadMgr : Singleton<ABBLoadMgr>
         public EnLoadStatus m_Status = EnLoadStatus.Start;
         private CancellationTokenSource m_TokenSource = null;
 
-        public  void OnPoolInit(CustomPoolData userData)
+        public  void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
         {
             m_TokenSource = new();
         }
@@ -144,7 +144,7 @@ public class ABBLoadMgr : Singleton<ABBLoadMgr>
     {
         if (!m_LoadDataCache.TryGetValue(assetID, out var loadData))
         {
-            loadData = GameClassPoolMgr.Instance.Pull<LoadData>();
+            loadData = ClassPoolMgr.Instance.Pull<LoadData>();
             m_LoadDataCache.Add(assetID, loadData);
         }
         return loadData;
@@ -152,7 +152,7 @@ public class ABBLoadMgr : Singleton<ABBLoadMgr>
     private void RemoveLoadData(int assetID)
     {
         var loadData = GetLoadData(assetID);
-        GameClassPoolMgr.Instance.Push(loadData);
+        ClassPoolMgr.Instance.Push(loadData);
         m_LoadDataCache.Remove(assetID);
     }
     private async UniTask<T> LoadAsync<T>(string assPath)

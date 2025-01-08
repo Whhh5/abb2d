@@ -2,10 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class GameClassPoolData : ClassData
+public class ClassPoolData : ClassData
 {
-    //public static EnClassType ClassType => EnClassType.GameClassPoolData;
-    private int m_UseCount = 0;
     private List<IGamePool> m_ListClass = new(GlobalConfig.Int5);
 
     public void Push(IGamePool classType)

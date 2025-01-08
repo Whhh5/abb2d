@@ -20,9 +20,11 @@ public class ABBEventData : IGamePool
     {
     }
 
-    public void OnPoolInit(CustomPoolData userData)
+    public void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
     {
-        var data = userData as ABBEventDataData;
+        if (userData is not ABBEventDataUserData data)
+            return;
+        //var data = (ABBEventDataUserData)userData;
         m_EventType = data.abbevent;
     }
 

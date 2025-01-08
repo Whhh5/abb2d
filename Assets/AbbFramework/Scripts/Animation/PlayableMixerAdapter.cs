@@ -29,7 +29,7 @@ public class PlayableMixerAdapterData : IPlayableAdapterCustomData
     {
     }
 
-    public void OnPoolInit(CustomPoolData userData)
+    public void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
     {
     }
 
@@ -67,10 +67,11 @@ public class PlayableMixerAdapter : PlayableAdapter
         m_EndTime = 0;
         m_CompleteAction = null;
     }
-    public override void OnPoolInit(CustomPoolData userData)
+    public override void OnPoolInit<T>(ref T userData)
     {
-        base.OnPoolInit(userData);
-        var playableData = userData as PlayableAdapterData;
+        base.OnPoolInit(ref userData);
+        if (userData is not PlayableAdapterUserData playableData)
+            return;
         var data = (PlayableMixerAdapterData)playableData.customData;
         m_MixerPlayable = AnimationMixerPlayable.Create(m_Graph.GetGraph(), GlobalConfig.Int2);
         AddConnectRootAdapter(m_MixerPlayable);

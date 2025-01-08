@@ -1,12 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.ConstrainedExecution;
-using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.Playables;
-using UnityEngine.SocialPlatforms;
-using static UnityEditor.Progress;
 
 public enum EnAnimLayer
 {
@@ -17,33 +13,23 @@ public enum EnAnimLayer
     Layer3,
     EnumCount,
 }
-public class PlayableGraphAdapterUserData : CustomPoolData
-{
-    public int entityID;
-    public Animator anim;
-
-    public override void OnPoolDestroy()
-    {
-        entityID = -1;
-        anim = null;
-    }
-}
 
 public class PlayableGraphAdapter : IGamePool, IUpdate
 {
 
     public static PlayableGraphAdapter Create(int entityID, Animator animator)
     {
-        var data = GameClassPoolMgr.Instance.Pull<PlayableGraphAdapterUserData>();
-        data.entityID = entityID;
-        data.anim = animator;
-            var playable = GameClassPoolMgr.Instance.Pull<PlayableGraphAdapter>(data);
-        GameClassPoolMgr.Instance.Push(data);
+        var data = new PlayableGraphAdapterUserData()
+        {
+            entityID = entityID,
+            anim = animator,
+        };
+        var playable = ClassPoolMgr.Instance.Pull<PlayableGraphAdapter, PlayableGraphAdapterUserData>(ref data);
         return playable;
     }
     public static void OnDestroy(PlayableGraphAdapter graph)
     {
-        GameClassPoolMgr.Instance.Push(graph);
+        ClassPoolMgr.Instance.Push(graph);
     }
     public static implicit operator int(PlayableGraphAdapter adapter)
     {
@@ -62,9 +48,10 @@ public class PlayableGraphAdapter : IGamePool, IUpdate
     {
     }
 
-    public  void OnPoolInit(CustomPoolData userData)
+    public void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
     {
-        var data = userData as PlayableGraphAdapterUserData;
+        if (userData is not PlayableGraphAdapterUserData data)
+            return;
 
         m_EntityID = data.entityID;
         m_Graph = PlayableGraph.Create($"custom-{data.anim.name}");
@@ -174,17 +161,18 @@ public class PlayableGraphAdapter : IGamePool, IUpdate
             return;
         m_LayerMixerPlayable.DisconnectInput((int)layer);
         m_Layer2unusePortDic.Remove(layer);
-        GameClassPoolMgr.Instance.Push(layerInfo);
+        ClassPoolMgr.Instance.Push(layerInfo);
     }
 
     public LayerMixerInfo CreateLayerMixerInfo(EnAnimLayer layer)
     {
         var layerAdapter = ScriptPlayable<AdapterPlayable>.Create(m_Graph);
-        var infoUserData = GameClassPoolMgr.Instance.Pull<LayerMixerInfoUserData>();
-        infoUserData.layer = layer;
-        infoUserData.layerAdapter = layerAdapter;
-        var info = GameClassPoolMgr.Instance.Pull<LayerMixerInfo>(infoUserData);
-        GameClassPoolMgr.Instance.Push(infoUserData);
+        var infoUserData = new LayerMixerInfoUserData()
+        {
+            layer = layer,
+            layerAdapter = layerAdapter,
+        };
+        var info = ClassPoolMgr.Instance.Pull<LayerMixerInfo, LayerMixerInfoUserData>(ref infoUserData);
         m_Layer2unusePortDic.Add(layer, info);
         m_LayerMixerPlayable.ConnectInput((int)layer, layerAdapter, GlobalConfig.Int0, GlobalConfig.Int0);
         var avatar = AnimMgr.Instance.GetLayerAvatar(layer);
@@ -266,21 +254,21 @@ public class PlayableGraphAdapter : IGamePool, IUpdate
 
     public PlayableClipAdapter CreateClipPlayableAdapter(int clipID)
     {
-        var clipData = GameClassPoolMgr.Instance.Pull<PlayableClipAdapterData>();
+        var clipData = ClassPoolMgr.Instance.Pull<PlayableClipAdapterData>();
         clipData.clipID = clipID;
         var clipPlayable = Create<PlayableClipAdapter>(clipData);
-        GameClassPoolMgr.Instance.Push(clipData);
+        ClassPoolMgr.Instance.Push(clipData);
         return clipPlayable;
     }
     public PlayableMixerAdapter CreateMixerPlayableAdapter(PlayableAdapter from, PlayableAdapter to, float time, PlayableMixerCompleteAction complete)
     {
-        var clipData = GameClassPoolMgr.Instance.Pull<PlayableMixerAdapterData>();
+        var clipData = ClassPoolMgr.Instance.Pull<PlayableMixerAdapterData>();
         clipData.from = from;
         clipData.to = to;
         clipData.time = time;
         clipData.complete = complete;
         var clipPlayable = Create<PlayableMixerAdapter>(clipData);
-        GameClassPoolMgr.Instance.Push(clipData);
+        ClassPoolMgr.Instance.Push(clipData);
         return clipPlayable;
     }
     public T Create<T>()
@@ -290,7 +278,7 @@ public class PlayableGraphAdapter : IGamePool, IUpdate
         return playable;
     }
     public T Create<T>(IPlayableAdapterCustomData customData)
-        where T: PlayableAdapter, new()
+        where T : PlayableAdapter, new()
     {
         var playable = PlayableAdapter.Create<T>(this, customData);
         return playable;

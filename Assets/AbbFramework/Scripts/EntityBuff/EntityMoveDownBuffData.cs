@@ -7,8 +7,8 @@ public class EntityMoveDownBuffData : EntityBuffData
 
     public override void OnDisable()
     {
-        Entity3DMgr.Instance.SetEntityMoveSpeedIncrements(m_EntityID, -m_MoveDownParams.value);
-        GameClassPoolMgr.Instance.Push(m_MoveDownParams);
+        Entity3DMgr.Instance.SetEntityMoveSpeedIncrements(m_EntityID, -m_MoveDownParams.GetValue());
+        ClassPoolMgr.Instance.Push(m_MoveDownParams);
         m_MoveDownParams = null;
     }
 
@@ -16,6 +16,6 @@ public class EntityMoveDownBuffData : EntityBuffData
     {
         m_MoveDownParams = buffParams as EntityMoveDownBuffParams;
 
-        Entity3DMgr.Instance.SetEntityMoveSpeedIncrements(m_EntityID, m_MoveDownParams.value);
+        Entity3DMgr.Instance.SetEntityMoveSpeedIncrements(m_EntityID, m_MoveDownParams.GetValue());
     }
 }

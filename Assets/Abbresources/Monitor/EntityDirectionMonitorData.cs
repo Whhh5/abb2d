@@ -27,7 +27,7 @@ public class EntityDirectionMonitorData : IEntityMonitorEntity, IUpdate
     {
     }
 
-    public  void OnPoolInit(CustomPoolData userData)
+    public  void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
     {
     }
 

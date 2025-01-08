@@ -1,19 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Playables;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
 
-public class LayerMixerInfoUserData : CustomPoolData
-{
-    public EnAnimLayer layer;
-    public ScriptPlayable<AdapterPlayable> layerAdapter;
-    public override void OnPoolDestroy()
-    {
-        layerAdapter = default;
-        layer = EnAnimLayer.None;
-    }
-}
 public class LayerMixerInfo : IGamePool
 {
     private EnAnimLayer m_Layer = EnAnimLayer.None;
@@ -36,10 +25,11 @@ public class LayerMixerInfo : IGamePool
     {
     }
 
-    public void OnPoolInit(CustomPoolData userData)
+    public void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
     {
-        var data = userData as LayerMixerInfoUserData;
-        m_LayerAdapter = data.layerAdapter;
+        if (userData is not LayerMixerInfoUserData data)
+            return;
+        m_LayerAdapter = data .layerAdapter;
         m_Layer = data.layer;
     }
 

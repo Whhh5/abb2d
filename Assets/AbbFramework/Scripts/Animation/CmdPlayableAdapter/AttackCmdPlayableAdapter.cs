@@ -15,7 +15,7 @@ public class AttackCmdPlayableAdapterData : IPlayableAdapterCustomData
     {
     }
 
-    public void OnPoolInit(CustomPoolData userData)
+    public void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
     {
     }
 
@@ -36,7 +36,7 @@ public class AttackCmdPlayableAdapter : CmdPlayableAdapter
     private int m_PortID = -1;
     protected override void OnDestroy()
     {
-        GameClassPoolMgr.Instance.Push(m_LinkData);
+        ClassPoolMgr.Instance.Push(m_LinkData);
         m_LinkData = null;
         
         PlayableAdapter.Destroy(m_CurClipAdapter);
@@ -54,16 +54,19 @@ public class AttackCmdPlayableAdapter : CmdPlayableAdapter
     {
         return m_CurClipAdapter.GetUnitTime();
     }
-    public override void OnPoolInit(CustomPoolData userData)
+    public override void OnPoolInit<T>(ref T userData)
     {
-        base.OnPoolInit(userData);
-
-        var playableData = userData as PlayableAdapterData;
+        base.OnPoolInit(ref userData);
+        if (userData is not PlayableAdapterUserData playableData)
+            return;
         var data = playableData.customData as AttackCmdPlayableAdapterData;
 
-        m_LinkData = GameClassPoolMgr.Instance.Pull<AttackLinkSkillData>();
-        var arrParams = data.arrParams;
-        m_LinkData.InitData(arrParams);
+        var skillData = new AttackLinkSkillDataUserData()
+        {
+            arrParams = data.arrParams,
+        };
+        m_LinkData = ClassPoolMgr.Instance.Pull<AttackLinkSkillData, AttackLinkSkillDataUserData>(ref skillData);
+
 
         m_Index = 0;
         m_CurClipAdapter = m_Graph.CreateClipPlayableAdapter(curAttackData.clipID);
@@ -78,9 +81,6 @@ public class AttackCmdPlayableAdapter : CmdPlayableAdapter
         base.ExecuteCmd();
         m_LinkData.OnEnable(m_Graph);
         curAttackData.OnEnable(m_Graph);
-
-        var param = GameClassPoolMgr.Instance.Pull<EntityMoveDownBuffParams>();
-        param.value = -0.8f;
     }
     public override void RemoveCmd()
     {

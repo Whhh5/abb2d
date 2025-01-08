@@ -13,9 +13,10 @@ public class EntityBuffComData : IEntity3DComData, IUpdate
         m_BuffDic.Clear();
         m_EntityID = -1;
     }
-    public void OnPoolInit(CustomPoolData customData)
+    public void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
     {
-        var data = customData as Entity3DComDataData;
+        if (userData is not Entity3DComDataUserData data)
+            return;
         m_EntityID = data.entity3DData.EntityID;
         UpdateMgr.Instance.Registener(this);
     }

@@ -1,15 +1,5 @@
 using UnityEngine;
 
-public class EntityBuffDataUserData : CustomPoolData
-{
-    public int entityID;
-    public EnBuff buff;
-    public override void OnPoolDestroy()
-    {
-        entityID = -1;
-        buff = EnBuff.None;
-    }
-}
 public abstract class EntityBuffData : IGamePool
 {
     private EnBuff m_Buff = EnBuff.None;
@@ -34,9 +24,10 @@ public abstract class EntityBuffData : IGamePool
     {
     }
 
-    public void OnPoolInit(CustomPoolData userData)
+    public void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
     {
-        var data = userData as EntityBuffDataUserData;
+        if (userData is not EntityBuffDataUserData data)
+            return;
 
         m_Count = 0;
         m_EntityID = data.entityID;

@@ -3,14 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public sealed class GameClassPoolMgr : Singleton<GameClassPoolMgr>
+
+public sealed class ClassPoolMgr : Singleton<ClassPoolMgr>
 {
-    private Dictionary<Type, GameClassPoolData> m_DicClassPool = new();
-    private GameClassPoolData GetClassPoolData(Type type)
+    private Dictionary<Type, ClassPoolData> m_DicClassPool = new();
+    private PoolNaNUserData m_NaNUserData = new();
+    private ClassPoolData GetClassPoolData(Type type)
     {
         if (!m_DicClassPool.TryGetValue(type, out var poolData))
         {
-            poolData = new GameClassPoolData();
+            poolData = new ClassPoolData();
             m_DicClassPool.Add(type, poolData);
         }
         return poolData;
@@ -19,11 +21,12 @@ public sealed class GameClassPoolMgr : Singleton<GameClassPoolMgr>
     public T Pull<T>()
         where T : class, IGamePool, new()
     {
-        var data = Pull<T>(null);
+        var data = Pull<T, PoolNaNUserData>(ref m_NaNUserData);
         return data;
     }
-    public T Pull<T>(CustomPoolData userData)
+    public T Pull<T, TUserData>(ref TUserData userData)
         where T : class, IGamePool, new()
+        where TUserData : struct, IPoolUserData
     {
         var type = typeof(T);
         var poolData = GetClassPoolData(type);
@@ -32,7 +35,7 @@ public sealed class GameClassPoolMgr : Singleton<GameClassPoolMgr>
             data = new T();
             data.PoolConstructor();
         }
-        data.OnPoolInit(userData);
+        data.OnPoolInit(ref userData);
         return data as T;
     }
     public void Push<T>(T classData)

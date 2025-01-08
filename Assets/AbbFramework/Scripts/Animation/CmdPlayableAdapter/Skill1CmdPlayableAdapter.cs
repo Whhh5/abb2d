@@ -14,9 +14,9 @@ public class Skill1CmdPlayableAdapter : CmdPlayableAdapter
         m_ClipList = null;
         m_Index = -1;
     }
-    public override void OnPoolInit(CustomPoolData userData)
+    public override void OnPoolInit<T>(ref T userData)
     {
-        base.OnPoolInit(userData);
+        base.OnPoolInit(ref userData);
         var roleID = Entity3DMgr.Instance.EntityID2RoleID(m_Graph.GetEntityID());
         m_ClipList = AnimMgr.Instance.GetSkill1AnimClipList(roleID);
         m_Index = 0;

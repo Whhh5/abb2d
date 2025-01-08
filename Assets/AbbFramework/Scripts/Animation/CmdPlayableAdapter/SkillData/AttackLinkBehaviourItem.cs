@@ -8,13 +8,10 @@ public enum EnBehaviourType
     [EditorFieldName("高度")]
     Height,
 }
-public class AttackLinkBehaviourItemUserData : CustomPoolData
-{
-    public int count;
-    public override void OnPoolDestroy()
-    {
-    }
-}
+//public struct AttackLinkBehaviourItemUserData : IPoolUserData
+//{
+//    public int count;
+//}
 public class AttackLinkBehaviourItem : IAttackLinkScheduleItem
 {
     public float schedule;
@@ -34,7 +31,7 @@ public class AttackLinkBehaviourItem : IAttackLinkScheduleItem
     {
     }
 
-    public void OnPoolInit(CustomPoolData userData)
+    public void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
     {
     }
 

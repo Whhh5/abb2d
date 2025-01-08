@@ -36,7 +36,7 @@ public abstract class EntityData : IGamePool
         m_WorldPos = Vector3.zero;
         m_ParentTran = null;
     }
-    public virtual void OnPoolInit(CustomPoolData userData)
+    public virtual void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
     {
 
     }

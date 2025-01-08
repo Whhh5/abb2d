@@ -19,9 +19,9 @@ public class JumpCmdPlayableAdapter : CmdPlayableAdapter
         m_InputPort = -1;
     }
 
-    public override void OnPoolInit(CustomPoolData userData)
+    public override void OnPoolInit<T>(ref T userData)
     {
-        base.OnPoolInit(userData);
+        base.OnPoolInit(ref userData);
         var roleID = EntityMgr.Instance.EntityID2RoleID(m_Graph.GetEntityID());
         m_JumpLinkAnim = AnimMgr.Instance.GetJumpAnimClipList(roleID);
 

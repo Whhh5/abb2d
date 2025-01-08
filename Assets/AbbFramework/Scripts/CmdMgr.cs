@@ -25,34 +25,34 @@ public class CmdMgr : Singleton<CmdMgr>
         {
             case 1:
                 {
-                    var customData = GameClassPoolMgr.Instance.Pull<AttackCmdPlayableAdapterData>();
+                    var customData = ClassPoolMgr.Instance.Pull<AttackCmdPlayableAdapterData>();
                     customData.arrParams = skillCfg.arrParams;
                     var playable = graph.Create<AttackCmdPlayableAdapter>(customData);
-                    GameClassPoolMgr.Instance.Push(customData);
+                    ClassPoolMgr.Instance.Push(customData);
                     return playable;
                 }
             case 2:
                 {
-                    var customData = GameClassPoolMgr.Instance.Pull<IdleCmdPlayableAdapterData>();
+                    var customData = ClassPoolMgr.Instance.Pull<IdleCmdPlayableAdapterData>();
                     customData.arrClip = skillCfg.arrParams;
                     var playable = graph.Create<IdleCmdPlayableAdapter>(customData);
-                    GameClassPoolMgr.Instance.Push(customData);
+                    ClassPoolMgr.Instance.Push(customData);
                     return playable;
                 }
             case 3:
                 {
-                    var customData = GameClassPoolMgr.Instance.Pull<RunCmdPlayableAdapterData>();
+                    var customData = ClassPoolMgr.Instance.Pull<RunCmdPlayableAdapterData>();
                     customData.arrClip = skillCfg.arrParams;
                     var playable = graph.Create<RunCmdPlayableAdapter>(customData);
-                    GameClassPoolMgr.Instance.Push(customData);
+                    ClassPoolMgr.Instance.Push(customData);
                     return playable;
                 }
             case 4:
                 {
-                    var customData = GameClassPoolMgr.Instance.Pull<Skill2CmdPlayableAdapterData>();
+                    var customData = ClassPoolMgr.Instance.Pull<Skill2CmdPlayableAdapterData>();
                     customData.arrParams = skillCfg.arrParams;
                     var playable = graph.Create<Skill2CmdPlayableAdapter>(customData);
-                    GameClassPoolMgr.Instance.Push(customData);
+                    ClassPoolMgr.Instance.Push(customData);
                     return playable;
                 }
             default:

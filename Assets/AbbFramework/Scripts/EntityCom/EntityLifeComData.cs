@@ -5,7 +5,7 @@ public sealed class EntityLifeComData : IEntity3DComData
     private int m_HealthPoint = -1;
     private int m_MaxHealthPoint = -1;
 
-    public void OnPoolInit(CustomPoolData customData)
+    public void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
     {
     }
 

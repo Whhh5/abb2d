@@ -41,7 +41,7 @@ public class AttackLinkPhysicsItem : IPhysicsParams, IAttackLinkScheduleItem
     {
     }
 
-    public void OnPoolInit(CustomPoolData userData)
+    public void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
     {
     }
 

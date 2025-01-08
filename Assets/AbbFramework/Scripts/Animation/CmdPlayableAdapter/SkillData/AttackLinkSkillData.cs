@@ -11,7 +11,7 @@ public class AttackLinkSkillData : ISkillData
     {
         foreach (var item in m_DataList)
         {
-            GameClassPoolMgr.Instance.Push(item);
+            ClassPoolMgr.Instance.Push(item);
         }
         m_DataList.Clear();
         m_BuffList.Clear();
@@ -21,24 +21,16 @@ public class AttackLinkSkillData : ISkillData
     {
     }
 
-    public  void OnPoolInit(CustomPoolData userData)
+    public  void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
     {
-    }
-
-    public void OnPoolEnable()
-    {
-    }
-
-    public void PoolRelease()
-    {
-    }
-    public void InitData(int[] data)
-    {
+        if (userData is not AttackLinkSkillDataUserData user)
+            return;
+        var data = user.arrParams;
         var arrIndex = 0;
         var atkCount = data?[arrIndex++];
         for (int i = 0; i < atkCount; i++)
         {
-            var atkData = GameClassPoolMgr.Instance.Pull<AttackLinkItemData>();
+            var atkData = ClassPoolMgr.Instance.Pull<AttackLinkItemData>();
             var arrCount = data[arrIndex++];
             atkData.Init(data, arrCount, ref arrIndex);
             AddAttackData(atkData);
@@ -53,6 +45,14 @@ public class AttackLinkSkillData : ISkillData
             arrIndex += paramCount;
             m_BuffList.Add(buff, arrParams);
         }
+    }
+
+    public void OnPoolEnable()
+    {
+    }
+
+    public void PoolRelease()
+    {
     }
     public void AddAttackData(AttackLinkItemData atkData)
     {

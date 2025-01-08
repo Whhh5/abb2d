@@ -11,11 +11,6 @@ public abstract class SkillTypeItem : IEditorItem, ISkillData
     {
     }
 
-    public void InitData(int[] data)
-    {
-
-    }
-
     public void InitEditor()
     {
     }
@@ -28,7 +23,7 @@ public abstract class SkillTypeItem : IEditorItem, ISkillData
     {
     }
 
-    public void OnPoolInit(CustomPoolData userData)
+    public void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
     {
     }
 

@@ -15,7 +15,7 @@ public class PlayableClipAdapterData : IPlayableAdapterCustomData
     {
     }
 
-    public void OnPoolInit(CustomPoolData userData)
+    public void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
     {
     }
 
@@ -40,10 +40,11 @@ public class PlayableClipAdapter : PlayableAdapter
         m_ClipID = -1;
         m_ClipLength = -1;
     }
-    public override void OnPoolInit(CustomPoolData userData)
+    public override void OnPoolInit<T>(ref T userData)
     {
-        base.OnPoolInit(userData);
-        var playableData = userData as PlayableAdapterData;
+        base.OnPoolInit(ref userData);
+        if (userData is not PlayableAdapterUserData playableData)
+            return;
         var clipData = (PlayableClipAdapterData)playableData.customData;
 
         m_ClipID = clipData.clipID;

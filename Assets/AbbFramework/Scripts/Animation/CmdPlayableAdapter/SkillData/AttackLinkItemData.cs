@@ -19,7 +19,7 @@ public class AttackLinkItemData : IGamePool
         ResetAllItemData();
         foreach (var item in m_ArrAtkLinkSchedule)
         {
-            GameClassPoolMgr.Instance.Push(item);
+            ClassPoolMgr.Instance.Push(item);
         }
         arrBuff.Clear();
         m_ArrAtkLinkSchedule = null;
@@ -28,7 +28,7 @@ public class AttackLinkItemData : IGamePool
     {
     }
 
-    public void OnPoolInit(CustomPoolData userData)
+    public void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
     {
     }
 

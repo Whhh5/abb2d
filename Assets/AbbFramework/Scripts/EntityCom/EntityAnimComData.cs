@@ -51,9 +51,10 @@ public class EntityAnimComData : IEntity3DComData, IUpdate
         m_Entity3D = null;
         m_EntityID = -1;
     }
-    public void OnPoolInit(CustomPoolData customData)
+    public void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
     {
-        var data = customData as Entity3DComDataData;
+        if (userData is not Entity3DComDataUserData data)
+            return;
         m_EntityID = data.entity3DData.EntityID;
         m_Entity3D = data.entity3DData;
 
@@ -213,7 +214,7 @@ public class EntityAnimComData : IEntity3DComData, IUpdate
     #region adapter
     private void AddAdapter(PlayableAdapter adapter, EnAnimLayer layer, int portID, EnEntityCmd cmd)
     {
-        var connectInfo = GameClassPoolMgr.Instance.Pull<LayerMixerConnectInfo>();
+        var connectInfo = ClassPoolMgr.Instance.Pull<LayerMixerConnectInfo>();
         connectInfo.layer = layer;
         connectInfo.port = portID;
         connectInfo.cmd = cmd;
@@ -228,7 +229,7 @@ public class EntityAnimComData : IEntity3DComData, IUpdate
         m_Adapter2ConnectInfo.Remove(adapter);
         m_NoLoopPlayableList.Remove(adapter);
         RemoveCmdData(connectInfo2.cmd);
-        GameClassPoolMgr.Instance.Push(connectInfo2);
+        ClassPoolMgr.Instance.Push(connectInfo2);
     }
 
     public bool ContainsPlayableAdapter(PlayableAdapter adapter)

@@ -24,26 +24,28 @@ public class BuffMgr : Singleton<BuffMgr>
     public EntityBuffData CreateBuffData(EnBuff buff, int entityID)
     {
         EntityBuffData buffData = null;
-        var data = GameClassPoolMgr.Instance.Pull<EntityBuffDataUserData>();
-        data.entityID = entityID;
-        data.buff = buff;
+        var data = new EntityBuffDataUserData()
+        {
+            entityID = entityID,
+            buff = buff,
+        };
 
         switch (buff)
         {
             case EnBuff.NoMove:
-                buffData = GameClassPoolMgr.Instance.Pull<EntityNoMoveBuffData>(data);
+                buffData = ClassPoolMgr.Instance.Pull<EntityNoMoveBuffData, EntityBuffDataUserData>(ref data);
                 break;
             case EnBuff.NoJump:
-                buffData = GameClassPoolMgr.Instance.Pull<EntityNoJumpBuffData>(data);
+                buffData = ClassPoolMgr.Instance.Pull<EntityNoJumpBuffData, EntityBuffDataUserData>(ref data);
                 break;
             case EnBuff.MoveDown:
-                buffData = GameClassPoolMgr.Instance.Pull<EntityMoveDownBuffData>(data);
+                buffData = ClassPoolMgr.Instance.Pull<EntityMoveDownBuffData, EntityBuffDataUserData>(ref data);
                 break;
             case EnBuff.NoRotation:
-                buffData = GameClassPoolMgr.Instance.Pull<EntityNoRotationBuffData>(data);
+                buffData = ClassPoolMgr.Instance.Pull<EntityNoRotationBuffData, EntityBuffDataUserData>(ref data);
                 break;
             case EnBuff.NoGravity:
-                buffData = GameClassPoolMgr.Instance.Pull<EntityNoGravityBuffData>(data);
+                buffData = ClassPoolMgr.Instance.Pull<EntityNoGravityBuffData, EntityBuffDataUserData>(ref data);
                 break;
             default:
                 break;
@@ -56,11 +58,19 @@ public class BuffMgr : Singleton<BuffMgr>
     }
     public IEntityBuffParams GetBuffData(EnBuff buff, int[] arrParams)
     {
-        IEntityBuffParams data = buff switch
+        switch (buff)
         {
-            EnBuff.MoveDown => new EntityMoveDownBuffParams() { value = arrParams[0] / 100f },
-            _ => null,
-        };
-        return data;
-    }       
+            case EnBuff.MoveDown:
+                {
+                    var data = new EntityMoveDownBuffParamsUserData()
+                    {
+                        value = arrParams[0] / 100f,
+                    };
+                    var param = ClassPoolMgr.Instance.Pull<EntityMoveDownBuffParams, EntityMoveDownBuffParamsUserData>(ref data);
+                    return param;
+                }
+            default:
+                return null;
+        }
+    }
 }

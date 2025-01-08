@@ -3,15 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Entity3DComDataData : CustomPoolData
-{
-    public Entity3DData entity3DData = null;
-
-    public override void OnPoolDestroy()
-    {
-        entity3DData = null;
-    }
-}
 public abstract class Entity3DData<T> : Entity3DData
     where T : Entity3D
 {
@@ -83,10 +74,11 @@ public abstract class Entity3DData : EntityData
         var type = typeof(T);
         if (m_EntityComs.ContainsKey(type))
             return false;
-        var data = GameClassPoolMgr.Instance.Pull<Entity3DComDataData>();
-        data.entity3DData = this;
-        var entityCom = GameClassPoolMgr.Instance.Pull<T>(data);
-        GameClassPoolMgr.Instance.Push(data);
+        var data = new Entity3DComDataUserData()
+        {
+            entity3DData = this,
+        };
+        var entityCom = ClassPoolMgr.Instance.Pull<T, Entity3DComDataUserData>(ref data);
         m_EntityComs.Add(type, entityCom);
         if (m_IsLoadSuccess)
             entityCom.OnCreateGO(m_Entity3D);
@@ -102,7 +94,7 @@ public abstract class Entity3DData : EntityData
         if (m_IsLoadSuccess)
             entityCom.OnDestroyGO();
         entityCom.OnPoolDestroy();
-        GameClassPoolMgr.Instance.Push(entityCom);
+        ClassPoolMgr.Instance.Push(entityCom);
         return true;
     }
     public bool ContainsEntityCom<T>()
@@ -122,7 +114,7 @@ public abstract class Entity3DData : EntityData
         var type = typeof(T);
         if (m_MonitorDic.ContainsKey(type))
             return false;
-        var monitor = GameClassPoolMgr.Instance.Pull<T>();
+        var monitor = ClassPoolMgr.Instance.Pull<T>();
         m_MonitorDic.Add(type, monitor);
         monitor.StartMonitor(this);
         return true;
@@ -135,7 +127,7 @@ public abstract class Entity3DData : EntityData
             return false;
         m_MonitorDic.Remove(type);
         monitor.StopMonitor();
-        GameClassPoolMgr.Instance.Push(monitor);
+        ClassPoolMgr.Instance.Push(monitor);
         return true;
     }
     #endregion

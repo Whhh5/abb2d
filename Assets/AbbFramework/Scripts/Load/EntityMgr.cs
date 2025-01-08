@@ -25,7 +25,7 @@ public class EntityMgr : Singleton<EntityMgr>
         where T: EntityData, new()
     {
         var entityID = ABBUtil.GetTempKey();
-        var entityData = GameClassPoolMgr.Instance.Pull<T>();
+        var entityData = ClassPoolMgr.Instance.Pull<T>();
         entityData.SetEntityID(entityID);
         entityData.SetLoadStatus(EnLoadStatus.Start);
         entityData.Create();
@@ -40,7 +40,7 @@ public class EntityMgr : Singleton<EntityMgr>
             UnloadEntity(entityID);
         m_EntityDataMap.Remove(entityID);
         entityData.Destroy();
-        GameClassPoolMgr.Instance.Push(entityData);
+        ClassPoolMgr.Instance.Push(entityData);
     }
     public async void LoadEntity(int entityID)
     {

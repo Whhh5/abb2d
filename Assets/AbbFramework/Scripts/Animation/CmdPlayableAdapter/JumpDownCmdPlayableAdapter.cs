@@ -14,9 +14,9 @@ public class JumpDownCmdPlayableAdapter : CmdPlayableAdapter
         m_Clipadapter = null;
         m_DownType = -1;
     }
-    public override void OnPoolInit(CustomPoolData userData)
+    public override void OnPoolInit<T>(ref T userData)
     {
-        base.OnPoolInit(userData);
+        base.OnPoolInit(ref userData);
 
 
         var roleID = EntityMgr.Instance.EntityID2RoleID(m_Graph);

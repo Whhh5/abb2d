@@ -40,10 +40,10 @@ public class AttackMgr : Singleton<AttackMgr>
         var count = data[startIndex++];
         IAttackLinkScheduleItem item = scheduleType switch
         {
-            EnAtkLinkScheculeType.Physics => GameClassPoolMgr.Instance.Pull<AttackLinkPhysicsItem>(),
-            EnAtkLinkScheculeType.Effect => GameClassPoolMgr.Instance.Pull<AttackLinkEffectItem>(),
-            EnAtkLinkScheculeType.Buff => GameClassPoolMgr.Instance.Pull<AttackLinkBuffItem>(),
-            EnAtkLinkScheculeType.Behaviour => GameClassPoolMgr.Instance.Pull<AttackLinkBehaviourItem>(),
+            EnAtkLinkScheculeType.Physics => ClassPoolMgr.Instance.Pull<AttackLinkPhysicsItem>(),
+            EnAtkLinkScheculeType.Effect => ClassPoolMgr.Instance.Pull<AttackLinkEffectItem>(),
+            EnAtkLinkScheculeType.Buff => ClassPoolMgr.Instance.Pull<AttackLinkBuffItem>(),
+            EnAtkLinkScheculeType.Behaviour => ClassPoolMgr.Instance.Pull<AttackLinkBehaviourItem>(),
             _ => null,
         };
         item.SetScheduleType(scheduleType);

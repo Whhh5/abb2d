@@ -54,9 +54,10 @@ public class EntityCCComData : IEntity3DComData, IUpdate
         m_Tran = null;
     }
 
-    public void OnPoolInit(CustomPoolData customData)
+    public void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
     {
-        var data = customData as Entity3DComDataData;
+        if (userData is not Entity3DComDataUserData data)
+            return;
         m_Entity3DData = data.entity3DData;
 
     }

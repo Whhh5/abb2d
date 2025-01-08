@@ -6,19 +6,9 @@ using UnityEngine.Animations;
 using Unity.Collections;
 using System;
 
-public interface IPlayableAdapterCustomData: IGamePool
+public interface IPlayableAdapterCustomData : IGamePool
 {
     //public void OnPoolRecycle();
-}
-public class PlayableAdapterData : CustomPoolData, IGamePool
-{
-    public PlayableGraphAdapter graph = null;
-    public IPlayableAdapterCustomData customData = null;
-    public override void OnPoolDestroy()
-    {
-        graph = null;
-        customData = null;
-    }
 }
 public struct AnimJob : IAnimationJob
 {
@@ -66,18 +56,19 @@ public abstract class PlayableAdapter : IGamePool
     public static T Create<T>(PlayableGraphAdapter graph, IPlayableAdapterCustomData customData)
         where T : PlayableAdapter, new()
     {
-        var userData = GameClassPoolMgr.Instance.Pull<PlayableAdapterData>();
-        userData.graph = graph;
-        userData.customData = customData;
-        var adapter = GameClassPoolMgr.Instance.Pull<T>(userData);
+        var userData = new PlayableAdapterUserData
+        {
+            graph = graph,
+            customData = customData,
+        };
+        var adapter = ClassPoolMgr.Instance.Pull<T, PlayableAdapterUserData>(ref userData);
 
-        GameClassPoolMgr.Instance.Push(userData);
         return adapter;
     }
     public static void Destroy(PlayableAdapter adapter)
     {
         adapter.OnDestroy();
-        GameClassPoolMgr.Instance.Push(adapter);
+        ClassPoolMgr.Instance.Push(adapter);
     }
     public static implicit operator Playable(PlayableAdapter playable)
     {
@@ -92,9 +83,10 @@ public abstract class PlayableAdapter : IGamePool
         m_IsValid = false;
         m_Graph = null;
     }
-    public virtual void OnPoolInit(CustomPoolData userData)
+    public virtual void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
     {
-        var data = userData as PlayableAdapterData;
+        if (userData is not PlayableAdapterUserData data)
+            return;
 
         m_IsValid = true;
         m_Graph = data.graph;
@@ -109,7 +101,7 @@ public abstract class PlayableAdapter : IGamePool
 
     public void OnPoolEnable()
     {
-        
+
     }
 
     public virtual void OnPoolDestroy()

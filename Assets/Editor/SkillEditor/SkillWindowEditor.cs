@@ -111,7 +111,11 @@ public class SkillWindowEditor : EditorWindow
         m_ID2SkillEditor.Add(key, skillCfg);
 
         IEditorItem linkData = GetAtkItem(skillCfg.nType);
-        (linkData as ISkillData).InitData(skillCfg.arrParams);
+        var data = new AttackLinkSkillDataUserData()
+        {
+            arrParams = skillCfg.arrParams,
+        };
+        (linkData as IGamePool).OnPoolInit(ref data);
         linkData.InitEditor();
         m_DicSkilDrawData.Add(key, linkData);
     }

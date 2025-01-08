@@ -13,9 +13,9 @@ public class InjuredCmdPlayableAdapter : CmdPlayableAdapter
         m_CurPlayableAdapter = null;
         m_ClipIDList = null;
     }
-    public override void OnPoolInit(CustomPoolData userData)
+    public override void OnPoolInit<T>(ref T userData)
     {
-        base.OnPoolInit(userData);
+        base.OnPoolInit(ref userData);
 
         var roleID = EntityMgr.Instance.EntityID2RoleID(m_Graph);
         m_ClipIDList = AnimMgr.Instance.GetInjuredAnimClipList(roleID);

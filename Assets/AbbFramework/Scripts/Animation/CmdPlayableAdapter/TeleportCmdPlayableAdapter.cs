@@ -12,9 +12,9 @@ public class TeleportCmdPlayableAdapter : CmdPlayableAdapter
         m_PlayableAdapter = null;
         m_ClipList = null;
     }
-    public override void OnPoolInit(CustomPoolData userData)
+    public override void OnPoolInit<T>(ref T userData)
     {
-        base.OnPoolInit(userData);
+        base.OnPoolInit(ref userData);
         var roleID = Entity3DMgr.Instance.EntityID2RoleID(m_Graph);
         m_ClipList = AnimMgr.Instance.GetTeleportAnimClipList(roleID);
         m_PlayableAdapter = m_Graph.CreateClipPlayableAdapter(m_ClipList[0]);
@@ -24,8 +24,12 @@ public class TeleportCmdPlayableAdapter : CmdPlayableAdapter
     public override void ExecuteCmd()
     {
         base.ExecuteCmd();
-        var param = GameClassPoolMgr.Instance.Pull<EntityMoveDownBuffParams>();
-        param.value = 3;
+
+        var paramUserData = new EntityMoveDownBuffParamsUserData()
+        {
+            value = 3f,
+        };
+        var param = ClassPoolMgr.Instance.Pull<EntityMoveDownBuffParams, EntityMoveDownBuffParamsUserData>(ref paramUserData);
         Entity3DMgr.Instance.AddEntityBuff(m_Graph, EnBuff.MoveDown, param);
     }
     public override void RemoveCmd()
