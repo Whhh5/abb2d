@@ -8,7 +8,7 @@ public enum EnAnimLayerStatus
     Exiting,
     Nothing,
 }
-public class LayerMixerConnectInfo : IGamePool
+public class LayerMixerConnectInfo : IClassPool
 {
     public int port;
     public EnAnimLayer layer;
@@ -25,7 +25,7 @@ public class LayerMixerConnectInfo : IGamePool
     {
     }
 
-    public void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
+    public void OnPoolInit<T>(ref T userData) where T : IClassPoolUserData
     {
     }
 

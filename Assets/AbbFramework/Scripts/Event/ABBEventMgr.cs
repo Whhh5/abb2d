@@ -12,11 +12,10 @@ public class ABBEventMgr : Singleton<ABBEventMgr>
     {
         if (!m_ActionList.TryGetValue(ev, out var evData))
         {
-            var data = new ABBEventDataUserData()
-            {
-                abbevent = ev,
-            };
-            evData = ClassPoolMgr.Instance.Pull<ABBEventData, ABBEventDataUserData>(ref data);
+            var data = ClassPoolMgr.Instance.Pull<ABBEventDataUserData>();
+            data.abbevent = ev;
+            evData = ClassPoolMgr.Instance.Pull<ABBEventData>(data);
+            ClassPoolMgr.Instance.Push(data);
             m_ActionList.Add(ev, evData);
         }
         evData.AddEvent(sourceID, typeID, action);

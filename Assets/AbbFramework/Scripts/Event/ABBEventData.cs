@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class ABBEventData : IGamePool
+public class ABBEventData : IClassPool<ABBEventDataUserData>
 {
     private int m_Count = 0;
     public int Count => m_Count;
@@ -20,12 +20,9 @@ public class ABBEventData : IGamePool
     {
     }
 
-    public void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
+    public void OnPoolInit(ABBEventDataUserData userData)
     {
-        if (userData is not ABBEventDataUserData data)
-            return;
-        //var data = (ABBEventDataUserData)userData;
-        m_EventType = data.abbevent;
+        m_EventType = userData.abbevent;
     }
 
     public void OnPoolEnable()

@@ -2,7 +2,7 @@
 using UnityEngine;
 
 
-public class AttackLinkBuffItem : IAttackLinkScheduleItem
+public class AttackLinkBuffItem : IAttackLinkScheduleItem<PoolNaNUserData>
 {
     public float addSchedule;
     public int buffID;
@@ -24,7 +24,7 @@ public class AttackLinkBuffItem : IAttackLinkScheduleItem
     {
     }
 
-    public void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
+    public void OnPoolInit(PoolNaNUserData userData)
     {
     }
 

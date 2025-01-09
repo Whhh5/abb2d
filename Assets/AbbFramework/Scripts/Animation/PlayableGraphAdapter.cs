@@ -14,17 +14,16 @@ public enum EnAnimLayer
     EnumCount,
 }
 
-public class PlayableGraphAdapter : IGamePool, IUpdate
+public class PlayableGraphAdapter : IClassPool<PlayableGraphAdapterUserData>, IUpdate
 {
 
     public static PlayableGraphAdapter Create(int entityID, Animator animator)
     {
-        var data = new PlayableGraphAdapterUserData()
-        {
-            entityID = entityID,
-            anim = animator,
-        };
-        var playable = ClassPoolMgr.Instance.Pull<PlayableGraphAdapter, PlayableGraphAdapterUserData>(ref data);
+        var data = ClassPoolMgr.Instance.Pull<PlayableGraphAdapterUserData>();
+        data.entityID = entityID;
+        data.anim = animator;
+        var playable = ClassPoolMgr.Instance.Pull<PlayableGraphAdapter>(data);
+        ClassPoolMgr.Instance.Push(data);
         return playable;
     }
     public static void OnDestroy(PlayableGraphAdapter graph)
@@ -48,15 +47,12 @@ public class PlayableGraphAdapter : IGamePool, IUpdate
     {
     }
 
-    public void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
+    public void OnPoolInit(PlayableGraphAdapterUserData userData)
     {
-        if (userData is not PlayableGraphAdapterUserData data)
-            return;
-
-        m_EntityID = data.entityID;
-        m_Graph = PlayableGraph.Create($"custom-{data.anim.name}");
+        m_EntityID = userData.entityID;
+        m_Graph = PlayableGraph.Create($"custom-{userData.anim.name}");
         m_Graph.SetTimeUpdateMode(DirectorUpdateMode.GameTime);
-        var output = AnimationPlayableOutput.Create(m_Graph, $"{data.anim.name}-output", data.anim);
+        var output = AnimationPlayableOutput.Create(m_Graph, $"{userData.anim.name}-output", userData.anim);
         m_LayerMixerPlayable = AnimationLayerMixerPlayable.Create(m_Graph, (int)EnAnimLayer.EnumCount);
         output.SetSourcePlayable(m_LayerMixerPlayable);
         UpdateMgr.Instance.Registener(this);
@@ -167,12 +163,11 @@ public class PlayableGraphAdapter : IGamePool, IUpdate
     public LayerMixerInfo CreateLayerMixerInfo(EnAnimLayer layer)
     {
         var layerAdapter = ScriptPlayable<AdapterPlayable>.Create(m_Graph);
-        var infoUserData = new LayerMixerInfoUserData()
-        {
-            layer = layer,
-            layerAdapter = layerAdapter,
-        };
-        var info = ClassPoolMgr.Instance.Pull<LayerMixerInfo, LayerMixerInfoUserData>(ref infoUserData);
+        var infoUserData = ClassPoolMgr.Instance.Pull<LayerMixerInfoUserData>();
+        infoUserData.layer = layer;
+        infoUserData.layerAdapter = layerAdapter;
+        var info = ClassPoolMgr.Instance.Pull<LayerMixerInfo>(infoUserData);
+        ClassPoolMgr.Instance.Push(infoUserData);
         m_Layer2unusePortDic.Add(layer, info);
         m_LayerMixerPlayable.ConnectInput((int)layer, layerAdapter, GlobalConfig.Int0, GlobalConfig.Int0);
         var avatar = AnimMgr.Instance.GetLayerAvatar(layer);

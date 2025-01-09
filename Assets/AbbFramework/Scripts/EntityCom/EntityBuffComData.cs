@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EntityBuffComData : IEntity3DComData, IUpdate
+public class EntityBuffComData : IEntity3DComData<Entity3DComDataUserData>, IUpdate
 {
     private Dictionary<EnBuffType, List<EnBuff>> m_BuffTypeDic = new();
     private Dictionary<EnBuff, EntityBuffData> m_BuffDic = new();
@@ -13,11 +13,9 @@ public class EntityBuffComData : IEntity3DComData, IUpdate
         m_BuffDic.Clear();
         m_EntityID = -1;
     }
-    public void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
+    public void OnPoolInit(Entity3DComDataUserData userData)
     {
-        if (userData is not Entity3DComDataUserData data)
-            return;
-        m_EntityID = data.entity3DData.EntityID;
+        m_EntityID = userData.entity3DData.EntityID;
         UpdateMgr.Instance.Registener(this);
     }
 

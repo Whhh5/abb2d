@@ -12,7 +12,7 @@ public enum EnBehaviourType
 //{
 //    public int count;
 //}
-public class AttackLinkBehaviourItem : IAttackLinkScheduleItem
+public class AttackLinkBehaviourItem : IAttackLinkScheduleItem<PoolNaNUserData>
 {
     public float schedule;
     public EnBehaviourType behaviourType;
@@ -31,7 +31,7 @@ public class AttackLinkBehaviourItem : IAttackLinkScheduleItem
     {
     }
 
-    public void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
+    public void OnPoolInit(PoolNaNUserData userData)
     {
     }
 

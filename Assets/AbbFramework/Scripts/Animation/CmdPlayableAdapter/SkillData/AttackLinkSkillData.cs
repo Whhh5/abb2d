@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class AttackLinkSkillData : ISkillData
+public class AttackLinkSkillData : ISkillData<AttackLinkSkillDataUserData>
 {
     protected List<AttackLinkItemData> m_DataList = new();
     protected Dictionary<EnBuff, int[]> m_BuffList = new();
@@ -21,11 +21,9 @@ public class AttackLinkSkillData : ISkillData
     {
     }
 
-    public  void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
+    public  void OnPoolInit(AttackLinkSkillDataUserData userData)
     {
-        if (userData is not AttackLinkSkillDataUserData user)
-            return;
-        var data = user.arrParams;
+        var data = userData.arrParams;
         var arrIndex = 0;
         var atkCount = data?[arrIndex++];
         for (int i = 0; i < atkCount; i++)

@@ -23,7 +23,7 @@ public abstract class SkillTypeItem : IEditorItem, ISkillData
     {
     }
 
-    public void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
+    public void OnPoolInit<T>(ref T userData) where T : IClassPoolUserData
     {
     }
 

@@ -1,11 +1,11 @@
 using UnityEngine;
 
-public sealed class EntityLifeComData : IEntity3DComData
+public sealed class EntityLifeComData : IEntity3DComData<PoolNaNUserData>
 {
     private int m_HealthPoint = -1;
     private int m_MaxHealthPoint = -1;
 
-    public void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
+    public void OnPoolInit(PoolNaNUserData userData)
     {
     }
 

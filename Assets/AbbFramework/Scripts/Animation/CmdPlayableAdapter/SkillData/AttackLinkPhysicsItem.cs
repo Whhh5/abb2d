@@ -10,7 +10,7 @@ public class PhysicsOverlapCallbackCustomData : IPhysicsColliderCallbackCustomDa
     public int atkValue;
     public int entityID;
 }
-public class AttackLinkPhysicsItem : IPhysicsParams, IAttackLinkScheduleItem
+public class AttackLinkPhysicsItem : IPhysicsParams, IAttackLinkScheduleItem<PoolNaNUserData>
 {
 
     public float atkSchedule;
@@ -41,7 +41,7 @@ public class AttackLinkPhysicsItem : IPhysicsParams, IAttackLinkScheduleItem
     {
     }
 
-    public void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
+    public void OnPoolInit(PoolNaNUserData userData)
     {
     }
 

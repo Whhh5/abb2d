@@ -9,7 +9,7 @@ public class GamePoolData
     private Type m_Type = null;
     private int m_Count = 0;
     public int Count => m_Count;
-    private List<IGamePool> m_List = new(10);
+    private List<IClassPool> m_List = new(10);
     private int m_TotalCount = 0;
     public int TotalCount => m_TotalCount;
     public void SetType(Type type)
@@ -28,7 +28,7 @@ public class GamePoolData
         m_Type = null;
     }
     public T Get<T>()
-        where T : class, IGamePool, new()
+        where T : class, IClassPool, new()
     {
         m_TotalCount++;
         if (m_Count == 0)
@@ -53,7 +53,7 @@ public class GamePoolData
             return value as T;
         }
     }
-    public void Recycle(IGamePool obj)
+    public void Recycle(IClassPool obj)
     {
 #if UNITY_EDITOR
         var objType = obj.GetType();

@@ -4,13 +4,13 @@ using System.Collections.Generic;
 
 public class ClassPoolData : ClassData
 {
-    private List<IGamePool> m_ListClass = new(GlobalConfig.Int5);
+    private List<IClassPool> m_ListClass = new(GlobalConfig.Int5);
 
-    public void Push(IGamePool classType)
+    public void Push(IClassPool classType)
     {
         m_ListClass.Add(classType);
     }
-    public bool TryPull(out IGamePool result)
+    public bool TryPull(out IClassPool result)
     {
         result = null;
         if (m_ListClass.Count == 0)

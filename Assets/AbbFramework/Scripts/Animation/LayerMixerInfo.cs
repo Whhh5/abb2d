@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Playables;
 
 
-public class LayerMixerInfo : IGamePool
+public class LayerMixerInfo : IClassPool
 {
     private EnAnimLayer m_Layer = EnAnimLayer.None;
     private ScriptPlayable<AdapterPlayable> m_LayerAdapter;
@@ -25,7 +25,7 @@ public class LayerMixerInfo : IGamePool
     {
     }
 
-    public void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
+    public void OnPoolInit<T>(ref T userData) where T : IClassPoolUserData
     {
         if (userData is not LayerMixerInfoUserData data)
             return;

@@ -24,22 +24,6 @@ public class PlayableMixerAdapterData : IPlayableAdapterCustomData
         time = -1;
         complete = null;
     }
-
-    public void OnPoolEnable()
-    {
-    }
-
-    public void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
-    {
-    }
-
-    public void PoolConstructor()
-    {
-    }
-
-    public void PoolRelease()
-    {
-    }
 }
 public class PlayableMixerAdapter : PlayableAdapter
 {
@@ -67,9 +51,9 @@ public class PlayableMixerAdapter : PlayableAdapter
         m_EndTime = 0;
         m_CompleteAction = null;
     }
-    public override void OnPoolInit<T>(ref T userData)
+    public override void OnPoolInit(PlayableAdapterUserData userData)
     {
-        base.OnPoolInit(ref userData);
+        base.OnPoolInit(userData);
         if (userData is not PlayableAdapterUserData playableData)
             return;
         var data = (PlayableMixerAdapterData)playableData.customData;

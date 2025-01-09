@@ -2,7 +2,7 @@
 
 using System;
 
-public class SingletonClipSkillData : ISkillData
+public class SingletonClipSkillData : ISkillData<AttackLinkSkillDataUserData>
 {
     protected int[] m_ArrClip;
     public void OnPoolDestroy()
@@ -14,11 +14,9 @@ public class SingletonClipSkillData : ISkillData
     {
     }
 
-    public void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
+    public void OnPoolInit(AttackLinkSkillDataUserData userData)
     {
-        if (userData is not AttackLinkSkillDataUserData user)
-            return;
-        var data = user.arrParams;
+        var data = userData.arrParams;
         if (data != null)
         {
             m_ArrClip = new int[data.Length];

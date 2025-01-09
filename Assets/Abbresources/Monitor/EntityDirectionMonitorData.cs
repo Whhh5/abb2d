@@ -12,7 +12,7 @@ public enum EnDirectionType
     Forward,
     back,
 }
-public class EntityDirectionMonitorData : IEntityMonitorEntity, IUpdate
+public class EntityDirectionMonitorData : IEntityMonitorEntity<PoolNaNUserData>, IUpdate
 {
     private Entity3DData m_Entity3DData = null;
     private Vector3 m_LastPos = Vector3.zero;
@@ -27,7 +27,7 @@ public class EntityDirectionMonitorData : IEntityMonitorEntity, IUpdate
     {
     }
 
-    public  void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
+    public  void OnPoolInit(PoolNaNUserData userData)
     {
     }
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-public class AttackLinkItemData : IGamePool
+public class AttackLinkItemData : IClassPool<PoolNaNUserData>
 {
     public int clipID;
     public float canNextTime;
@@ -28,7 +28,7 @@ public class AttackLinkItemData : IGamePool
     {
     }
 
-    public void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
+    public void OnPoolInit(PoolNaNUserData userData)
     {
     }
 

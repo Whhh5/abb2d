@@ -74,11 +74,10 @@ public abstract class Entity3DData : EntityData
         var type = typeof(T);
         if (m_EntityComs.ContainsKey(type))
             return false;
-        var data = new Entity3DComDataUserData()
-        {
-            entity3DData = this,
-        };
-        var entityCom = ClassPoolMgr.Instance.Pull<T, Entity3DComDataUserData>(ref data);
+        var data = ClassPoolMgr.Instance.Pull<Entity3DComDataUserData>();
+        data.entity3DData = this;
+        var entityCom = ClassPoolMgr.Instance.Pull<T>(data);
+        ClassPoolMgr.Instance.Push(data);
         m_EntityComs.Add(type, entityCom);
         if (m_IsLoadSuccess)
             entityCom.OnCreateGO(m_Entity3D);
@@ -170,8 +169,8 @@ public abstract class Entity3DData : EntityData
             m_Entity3D.UpdateRotation(timeDelta);
     }
 }
-public abstract class Entity3D<T>: Entity3D
-    where T: Entity3DData
+public abstract class Entity3D<T> : Entity3D
+    where T : Entity3DData
 {
     protected T m_Entity3DData = null;
     public override void OnUnload()
@@ -200,7 +199,7 @@ public abstract class Entity3D : Entity
     protected override void Awake()
     {
         base.Awake();
-        m_MainBodyTran= m_BodyObj == null ? transform : m_BodyObj.transform;
+        m_MainBodyTran = m_BodyObj == null ? transform : m_BodyObj.transform;
     }
     public override void LoadCompeletion()
     {

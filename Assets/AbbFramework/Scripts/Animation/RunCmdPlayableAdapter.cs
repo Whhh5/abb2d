@@ -12,22 +12,6 @@ public class RunCmdPlayableAdapterData : IPlayableAdapterCustomData
     {
         arrClip = null;
     }
-
-    public void OnPoolEnable()
-    {
-    }
-
-    public void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
-    {
-    }
-
-    public void PoolConstructor()
-    {
-    }
-
-    public void PoolRelease()
-    {
-    }
 }
 public class RunCmdPlayableAdapter : CmdPlayableAdapter
 {
@@ -39,9 +23,9 @@ public class RunCmdPlayableAdapter : CmdPlayableAdapter
         m_RunAnimList = null;
         base.OnDestroy();
     }
-    public override void OnPoolInit<T>(ref T userData)
+    public override void OnPoolInit(PlayableAdapterUserData userData)
     {
-        base.OnPoolInit(ref userData);
+        base.OnPoolInit(userData);
         if (userData is not PlayableAdapterUserData playableData)
             return;
         var runData = playableData.customData as RunCmdPlayableAdapterData;

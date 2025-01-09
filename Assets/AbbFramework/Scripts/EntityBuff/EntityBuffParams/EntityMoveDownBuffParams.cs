@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class EntityMoveDownBuffParams : IEntityBuffParams
+public class EntityMoveDownBuffParams : IEntityBuffParams<EntityMoveDownBuffParamsUserData>
 {
     private float m_Value;
 
@@ -13,11 +13,9 @@ public class EntityMoveDownBuffParams : IEntityBuffParams
     {
     }
 
-    public void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
+    public void OnPoolInit(EntityMoveDownBuffParamsUserData userData)
     {
-        if (userData is not EntityMoveDownBuffParamsUserData data)
-            return;
-        m_Value = data.value;
+        m_Value = userData.value;
     }
 
     public void PoolConstructor()

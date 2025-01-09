@@ -4,33 +4,13 @@ using UnityEngine;
 using UnityEngine.Playables;
 
 
-public class Skill2CmdPlayableAdapterData: IPlayableAdapterCustomData
+public class Skill2CmdPlayableAdapterData : IPlayableAdapterCustomData
 {
     public int[] arrParams;
 
     public void OnPoolDestroy()
     {
         arrParams = null;
-    }
-
-    public void OnPoolEnable()
-    {
-    }
-
-    public void OnPoolInit()
-    {
-    }
-
-    public void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
-    {
-    }
-
-    public void PoolConstructor()
-    {
-    }
-
-    public void PoolRelease()
-    {
     }
 }
 public class Skill2CmdPlayableAdapter : CmdPlayableAdapter
@@ -56,22 +36,18 @@ public class Skill2CmdPlayableAdapter : CmdPlayableAdapter
         m_LoopCount = GlobalConfig.IntM1;
         m_AttackLink = null;
     }
-    public override void OnPoolInit<T>(ref T userData)
+    public override void OnPoolInit(PlayableAdapterUserData userData)
     {
-        base.OnPoolInit(ref userData);
-        if (userData is not PlayableAdapterUserData playableData)
-            return;
-        var arrData = playableData.customData as Skill2CmdPlayableAdapterData;
+        base.OnPoolInit(userData);
+        var arrData = userData.customData as Skill2CmdPlayableAdapterData;
 
         m_StepIndex = EnCmdStep.Step0;
         //m_SkillList = arrData.arrParams.Copy(0, 3);
 
-        var skillData = new AttackLinkSkillDataUserData()
-        {
-            arrParams = arrData.arrParams,
-        };
-        m_AttackLink = ClassPoolMgr.Instance.Pull<AttackLinkSkillData, AttackLinkSkillDataUserData>(ref skillData);
-
+        var skillData = ClassPoolMgr.Instance.Pull<AttackLinkSkillDataUserData>();
+        skillData.arrParams = arrData.arrParams;
+        m_AttackLink = ClassPoolMgr.Instance.Pull<AttackLinkSkillData>(skillData);
+        ClassPoolMgr.Instance.Push(skillData);
 
         m_LastExecuteTime = ABBUtil.GetGameTimeSeconds();
 

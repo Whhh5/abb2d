@@ -1,7 +1,12 @@
 ﻿using System;
 
 
-public interface ISkillData : IGamePool
+public interface ISkillData : IClassPool
 {
     
+}
+public interface ISkillData<T> : ISkillData, IClassPool<T>
+    where T: class, IClassPoolUserData
+{
+
 }

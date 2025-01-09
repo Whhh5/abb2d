@@ -2,8 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IEntityMonitorEntity: IGamePool
+public interface IEntityMonitorEntity: IClassPool
 {
     public void StartMonitor(Entity3DData entityData);
     public void StopMonitor();
+}
+public interface IEntityMonitorEntity<T> : IClassPool<T>
+    where T : class, IClassPoolUserData
+
+{
 }

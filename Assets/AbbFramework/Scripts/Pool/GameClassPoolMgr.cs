@@ -7,7 +7,6 @@ using System;
 public sealed class ClassPoolMgr : Singleton<ClassPoolMgr>
 {
     private Dictionary<Type, ClassPoolData> m_DicClassPool = new();
-    private PoolNaNUserData m_NaNUserData = new();
     private ClassPoolData GetClassPoolData(Type type)
     {
         if (!m_DicClassPool.TryGetValue(type, out var poolData))
@@ -19,14 +18,13 @@ public sealed class ClassPoolMgr : Singleton<ClassPoolMgr>
     }
 
     public T Pull<T>()
-        where T : class, IGamePool, new()
+        where T : class, IClassPool, new()
     {
-        var data = Pull<T, PoolNaNUserData>(ref m_NaNUserData);
+        var data = Pull<T>(null);
         return data;
     }
-    public T Pull<T, TUserData>(ref TUserData userData)
-        where T : class, IGamePool, new()
-        where TUserData : struct, IPoolUserData
+    public T Pull<T>(IClassPoolUserData userData)
+        where T : class, IClassPool, new()
     {
         var type = typeof(T);
         var poolData = GetClassPoolData(type);
@@ -35,11 +33,11 @@ public sealed class ClassPoolMgr : Singleton<ClassPoolMgr>
             data = new T();
             data.PoolConstructor();
         }
-        data.OnPoolInit(ref userData);
+        data.OnPoolInit(userData);
         return data as T;
     }
     public void Push<T>(T classData)
-        where T : class, IGamePool
+        where T : class, IClassPool
     {
         var type = classData.GetType();
         classData.OnPoolDestroy();

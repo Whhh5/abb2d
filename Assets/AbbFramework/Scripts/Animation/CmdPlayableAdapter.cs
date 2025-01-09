@@ -22,6 +22,11 @@ public abstract class CmdPlayableAdapter : PlayableAdapter
         base.OnDestroy();
         m_EntityCmd = EnEntityCmd.None;
     }
+    public override void OnPoolInit(PlayableAdapterUserData userData)
+    {
+        base.OnPoolInit(userData);
+        var data = userData as CmdPlayableAdapterUserData;
+    }
     public virtual void ExecuteCmd()
     {
         m_IsValid = true;

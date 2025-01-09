@@ -33,7 +33,7 @@ public enum EnEntityCmdLevel
     Level100,
     MaxLevel,
 }
-public class EntityAnimComData : IEntity3DComData, IUpdate
+public class EntityAnimComData : IEntity3DComData<Entity3DComDataUserData>, IUpdate
 {
     private int m_EntityID = -1;
     private Entity3DData m_Entity3D = null;
@@ -51,12 +51,10 @@ public class EntityAnimComData : IEntity3DComData, IUpdate
         m_Entity3D = null;
         m_EntityID = -1;
     }
-    public void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
+    public void OnPoolInit(Entity3DComDataUserData userData)
     {
-        if (userData is not Entity3DComDataUserData data)
-            return;
-        m_EntityID = data.entity3DData.EntityID;
-        m_Entity3D = data.entity3DData;
+        m_EntityID = userData.entity3DData.EntityID;
+        m_Entity3D = userData.entity3DData;
 
     }
 

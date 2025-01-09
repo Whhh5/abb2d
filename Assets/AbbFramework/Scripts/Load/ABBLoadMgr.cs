@@ -1,11 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-using Newtonsoft.Json;
 
 public class ABBLoadMgr : Singleton<ABBLoadMgr>
 {
@@ -13,14 +9,14 @@ public class ABBLoadMgr : Singleton<ABBLoadMgr>
     {
         Editor,
     }
-    public class LoadData : IGamePool
+    public class LoadData : IClassPool<PoolNaNUserData>
     {
         private int m_ObjID = -1;
         private int m_RefCount = 0;
         public EnLoadStatus m_Status = EnLoadStatus.Start;
         private CancellationTokenSource m_TokenSource = null;
 
-        public  void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
+        public void OnPoolInit(PoolNaNUserData userData)
         {
             m_TokenSource = new();
         }

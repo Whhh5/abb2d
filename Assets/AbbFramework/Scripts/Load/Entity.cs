@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public abstract class EntityData : IGamePool
+
+
+public abstract class EntityData : IClassPool<EntityDataUserData>
 {
     protected int m_EntityID;
     public int EntityID => m_EntityID;
@@ -36,7 +38,7 @@ public abstract class EntityData : IGamePool
         m_WorldPos = Vector3.zero;
         m_ParentTran = null;
     }
-    public virtual void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
+    public virtual void OnPoolInit(EntityDataUserData userData)
     {
 
     }

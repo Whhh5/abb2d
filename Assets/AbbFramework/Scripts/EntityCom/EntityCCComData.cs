@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class EntityCCComData : IEntity3DComData, IUpdate
+public class EntityCCComData : IEntity3DComData<Entity3DComDataUserData>, IUpdate
 {
     private Entity3DData m_Entity3DData = null;
     private IEntity3DCCCom m_RigidCom = null;
@@ -54,11 +54,9 @@ public class EntityCCComData : IEntity3DComData, IUpdate
         m_Tran = null;
     }
 
-    public void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
+    public void OnPoolInit(Entity3DComDataUserData userData)
     {
-        if (userData is not Entity3DComDataUserData data)
-            return;
-        m_Entity3DData = data.entity3DData;
+        m_Entity3DData = userData.entity3DData;
 
     }
 

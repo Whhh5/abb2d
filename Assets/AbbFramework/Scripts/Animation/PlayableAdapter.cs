@@ -6,9 +6,24 @@ using UnityEngine.Animations;
 using Unity.Collections;
 using System;
 
-public interface IPlayableAdapterCustomData : IGamePool
+public interface IPlayableAdapterCustomData : IClassPool
 {
-    //public void OnPoolRecycle();
+
+    void IClassPool.OnPoolEnable()
+    {
+    }
+
+    void IClassPool.OnPoolInit<T>(T userData)
+    {
+    }
+
+    void IClassPool.PoolConstructor()
+    {
+    }
+
+    void IClassPool.PoolRelease()
+    {
+    }
 }
 public struct AnimJob : IAnimationJob
 {
@@ -45,7 +60,7 @@ public struct AnimJob : IAnimationJob
         stream.angularVelocity = Vector3.Lerp(stream1.angularVelocity, stream2.angularVelocity, weight);
     }
 }
-public abstract class PlayableAdapter : IGamePool
+public abstract class PlayableAdapter : IClassPool<PlayableAdapterUserData>
 {
     public static T Create<T>(PlayableGraphAdapter graph)
         where T : PlayableAdapter, new()
@@ -56,13 +71,11 @@ public abstract class PlayableAdapter : IGamePool
     public static T Create<T>(PlayableGraphAdapter graph, IPlayableAdapterCustomData customData)
         where T : PlayableAdapter, new()
     {
-        var userData = new PlayableAdapterUserData
-        {
-            graph = graph,
-            customData = customData,
-        };
-        var adapter = ClassPoolMgr.Instance.Pull<T, PlayableAdapterUserData>(ref userData);
-
+        var userData = ClassPoolMgr.Instance.Pull<PlayableAdapterUserData>();
+        userData.graph = graph;
+        userData.customData = customData;
+        var adapter = ClassPoolMgr.Instance.Pull<T>(userData);
+        ClassPoolMgr.Instance.Push(userData);
         return adapter;
     }
     public static void Destroy(PlayableAdapter adapter)
@@ -83,13 +96,10 @@ public abstract class PlayableAdapter : IGamePool
         m_IsValid = false;
         m_Graph = null;
     }
-    public virtual void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
+    public virtual void OnPoolInit(PlayableAdapterUserData userData)
     {
-        if (userData is not PlayableAdapterUserData data)
-            return;
-
         m_IsValid = true;
-        m_Graph = data.graph;
+        m_Graph = userData.graph;
         m_MainPlayable = ScriptPlayable<AdapterPlayable>.Create(m_Graph.GetGraph(), GlobalConfig.Int0);
         m_MainPlayable.GetBehaviour().Initialization(this);
 

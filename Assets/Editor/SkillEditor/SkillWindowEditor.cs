@@ -115,7 +115,7 @@ public class SkillWindowEditor : EditorWindow
         {
             arrParams = skillCfg.arrParams,
         };
-        (linkData as IGamePool).OnPoolInit(ref data);
+        (linkData as IClassPool).OnPoolInit(ref data);
         linkData.InitEditor();
         m_DicSkilDrawData.Add(key, linkData);
     }

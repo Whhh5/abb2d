@@ -7,9 +7,9 @@ public class LayerMixerCmdPlayableAdapter : CmdPlayableAdapter
     {
         base.OnDestroy();
     }
-    public override void OnPoolInit<T>(ref T userData)
+    public override void OnPoolInit(PlayableAdapterUserData userData)
     {
-        base.OnPoolInit(ref userData);
+        base.OnPoolInit(userData);
 
         m_CurPlayableAdater = m_Graph.CreateClipPlayableAdapter(81);
         AddConnectRootAdapter(m_CurPlayableAdater);

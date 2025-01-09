@@ -2,13 +2,13 @@
 using UnityEngine;
 using UnityEngine.Playables;
 
-public class PlayableBehaviourAdapter : PlayableBehaviour, IGamePool
+public abstract class PlayableBehaviourAdapter : PlayableBehaviour, IClassPool<PlayableBehaviourAdapterUserData>
 {
     public virtual void PoolConstructor()
     {
     }
 
-    public void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
+    public void OnPoolInit(PlayableBehaviourAdapterUserData userData)
     {
 
     }

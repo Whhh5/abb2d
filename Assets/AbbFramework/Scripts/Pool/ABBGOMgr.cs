@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 
-public class GOData : IGamePool
+public class GOData : IClassPool<GODataUserData>
 {
     private EnLoadTarget m_LoadTarget;
     private GameObject m_GO;
@@ -17,14 +17,12 @@ public class GOData : IGamePool
     {
     }
 
-    public void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
-    {
-        if (userData is not GODataUserData data)
-            return;
-        m_GO = data.go;
-        m_LoadTarget = data.target;
-    }
 
+    public void OnPoolInit(GODataUserData userData)
+    {
+        m_GO = userData.go;
+        m_LoadTarget = userData.target;
+    }
     public void PoolConstructor()
     {
     }
@@ -69,11 +67,11 @@ public class ABBGOMgr : Singleton<ABBGOMgr>
         var goID = ABBUtil.GetTempKey();
         var ins = GameObject.Instantiate(obj, parent);
 
-        m_CreateGOUserData.go = ins;
-        m_CreateGOUserData.target = target;
-
-        var goData = ClassPoolMgr.Instance.Pull<GOData, GODataUserData>(ref m_CreateGOUserData);
-
+        var data = ClassPoolMgr.Instance.Pull<GODataUserData>();
+        data.go = ins;
+        data.target = target;
+        var goData = ClassPoolMgr.Instance.Pull<GOData>(data);
+        ClassPoolMgr.Instance.Push(data);
         m_GOMap.Add(goID, goData);
         return goID;
     }

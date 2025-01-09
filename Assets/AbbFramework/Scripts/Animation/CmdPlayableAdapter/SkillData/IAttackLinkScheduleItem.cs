@@ -1,6 +1,6 @@
 ﻿using System;
 
-public interface IAttackLinkScheduleItem: IGamePool
+public interface IAttackLinkScheduleItem: IClassPool
 {
     public void SetScheduleType(EnAtkLinkScheculeType scheduleType);
     public EnAtkLinkScheculeType GetScheduleType();
@@ -11,4 +11,9 @@ public interface IAttackLinkScheduleItem: IGamePool
     public bool GetIsEffect();
     public float GetEnterSchedule();
     public void SetIsEffect(bool isEffect);
+}
+public interface IAttackLinkScheduleItem<T> : IAttackLinkScheduleItem, IClassPool<T>
+    where T : class, IClassPoolUserData
+{
+
 }

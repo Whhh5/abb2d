@@ -35,8 +35,9 @@ public abstract class UIEntity: Entity
     {
         m_Rect = null;
     }
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         m_Rect = GetComponent<RectTransform>();
     }
     public override void OnUnload()

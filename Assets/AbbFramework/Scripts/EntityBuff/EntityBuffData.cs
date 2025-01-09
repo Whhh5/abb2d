@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public abstract class EntityBuffData : IGamePool
+public abstract class EntityBuffData : IClassPool<EntityBuffDataUserData>
 {
     private EnBuff m_Buff = EnBuff.None;
     private EnBuffType m_BuffType = EnBuffType.None;
@@ -24,16 +24,13 @@ public abstract class EntityBuffData : IGamePool
     {
     }
 
-    public void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
+    public void OnPoolInit(EntityBuffDataUserData userData)
     {
-        if (userData is not EntityBuffDataUserData data)
-            return;
-
         m_Count = 0;
-        m_EntityID = data.entityID;
-        m_Buff = data.buff;
-        m_BuffType = BuffMgr.Instance.GetBuffType(data.buff);
-        m_EntityData = Entity3DMgr.Instance.GetEntity3DData(data.entityID);
+        m_EntityID = userData.entityID;
+        m_Buff = userData.buff;
+        m_BuffType = BuffMgr.Instance.GetBuffType(userData.buff);
+        m_EntityData = Entity3DMgr.Instance.GetEntity3DData(userData.entityID);
         m_AnimCom = m_EntityData.GetEntityCom<EntityAnimComData>();
         m_CCCom = m_EntityData.GetEntityCom<EntityCCComData>();
     }

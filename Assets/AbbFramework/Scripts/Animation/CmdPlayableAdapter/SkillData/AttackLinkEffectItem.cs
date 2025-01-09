@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-public class AttackLinkEffectItem : IEffectParams, IAttackLinkScheduleItem
+public class AttackLinkEffectItem : IEffectParams, IAttackLinkScheduleItem<PoolNaNUserData>
 {
     public int effectID;
     public float schedule;
@@ -22,7 +22,7 @@ public class AttackLinkEffectItem : IEffectParams, IAttackLinkScheduleItem
     {
     }
 
-    public void OnPoolInit<T>(ref T userData) where T : struct, IPoolUserData
+    public void OnPoolInit(PoolNaNUserData userData)
     {
     }
 
