@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using UnityEditor.VersionControl;
 using UnityEngine;
 
 public class ABBLoadMgr : Singleton<ABBLoadMgr>
@@ -61,6 +62,10 @@ public class ABBLoadMgr : Singleton<ABBLoadMgr>
         public void SetLoadStatus(EnLoadStatus loadStatus)
         {
             m_Status = loadStatus;
+        }
+        public EnLoadStatus GetLoadStatus()
+        {
+            return m_Status;
         }
         public bool IsLoadFinish()
         {
@@ -151,20 +156,37 @@ public class ABBLoadMgr : Singleton<ABBLoadMgr>
         ClassPoolMgr.Instance.Push(loadData);
         m_LoadDataCache.Remove(assetID);
     }
-    private async UniTask<T> LoadAsync<T>(string assPath)
-        where T : Object
-    {
-        var objID = await LoadAsync<T>(assPath, m_LoadTokenSource);
-        var asset = GetLoader().GetObject(objID);
-        return asset as T;
-    }
     public async UniTask<T> LoadAsync<T>(EnLoadTarget loadTarget)
         where T : Object
     {
         var assCfg = GameSchedule.Instance.GetAssetCfg0((int)loadTarget);
-        var objID = await LoadAsync<T>(assCfg.strPath, m_LoadTokenSource);
-        var asset = GetLoader().GetObject(objID);
-        return asset as T;
+        var loadData = GetLoadData((int)loadTarget);
+
+        if (loadData.IsStatus(EnLoadStatus.Loading))
+            await UniTask.WaitUntil(() => loadData.GetLoadStatus() != EnLoadStatus.Loading);
+
+        if (loadData.IsStatus(EnLoadStatus.Start))
+        {
+            loadData.SetLoadStatus(EnLoadStatus.Loading);
+            var objID = await LoadAsync<T>(assCfg.strPath, m_LoadTokenSource);
+            loadData.SetLoadStatus(EnLoadStatus.Finish);
+            if (objID < 0)
+            {
+                loadData.SetLoadStatus(EnLoadStatus.Failed);
+                ABBUtil.LogError($"load failed, assetID: {loadTarget}, path: {assCfg.strPath}");
+            }
+            else
+            {
+                loadData.SetLoadStatus(EnLoadStatus.Success);
+                loadData.SetObjID(objID);
+            }
+        }
+
+        if (loadData.GetLoadStatus() != EnLoadStatus.Success)
+            return null;
+
+        var asset = loadData.GetObj<T>();
+        return asset;
     }
     private async UniTask<int> LoadAsync<T>(string assPath, CancellationTokenSource tokenSource)
         where T : Object

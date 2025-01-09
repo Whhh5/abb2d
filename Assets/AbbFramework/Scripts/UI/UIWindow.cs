@@ -14,9 +14,9 @@ public abstract class UIWindowData : UIEntityData
     {
         base.OnGOCreate();
     }
-    public override void OnPoolInit<T>(ref T userData)
+    public override void OnPoolInit(EntityDataUserData userData)
     {
-        base.OnPoolInit(ref userData);
+        base.OnPoolInit(userData);
     }
     public override void OnGODestroy()
     {

@@ -27,11 +27,11 @@ public interface IClassPool<T>: IClassPool
 
     void IClassPool.OnPoolInit<T1>(T1 userData)
     {
-        if (userData is not T)
-        {
-            Debug.LogError($"input error: target:{typeof(T)}, in:{userData}");
-            return;
-        }
+        //if (userData is not T)
+        //{
+        //    Debug.LogError($"input error: target:{typeof(T)}, in:{userData}");
+        //    return;
+        //}
         OnPoolInit(userData as T);
     }
 }

@@ -27,12 +27,12 @@ public static class ABBUtil
 	public static void LogWarring(params object[] messageList)
     {
         var str = GetLogStr(messageList);
-        Debug.Log($"ABB: {str}");
+        Debug.LogWarning($"ABB: {str}");
     }
 	public static void LogError(params object[] messageList)
     {
         var str = GetLogStr(messageList);
-        Debug.Log($"ABB: {str}");
+        Debug.LogError($"ABB: {str}");
     }
 
 

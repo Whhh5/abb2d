@@ -1,7 +1,7 @@
 ﻿
 using System.Collections.Generic;
 
-public abstract class SkillTypeItem : IEditorItem, ISkillData
+public abstract class SkillTypeItem : IEditorItem, ISkillData<PoolNaNUserData>
 {
     public void Draw()
     {
@@ -23,7 +23,7 @@ public abstract class SkillTypeItem : IEditorItem, ISkillData
     {
     }
 
-    public void OnPoolInit<T>(ref T userData) where T : IClassPoolUserData
+    public void OnPoolInit(PoolNaNUserData userData)
     {
     }
 
