@@ -35,15 +35,15 @@ public class AttackMgr : Singleton<AttackMgr>
     }
 
 
-    public static IAttackLinkScheduleItem GetAtkLinkScheduleItem(EnAtkLinkScheculeType scheduleType, int[] data, ref int startIndex)
+    public static ISkillScheduleAction  GetAtkLinkScheduleItem(EnAtkLinkScheculeType scheduleType, int[] data, ref int startIndex)
     {
         var count = data[startIndex++];
-        IAttackLinkScheduleItem item = scheduleType switch
+        ISkillScheduleAction  item = scheduleType switch
         {
             EnAtkLinkScheculeType.Physics => ClassPoolMgr.Instance.Pull<AttackLinkPhysicsItem>(),
-            EnAtkLinkScheculeType.Effect => ClassPoolMgr.Instance.Pull<AttackLinkEffectItem>(),
-            EnAtkLinkScheculeType.Buff => ClassPoolMgr.Instance.Pull<AttackLinkBuffItem>(),
-            EnAtkLinkScheculeType.Behaviour => ClassPoolMgr.Instance.Pull<AttackLinkBehaviourItem>(),
+            EnAtkLinkScheculeType.Effect => ClassPoolMgr.Instance.Pull<SkillEffectScheduleAction>(),
+            EnAtkLinkScheculeType.Buff => ClassPoolMgr.Instance.Pull<SkillBuffScheduleAction>(),
+            EnAtkLinkScheculeType.Behaviour => ClassPoolMgr.Instance.Pull<SkillBehaviourScheduleAction>(),
             _ => null,
         };
         item.SetScheduleType(scheduleType);

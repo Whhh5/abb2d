@@ -4,25 +4,37 @@ using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.Playables;
 
-public struct FootIKJob: IAnimationJob
+public struct FootIKJob : IAnimationJob
 {
     public TransformSceneHandle leftFootHandle;
     public float weight;
+    public Transform tran;
 
     public void ProcessAnimation(AnimationStream stream)
     {
+        //var pos = leftFootHandle.GetPosition(stream);
+        //var rot = leftFootHandle.GetRotation(stream);
+        //var human = stream.AsHuman();
 
-        var human = stream.AsHuman();
-        human.SetGoalLocalPosition(AvatarIKGoal.LeftFoot, leftFootHandle.GetPosition(stream));
-        human.SetGoalLocalRotation(AvatarIKGoal.LeftFoot, leftFootHandle.GetRotation(stream));
-        human.SetGoalWeightPosition(AvatarIKGoal.LeftFoot, weight);
-        human.SetGoalWeightRotation(AvatarIKGoal.LeftFoot, weight);
-        human.SolveIK();
+        //var curPos = human.GetGoalPosition(AvatarIKGoal.LeftFoot);
+
+        //var layer = (int)Mathf.Pow(2, (int)EnGameLayer.Terrain);
+        //var hit = Physics.SphereCastAll(curPos, 1f, Vector3.one, 1f, layer);
+        //Debug.Log(hit);
+
+        //human.SetGoalPosition(AvatarIKGoal.LeftFoot, pos);
+        //human.SetGoalRotation(AvatarIKGoal.LeftFoot, rot);
+        //human.SetGoalWeightPosition(AvatarIKGoal.LeftFoot, weight);
+        //human.SetGoalWeightRotation(AvatarIKGoal.LeftFoot, weight);
+        //human.SolveIK();
+
     }
 
     public void ProcessRootMotion(AnimationStream stream)
     {
-        
+        //var human = stream.AsHuman();
+
+        stream.rootMotionPosition.Set(0,0,0);
     }
 }
 
@@ -47,6 +59,7 @@ public class IKJobSample : MonoBehaviour
         FootIKJob job = new();
         job.leftFootHandle = animator.BindSceneTransform(leftFootEffector);
         job.weight = weight;
+        job.tran = leftFootEffector;
         jobPlayable = AnimationScriptPlayable.Create(graph, job);
         AnimationClipPlayable anim = AnimationClipPlayable.Create(graph, clip);
         anim.SetApplyFootIK(false);
@@ -57,8 +70,8 @@ public class IKJobSample : MonoBehaviour
         AnimationPlayableOutput output = AnimationPlayableOutput.Create(graph, "_", animator);
         output.SetSourcePlayable(jobPlayable);
         //jobPlayable.SetPropagateSetTime(false);
-        jobPlayable.SetSpeed(0);
-        jobPlayable.SetSpeed(0);
+        //jobPlayable.SetSpeed(0);
+        //jobPlayable.SetSpeed(0);
 
         graph.Play();
     }

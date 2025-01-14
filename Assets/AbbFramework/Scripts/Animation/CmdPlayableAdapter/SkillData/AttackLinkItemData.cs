@@ -8,7 +8,7 @@ public class AttackLinkItemData : IClassPool<PoolNaNUserData>
     public float atkEndTime;
     public Dictionary<EnBuff, int[]> arrBuff = new();
 
-    protected IAttackLinkScheduleItem[] m_ArrAtkLinkSchedule = null;
+    protected ISkillScheduleAction [] m_ArrAtkLinkSchedule = null;
     public int ScheduleEventCount => m_ArrAtkLinkSchedule.Length;
 
 
@@ -48,7 +48,7 @@ public class AttackLinkItemData : IClassPool<PoolNaNUserData>
         atkEndTime = gCount < 3 ? default : data[startIndex++] / 100f;
 
         var scheduleCount = startIndex >= endIndex ? default : data[startIndex++];
-        m_ArrAtkLinkSchedule = new IAttackLinkScheduleItem[scheduleCount];
+        m_ArrAtkLinkSchedule = new ISkillScheduleAction [scheduleCount];
         for (int i = 0; i < scheduleCount; i++)
         {
             var scheduleType = (EnAtkLinkScheculeType)data[startIndex++];
@@ -67,7 +67,7 @@ public class AttackLinkItemData : IClassPool<PoolNaNUserData>
         }
     }
 
-    public IAttackLinkScheduleItem GetCurScheduleItem()
+    public ISkillScheduleAction  GetCurScheduleItem()
     {
         return m_ArrAtkLinkSchedule[m_CurScheduleItemIndex];
     }

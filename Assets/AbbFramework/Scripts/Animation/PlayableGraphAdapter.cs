@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.Playables;
@@ -13,7 +14,6 @@ public enum EnAnimLayer
     Layer3,
     EnumCount,
 }
-
 public class PlayableGraphAdapter : IClassPool<PlayableGraphAdapterUserData>, IUpdate
 {
 
@@ -41,6 +41,7 @@ public class PlayableGraphAdapter : IClassPool<PlayableGraphAdapterUserData>, IU
     private Dictionary<EnAnimLayer, LayerMixerInfo> m_Layer2unusePortDic = new();
     private List<EnAnimLayer> m_EnterLayerList = new();
     private List<EnAnimLayer> m_ExistLayerList = new();
+    private AnimationScriptPlayable m_PlayableJob;
 
 
     public void PoolConstructor()
@@ -51,10 +52,13 @@ public class PlayableGraphAdapter : IClassPool<PlayableGraphAdapterUserData>, IU
     {
         m_EntityID = userData.entityID;
         m_Graph = PlayableGraph.Create($"custom-{userData.anim.name}");
-        m_Graph.SetTimeUpdateMode(DirectorUpdateMode.GameTime);
+        m_Graph.SetTimeUpdateMode(DirectorUpdateMode.Manual);
         var output = AnimationPlayableOutput.Create(m_Graph, $"{userData.anim.name}-output", userData.anim);
+        var jobData = new PlayableGraphAnimJob();
+        m_PlayableJob = AnimationScriptPlayable.Create<PlayableGraphAnimJob>(m_Graph, jobData);
         m_LayerMixerPlayable = AnimationLayerMixerPlayable.Create(m_Graph, (int)EnAnimLayer.EnumCount);
-        output.SetSourcePlayable(m_LayerMixerPlayable);
+        m_PlayableJob.AddInput(m_LayerMixerPlayable, 0, 1);
+        output.SetSourcePlayable(m_PlayableJob);
         UpdateMgr.Instance.Registener(this);
     }
 
@@ -98,7 +102,7 @@ public class PlayableGraphAdapter : IClassPool<PlayableGraphAdapterUserData>, IU
     }
     public void UpdtaeGraphEvaluate()
     {
-        m_Graph.Evaluate(Time.deltaTime);
+        m_Graph.Evaluate(ABBUtil.GetTimeDelta());
     }
     public bool IsPlaying()
     {
@@ -205,8 +209,10 @@ public class PlayableGraphAdapter : IClassPool<PlayableGraphAdapterUserData>, IU
         var count = info.GetConnectCount();
         return count;
     }
+    private RaycastHit[] m_ArrHit = new RaycastHit[1];
     public void Update()
     {
+        UpdateFootIK();
         UpdtaeGraphEvaluate();
         for (int i = 0; i < m_EnterLayerList.Count; i++)
         {
@@ -244,6 +250,77 @@ public class PlayableGraphAdapter : IClassPool<PlayableGraphAdapterUserData>, IU
             var weight = Mathf.Clamp(toWeight, 0, 1);
             SetLayerWeight(layer, weight);
         }
+    }
+    public void SetApplyRootMotion(bool applyRootMotion)
+    {
+        var job = m_PlayableJob.GetJobData<PlayableGraphAnimJob>();
+        job.applyRootMotion = applyRootMotion;
+        m_PlayableJob.SetJobData(job);
+    }
+
+
+    private void UpdateLeftFootIK(ref PlayableGraphAnimJob job)
+    {
+        var leftPos = job.lastLeftFootPos;
+        var startPos = leftPos + Vector3.up * 1;
+        var dis = 1 + 0.5f;
+        var count = Physics.RaycastNonAlloc(startPos, Vector3.down, m_ArrHit, dis);
+        Debug.DrawLine(startPos, startPos + Vector3.down * dis, Color.red);
+        if (count > 0)
+        {
+            var hit = m_ArrHit[0];
+            var pos = hit.point;
+            var ikDis = Vector3.Distance(pos, leftPos);
+
+            DebugDrawMgr.Instance.DrawSphere(pos, 0.1f, 0.01f);
+
+            var weight2 = pos.y < leftPos.y
+                ? Mathf.Lerp(0, 1, 1 - Mathf.Pow(Mathf.Clamp01((ikDis - 0.1f) / 0.4f), 5))
+                : 1;
+            job.leftFeatWorldPos = pos;
+            job.leftFootIKWeight = weight2;
+        }
+        else
+        {
+            job.leftFootIKWeight = 0;
+        }
+    }
+    private void UpdateRightFootIK(ref PlayableGraphAnimJob job)
+    {
+        var rightPos = job.lastRightFootPos;
+        var startPos = rightPos + Vector3.up * 1;
+        var dis = 1 + 0.5f;
+        var count = Physics.RaycastNonAlloc(startPos, Vector3.down, m_ArrHit, dis);
+        Debug.DrawLine(startPos, startPos + Vector3.down * dis, Color.red);
+        if (count > 0)
+        {
+            var hit = m_ArrHit[0];
+            var pos = hit.point;
+            var ikDis = Vector3.Distance(pos, rightPos);
+
+            //Debug.DrawRay(pos, dir, Color.gray, 1);
+            DebugDrawMgr.Instance.DrawSphere(pos, 0.1f, 0.01f);
+
+            var weight2 = pos.y < rightPos.y
+                ? Mathf.Lerp(0, 1, 1 - Mathf.Pow(Mathf.Clamp01((ikDis - 0.1f) / 0.4f), 5))
+                : 1;
+            job.rightFeatWorldPos = pos;
+            job.rightFootIKWeight = weight2;
+        }
+        else
+        {
+            job.rightFootIKWeight = 0;
+        }
+
+    }
+    private void UpdateFootIK()
+    {
+        var job = m_PlayableJob.GetJobData<PlayableGraphAnimJob>();
+
+        UpdateLeftFootIK(ref job);
+        UpdateRightFootIK(ref job);
+
+        m_PlayableJob.SetJobData(job);
     }
 
 

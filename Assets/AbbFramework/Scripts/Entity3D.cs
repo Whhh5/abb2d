@@ -193,6 +193,10 @@ public abstract class Entity3D : Entity
     private Entity3DData m_Entity3DData = null;
     [SerializeField]
     protected GameObject m_BodyObj = null;
+    [SerializeField]
+    private Animator m_Anim = null;
+    [SerializeField]
+    private Transform m_LeftFootIKRay = null;
     private Quaternion m_TargetRotation;
     private Transform m_MainBodyTran = null;
 
@@ -227,11 +231,25 @@ public abstract class Entity3D : Entity
     {
         return m_MainBodyTran.forward;
     }
+
+
+    private RaycastHit[] m_ArrHit = new RaycastHit[1];
+    private Vector3 m_LeftFoorIKPos = Vector3.zero;
+    private float m_Distance = -1;
     protected override void Update()
     {
         base.Update();
 
     }
+    public Vector3 GetLeftFootIKPos()
+    {
+        return m_LeftFoorIKPos;
+    }
+    public float GetLeftFoorIKDistance()
+    {
+        return m_Distance;
+    }
+
     public override void SetPosition()
     {
         base.SetPosition();
@@ -242,5 +260,38 @@ public abstract class Entity3D : Entity
         var curQua = Quaternion.Euler(m_Entity3DData.LocalRotation);
         var angle = Quaternion.SlerpUnclamped(curQua, m_TargetRotation, 10 * timeDelta);
         m_Entity3DData.SetLocalRotation(angle.eulerAngles);
+    }
+    public Animator GetAnimator()
+    {
+        return m_Anim;
+    }
+
+    private void OnAnimatorIK(int layerIndex)
+    {
+    }
+
+    private void OnAnimatorMove()
+    {
+        if (m_LeftFootIKRay)
+        {
+            var tran = m_Anim.GetBoneTransform(HumanBodyBones.LeftFoot);
+            var startPos = tran.position + Vector3.up * 1;
+            var dis = 1 + 0.2f;
+            var count = Physics.RaycastNonAlloc(startPos, Vector3.down, m_ArrHit, dis);
+            Debug.DrawLine(startPos, startPos + Vector3.down * dis, Color.red);
+            if (count > 0)
+            {
+                var pos = m_ArrHit[0].point;
+                //var rot = m_ArrHit[0].
+                m_LeftFoorIKPos = pos;
+                m_Distance = Vector3.Distance(pos, tran.position);
+
+                DebugDrawMgr.Instance.DrawSphere(pos, 0.05f, 0.1f);
+            }
+            else
+            {
+                m_Distance = float.MaxValue;
+            }
+        }
     }
 }

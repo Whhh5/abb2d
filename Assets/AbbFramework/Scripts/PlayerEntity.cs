@@ -64,26 +64,6 @@ public class PlayerEntity : Entity3D, IEntity3DCCCom
         return m_IsGroundTrigger.IsEnter();
     }
 
-    protected override void Update()
-    {
-        base.Update();
-
-        //var entityID = m_EntityData.EntityID;
-        //if (m_IsClimb)
-        //{
-        //    if (!Entity3DMgr.Instance.ContainsBuff(entityID, EnBuff.NoGravity))
-        //        Entity3DMgr.Instance.AddEntityBuff(entityID, EnBuff.NoGravity);
-        //}
-        //else
-        //{
-        //    if (Entity3DMgr.Instance.ContainsBuff(entityID, EnBuff.NoGravity))
-        //        Entity3DMgr.Instance.RemoveEntityBuff(entityID, EnBuff.NoGravity);
-        //}
-
-
-        //Debug.Log(hint.Length);
-    }
-
     private bool m_IsClimb = false;
     private void OnDrawGizmos()
     {

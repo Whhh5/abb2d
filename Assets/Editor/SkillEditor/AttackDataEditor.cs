@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class AttackDataEditor : AttackLinkItemData, IEditorItem
 {
-    private List<IAttackLinkScheduleItemEditor> m_AtkLinkScheduleList = new();
+    private List<ISkillScheduleActionEditor> m_AtkLinkScheduleList = new();
     private List<IBuffDaraEditor> m_BuffDataList = new();
     public void InitEditor()
     {
@@ -16,7 +16,7 @@ public class AttackDataEditor : AttackLinkItemData, IEditorItem
             var data = m_ArrAtkLinkSchedule[i];
             var scheduleType = data.GetScheduleType();
             var editorType = GetScheduleEditorType(scheduleType);
-            var item = EditorUtil.Copy<IAttackLinkScheduleItemEditor>(data, editorType);
+            var item = EditorUtil.Copy<ISkillScheduleActionEditor>(data, editorType);
             item.InitEditor();
             m_AtkLinkScheduleList.Add(item);
         }
@@ -40,7 +40,7 @@ public class AttackDataEditor : AttackLinkItemData, IEditorItem
             _ => null
         };
     }
-    private void AddAtkLinkScheduleList(IAttackLinkScheduleItemEditor item)
+    private void AddAtkLinkScheduleList(ISkillScheduleActionEditor item)
     {
         m_AtkLinkScheduleList.Add(item);
     }
@@ -154,7 +154,7 @@ public class AttackDataEditor : AttackLinkItemData, IEditorItem
         }
         EditorGUILayout.EndHorizontal();
     }
-    private int SortArray(IAttackLinkScheduleItemEditor item1, IAttackLinkScheduleItemEditor item2)
+    private int SortArray(ISkillScheduleActionEditor item1, ISkillScheduleActionEditor item2)
     {
         if (item1.GetEnterSchedule() < item2.GetEnterSchedule())
             return -1;
@@ -190,7 +190,7 @@ public class AttackDataEditor : AttackLinkItemData, IEditorItem
                     var scheduleType = index2ScheduleType[selected];
                     var type = GetScheduleEditorType(scheduleType);
                     var insType = Activator.CreateInstance(type);
-                    var value = insType as IAttackLinkScheduleItemEditor;
+                    var value = insType as ISkillScheduleActionEditor;
                     value.SetScheduleType(scheduleType);
                     value.InitEditor();
                     AddAtkLinkScheduleList(value);
@@ -201,7 +201,7 @@ public class AttackDataEditor : AttackLinkItemData, IEditorItem
         }
         EditorGUILayout.EndHorizontal();
 
-        var dic = new Dictionary<EnAtkLinkScheculeType, List<IAttackLinkScheduleItemEditor>>();
+        var dic = new Dictionary<EnAtkLinkScheculeType, List<ISkillScheduleActionEditor>>();
         foreach (var item in m_AtkLinkScheduleList)
         {
             var scheduleType = item.GetScheduleType();

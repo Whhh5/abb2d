@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-public class AttackLinkBuffItemEditor : AttackLinkBuffItem, IAttackLinkScheduleItemEditor
+public class AttackLinkBuffItemEditor : SkillBuffScheduleAction, ISkillScheduleActionEditor
 {
     private List<int> m_BuffParamList = new();
     public void InitEditor()

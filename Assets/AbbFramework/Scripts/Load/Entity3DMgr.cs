@@ -199,6 +199,13 @@ public class Entity3DMgr : Singleton<Entity3DMgr>
         var ccCom = entityData.GetEntityCom<EntityCCComData>();
         ccCom.SetIsCanRotation(value);
     }
+    public void SetApplyRootMotion(int entityID, bool applyRootMotion)
+    {
+        var entityData = GetEntity3DData(entityID);
+        var ccCom = entityData.GetEntityCom<EntityAnimComData>();
+        //ccCom.SetVerticalVelocity(heilght);
+        ccCom.SetApplyRootMotion(applyRootMotion);
+    }
     public override void Update()
     {
         base.Update();

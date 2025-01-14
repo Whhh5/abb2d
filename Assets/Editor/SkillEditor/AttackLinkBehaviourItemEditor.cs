@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-public class AttackLinkBehaviourItemEditor : AttackLinkBehaviourItem, IAttackLinkScheduleItemEditor
+public class AttackLinkBehaviourItemEditor : SkillBehaviourScheduleAction, ISkillScheduleActionEditor
 {
     private List<int> m_ParamsList = new();
 

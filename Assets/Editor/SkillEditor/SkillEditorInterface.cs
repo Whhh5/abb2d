@@ -13,7 +13,7 @@ public interface IEditorItem
     public void Draw();
 }
 
-public interface IAttackLinkScheduleItemEditor : IAttackLinkScheduleItem, IEditorItem
+public interface ISkillScheduleActionEditor : ISkillScheduleAction , IEditorItem
 {
 
 }

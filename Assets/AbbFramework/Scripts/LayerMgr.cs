@@ -6,6 +6,7 @@ public enum EnGameLayer
     Entity,
     Player = 6,
     Monster = 7,
+    Terrain = 8,
 }
 
 public class LayerMgr : MonoBehaviour

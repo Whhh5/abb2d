@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-public class AttackLinkPhysicsItemEditor : AttackLinkPhysicsItem, IAttackLinkScheduleItemEditor
+public class AttackLinkPhysicsItemEditor : AttackLinkPhysicsItem, ISkillScheduleActionEditor
 {
     private IEditorItem m_PhysicsResolveSphereEditor = null;
     public void InitEditor()

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.RefAndLookup;
 using UnityEditor.VersionControl;
 using UnityEngine;
 
@@ -54,7 +55,6 @@ public class ABBLoadMgr : Singleton<ABBLoadMgr>
         public T GetObj<T>()
             where T : Object
         {
-            m_RefCount++;
             var loader = Instance.GetLoader();
             var obj = loader.GetObject(m_ObjID);
             return obj as T;
@@ -86,6 +86,10 @@ public class ABBLoadMgr : Singleton<ABBLoadMgr>
         public void CancelRef()
         {
             m_RefCount--;
+        }
+        public void AddRef()
+        {
+            m_RefCount++;
         }
         public int GetRefCount()
         {
@@ -161,6 +165,7 @@ public class ABBLoadMgr : Singleton<ABBLoadMgr>
     {
         var assCfg = GameSchedule.Instance.GetAssetCfg0((int)loadTarget);
         var loadData = GetLoadData((int)loadTarget);
+        loadData.AddRef();
 
         if (loadData.IsStatus(EnLoadStatus.Loading))
             await UniTask.WaitUntil(() => loadData.GetLoadStatus() != EnLoadStatus.Loading);
@@ -200,6 +205,7 @@ public class ABBLoadMgr : Singleton<ABBLoadMgr>
     {
         var assetCfg = GameSchedule.Instance.GetAssetCfg0(assetID);
         var loadData = GetLoadData(assetID);
+        loadData.AddRef();
         if (loadData.IsStatus(EnLoadStatus.Start))
         {
             loadData.SetLoadStatus(EnLoadStatus.Loading);
@@ -237,7 +243,7 @@ public class ABBLoadMgr : Singleton<ABBLoadMgr>
         loadData.CancelRef();
         if (loadData.GetRefCount() == 0)
         {
-            if (loadData.IsStatus(EnLoadStatus.Success))
+            if (loadData.IsStatus(EnLoadStatus.Success)) 
             {
                 var objID = loadData.GetObjID();
                 // 对资源进行处理, 卸载资源，卸载 assetbundle

@@ -172,11 +172,15 @@ public class PlayerMgr : Singleton<PlayerMgr>
 
         //m_PlayerEntityData.SetPosition(new Vector3(10, 2, 10));
     }
+    private bool applyRootMotion = false;
     public void OnClick_KeyCodeDownI()
     {
         //var data = GameClassPoolMgr.Instance.Pull<AttackCmdData>();
         //data.cmd = EnEntityCmd.Skill3;
         //Entity3DMgr.Instance.AddEntityCmd(m_PlayerEntityID, EnEntityCmd.Skill3, data);
         //GameClassPoolMgr.Instance.Push(data);
+
+        applyRootMotion = !applyRootMotion;
+        Entity3DMgr.Instance.SetApplyRootMotion(m_PlayerEntityID, applyRootMotion);
     }
 }

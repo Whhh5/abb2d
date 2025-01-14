@@ -3,9 +3,11 @@ using UnityEngine;
 
 public class JumpDownCmdPlayableAdapter : CmdPlayableAdapter
 {
-    private List<int> m_JumpDownAnimList = null;
+    private int[] m_JumpDownAnimList = null;
     private PlayableClipAdapter m_Clipadapter = null;
     private int m_DownType = -1;
+
+    private AttackLinkItemData m_ItemData = null;
     protected override void OnDestroy()
     {
         PlayableAdapter.Destroy(m_Clipadapter);
@@ -18,10 +20,28 @@ public class JumpDownCmdPlayableAdapter : CmdPlayableAdapter
     {
         base.OnPoolInit(userData);
 
+        var data = userData.customData as JumpDownCmdPlayableAdapterUserData;
 
-        var roleID = EntityMgr.Instance.EntityID2RoleID(m_Graph);
-        m_JumpDownAnimList = AnimMgr.Instance.GetJumpDownAnimClipList(roleID);
+        var startIndex = 0;
+        var actionType = data.arrPArams[startIndex++];
+        var actionParamCount = data.arrPArams[startIndex++];
+        var actionParam = data.arrPArams.Copy(startIndex, actionParamCount);
+        startIndex += actionParamCount;
 
+        var clipCount = data.arrPArams[startIndex++];
+        for (int i = 0; i < clipCount; i++)
+        {
+            var arrClipActionParamCount = data.arrPArams[startIndex++];
+            var clipActionParam = data.arrPArams.Copy(startIndex, arrClipActionParamCount);
+            startIndex += arrClipActionParamCount;
+        }
+
+        m_ItemData = ClassPoolMgr.Instance.Pull<AttackLinkItemData>();
+        //m_ItemData.Init();
+
+
+
+        
 
         var velocity = Entity3DMgr.Instance.GetEntityVerticalVelocity(m_Graph);
         var isHeight = velocity < -10;
