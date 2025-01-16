@@ -5,7 +5,7 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
-public class AttackDataEditor : AttackLinkItemData, IEditorItem
+public class AttackLinkItemDataEditor : AttackLinkItemData, IEditorItem
 {
     private List<ISkillScheduleActionEditor> m_AtkLinkScheduleList = new();
     private List<IBuffDaraEditor> m_BuffDataList = new();

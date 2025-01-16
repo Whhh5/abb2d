@@ -5,6 +5,8 @@ using System.Collections;
 public class RandomClipGraoupSkillData : ISkillData<AttackLinkSkillDataUserData>
 {
     protected int[] m_ArrClip;
+
+    
     public void OnPoolDestroy()
     {
         m_ArrClip = null;

@@ -13,6 +13,17 @@ public interface ISkillItem
 
 }
 
+public enum EnSkillBoxType
+{
+    None,
+    Link,
+    Random,
+    Singleton,
+    Loop,
+    Select,
+    EnumCount,
+}
+
 public class SkillWindowEditor : EditorWindow
 {
     [MenuItem("Tools/SkillWindow %^e")]
@@ -51,7 +62,7 @@ public class SkillWindowEditor : EditorWindow
     }
 
     private void OnDisable()
-    { 
+    {
         m_ID2SkillEditor.Clear();
         m_DicItemInfo.Clear();
         m_DicSkilDrawData.Clear();
@@ -93,24 +104,25 @@ public class SkillWindowEditor : EditorWindow
         }
 
     }
-    public IEditorItem GetAtkItem(int type)
+    public IEditorItem GetAtkItem(EnSkillBoxType type)
     {
         return type switch
         {
-            1 => new AttackLinkDataEditor(),
-            2 => new RandomClipGraoupSkillDataEditor(),
-            3 => new SingletonClipSkillDataEditor(),
-            4 => new Skill2CmdPlayableAdapterDataEditor(),
+            EnSkillBoxType.Link => new AttackLinkDataEditor(),
+            EnSkillBoxType.Random => new RandomClipGraoupSkillDataEditor(),
+            EnSkillBoxType.Singleton => new SingletonClipSkillDataEditor(),
+            EnSkillBoxType.Loop => new Skill2CmdPlayableAdapterDataEditor(),
+            EnSkillBoxType.Select => new AttackSelectItemEditor(),
             _ => null,
         };
     }
     private void AddSkillItem(SkillCfgEditor skillCfg)
     {
-        var key = skillCfg.nSkillID; 
+        var key = skillCfg.nSkillID;
         m_DicItemInfo.Add(key, new());
         m_ID2SkillEditor.Add(key, skillCfg);
 
-        IEditorItem linkData = GetAtkItem(skillCfg.nType);
+        IEditorItem linkData = GetAtkItem((EnSkillBoxType)skillCfg.nType);
         var data = new AttackLinkSkillDataUserData()
         {
             arrParams = skillCfg.arrParams,
@@ -119,10 +131,10 @@ public class SkillWindowEditor : EditorWindow
         linkData.InitEditor();
         m_DicSkilDrawData.Add(key, linkData);
     }
-    private void AddSkillItem(int skillType)
+    private void AddSkillItem(EnSkillBoxType skillType)
     {
-        var skillCfg = new SkillCfgEditor(); 
-        skillCfg.nType = skillType;
+        var skillCfg = new SkillCfgEditor();
+        skillCfg.nType = (int)skillType;
         for (int i = 1; i < m_DicItemInfo.Count + 2; i++)
         {
             if (m_DicItemInfo.ContainsKey(i))
@@ -233,19 +245,20 @@ public class SkillWindowEditor : EditorWindow
                             center = Vector2.zero,
                             width = 200,
                         };
-                        GUIContent[] contents = new GUIContent[]
+                        var contents = new List<GUIContent>();
+                        var map = new Dictionary<string, EnSkillBoxType>();
+                        for (var i = EnSkillBoxType.None + 1; i < EnSkillBoxType.EnumCount; i++)
                         {
-                            new(){ text = "1"}, // 连击技能
-                            new(){ text = "2"}, // 随机播放
-                            new(){ text = "3"}, // 单动作播放
-                            new(){ text = "4"}, // 循环技能
-                        };
-                        EditorUtility.DisplayCustomMenu(rect, contents, 0, (object userData, string[] options, int selected) =>
+                            var key = i.ToString();
+                            contents.Add(new() { text = key });
+                            map.Add(key, i);
+                        }
+                        EditorUtility.DisplayCustomMenu(rect, contents.ToArray(), 0, (object userData, string[] options, int selected) =>
                         {
-                            var value = int.Parse(options[selected]);
+                            var value = map[options[selected]];
                             AddSkillItem(value);
 
-                        }, "ads");
+                        }, null);
                     }
                 }
                 EditorGUILayout.EndHorizontal();

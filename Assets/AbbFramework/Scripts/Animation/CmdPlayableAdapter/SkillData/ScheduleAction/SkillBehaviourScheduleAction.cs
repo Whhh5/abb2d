@@ -13,14 +13,14 @@ public class SkillBehaviourScheduleAction : ISkillScheduleAction<PoolNaNUserData
 {
     public float schedule;
     public EnBehaviourType behaviourType;
-    public int[] arrPArams;
+    public int[] arrParams;
 
 
     private bool m_IsEffect = false;
     private EnAtkLinkScheculeType m_ScheduleType = EnAtkLinkScheculeType.None;
     public void OnPoolDestroy()
     {
-        arrPArams = null;
+        arrParams = null;
         m_ScheduleType = EnAtkLinkScheculeType.None;
         m_IsEffect = false;
     }
@@ -47,12 +47,12 @@ public class SkillBehaviourScheduleAction : ISkillScheduleAction<PoolNaNUserData
         behaviourType = gCount < 2 ? default : (EnBehaviourType)data[startIndex++];
 
         var paramCount = startIndex >= endIndex ? default : data[startIndex++];
-        arrPArams = data.Copy(startIndex, paramCount);
+        arrParams = data.Copy(startIndex, paramCount);
         startIndex += paramCount;
     }
     public void Enter(int entityID)
     {
-        var height = arrPArams[0] / 100f;
+        var height = arrParams[0] / 100f;
         //var time = arrPArams[1] / 100f;
         Entity3DMgr.Instance.SetEntityHeight(entityID, height, 1);
     }

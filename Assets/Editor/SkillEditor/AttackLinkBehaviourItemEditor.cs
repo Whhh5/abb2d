@@ -10,7 +10,7 @@ public class AttackLinkBehaviourItemEditor : SkillBehaviourScheduleAction, ISkil
 
     public void InitEditor()
     {
-        m_ParamsList.AddRange(arrPArams ?? new int[1]);
+        m_ParamsList.AddRange(arrParams ?? new int[1]);
     }
     public void Draw()
     {

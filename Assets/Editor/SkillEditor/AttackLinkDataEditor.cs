@@ -6,7 +6,7 @@ using UnityEngine;
 public class AttackLinkDataEditor : AttackLinkSkillData, IEditorItem
 {
     private int m_Count => m_ArrAttackDataEditor.Count;
-    private List<AttackDataEditor> m_ArrAttackDataEditor = new();
+    private List<AttackLinkItemDataEditor> m_ArrAttackDataEditor = new();
     private List<IBuffDaraEditor> m_ArrBuff = new();
     private int m_CurSelectIndex = 0;
 
@@ -15,7 +15,7 @@ public class AttackLinkDataEditor : AttackLinkSkillData, IEditorItem
         for (int i = 0; i < m_DataList?.Count; i++)
         {
             var data = m_DataList[i];
-            var item = EditorUtil.Copy<AttackDataEditor>(data);
+            var item = EditorUtil.Copy<AttackLinkItemDataEditor>(data);
             item.InitEditor();
             m_ArrAttackDataEditor.Add(item);
         }
@@ -140,7 +140,7 @@ public class AttackLinkDataEditor : AttackLinkSkillData, IEditorItem
             }
             if (GUILayout.Button("➕", GUILayout.Width(30)))
             {
-                var item = new AttackDataEditor();
+                var item = new AttackLinkItemDataEditor();
                 item.InitEditor();
                 m_ArrAttackDataEditor.Add(item);
                 m_CurSelectIndex = m_ArrAttackDataEditor.Count - 1;

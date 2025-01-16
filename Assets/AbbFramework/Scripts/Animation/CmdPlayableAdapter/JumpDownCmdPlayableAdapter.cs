@@ -16,6 +16,10 @@ public class JumpDownCmdPlayableAdapter : CmdPlayableAdapter
         m_Clipadapter = null;
         m_DownType = -1;
     }
+    private void InitTemp()
+    {
+        var 
+    }
     public override void OnPoolInit(PlayableAdapterUserData userData)
     {
         base.OnPoolInit(userData);
