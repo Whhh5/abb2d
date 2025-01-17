@@ -13,17 +13,6 @@ public interface ISkillItem
 
 }
 
-public enum EnSkillBoxType
-{
-    None,
-    Link,
-    Random,
-    Singleton,
-    Loop,
-    Select,
-    EnumCount,
-}
-
 public class SkillWindowEditor : EditorWindow
 {
     [MenuItem("Tools/SkillWindow %^e")]

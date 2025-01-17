@@ -1,9 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-
-
 
 public class CompareLessInfoEditor : CompareLessInfo, IEditorItem
 {
@@ -33,5 +32,33 @@ public class CompareLessInfoEditor : CompareLessInfo, IEditorItem
         }
         EditorGUILayout.EndHorizontal();
 
+    }
+
+
+    public static List<(GUIContent title, Func<AttackSelectItemInfoEditor> click)> GetOperationCompareMenu(string rootMenu)
+    {
+        var result = new List<(GUIContent, Func<AttackSelectItemInfoEditor>)>();
+        for (var i = EnOperationCompareType.None + 1; i < EnOperationCompareType.EnumCount; i++)
+        {
+            var compareType = i;
+            var name = EditorUtil.GetEnumName(compareType);
+            var con = new GUIContent()
+            {
+                text = $"{rootMenu}/{name}",
+                tooltip = "adasdasda",
+            };
+            result.Add((con, () =>
+            {
+                var item = MenuOperationCompareClick(compareType);
+                return item;
+            }
+            ));
+        }
+        return result;
+    }
+    public static AttackSelectItemInfoEditor MenuOperationCompareClick(EnOperationCompareType compareType)
+    {
+        Debug.LogError(compareType);
+        return null;
     }
 }

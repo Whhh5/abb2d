@@ -4,15 +4,6 @@ using UnityEngine;
 using UnityEngine.Playables;
 
 
-public class Skill2CmdPlayableAdapterData : IPlayableAdapterCustomData
-{
-    public int[] arrParams;
-
-    public void OnPoolDestroy()
-    {
-        arrParams = null;
-    }
-}
 public class Skill2CmdPlayableAdapter : CmdPlayableAdapter
 {
     private PlayableAdapter m_PlayableAdapter = null;
@@ -39,7 +30,7 @@ public class Skill2CmdPlayableAdapter : CmdPlayableAdapter
     public override void OnPoolInit(PlayableAdapterUserData userData)
     {
         base.OnPoolInit(userData);
-        var arrData = userData.customData as Skill2CmdPlayableAdapterData;
+        var arrData = userData.customData as AttackCmdPlayableAdapterData;
 
         m_StepIndex = EnCmdStep.Step0;
         //m_SkillList = arrData.arrParams.Copy(0, 3);

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public interface IClassPoolUserDataEditor : IClassPoolUserData
 {
-    
+
 }
 public interface IOperationInfoEditor : IOperationInfo, IEditorItem
 {
@@ -31,5 +31,9 @@ public static class OperationFactoryEditor
             EnOperationCompareType.Less => typeof(CompareLessInfoEditor),
             _ => null,
         };
+    }
+    public static void GetOperationChild()
+    {
+
     }
 }

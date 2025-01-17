@@ -3,16 +3,6 @@ using UnityEngine;
 using UnityEngine.Playables;
 
 
-
-public class IdleCmdPlayableAdapterData : IPlayableAdapterCustomData
-{
-    public int[] arrClip;
-
-    public void OnPoolDestroy()
-    {
-        arrClip = null;
-    }
-}
 public class IdleCmdPlayableAdapter : CmdPlayableAdapter
 {
     public override EnAnimLayer GetOutputLayer()
@@ -32,11 +22,9 @@ public class IdleCmdPlayableAdapter : CmdPlayableAdapter
     {
         base.OnPoolInit(userData);
 
-        if (userData is not PlayableAdapterUserData playableData)
-            return;
-        var data = playableData.customData as IdleCmdPlayableAdapterData;
-        m_IdleAnimList = data.arrClip;
-        m_CurClipAdapter = playableData.graph.CreateClipPlayableAdapter(m_IdleAnimList[0]);
+        var data = userData.customData as AttackCmdPlayableAdapterData;
+        m_IdleAnimList = data.arrParams;
+        m_CurClipAdapter = userData.graph.CreateClipPlayableAdapter(m_IdleAnimList[0]);
         AddConnectRootAdapter(m_CurClipAdapter, GlobalConfig.Int0, GlobalConfig.Int1);
     }
     public override float GetUnitTime()

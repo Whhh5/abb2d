@@ -4,15 +4,6 @@ using UnityEngine.Playables;
 using UnityEngine.Animations;
 
 
-public class RunCmdPlayableAdapterData : IPlayableAdapterCustomData
-{
-    public int[] arrClip;
-
-    public void OnPoolDestroy()
-    {
-        arrClip = null;
-    }
-}
 public class RunCmdPlayableAdapter : CmdPlayableAdapter
 {
     protected int[] m_RunAnimList = null;
@@ -28,8 +19,8 @@ public class RunCmdPlayableAdapter : CmdPlayableAdapter
         base.OnPoolInit(userData);
         if (userData is not PlayableAdapterUserData playableData)
             return;
-        var runData = playableData.customData as RunCmdPlayableAdapterData;
-        m_RunAnimList = runData.arrClip.Copy();
+        var runData = playableData.customData as AttackCmdPlayableAdapterData;
+        m_RunAnimList = runData.arrParams.Copy();
         m_CurClipAdapter = m_Graph.CreateClipPlayableAdapter(m_RunAnimList[0]);
         AddConnectRootAdapter(m_CurClipAdapter);
     }

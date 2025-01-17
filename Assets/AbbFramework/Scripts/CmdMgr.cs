@@ -1,5 +1,19 @@
 using UnityEngine;
 
+
+
+
+public enum EnSkillBoxType
+{
+    None,
+    Link,
+    Random,
+    Singleton,
+    Loop,
+    Select,
+    EnumCount,
+}
+
 public class CmdMgr : Singleton<CmdMgr>
 {
 
@@ -10,7 +24,7 @@ public class CmdMgr : Singleton<CmdMgr>
         switch (cmdCfg.nType)
         {
             case 1:
-                var playable = GetSkillPlayable(cmdCfg.arrParams[0],  graph);
+                var playable = GetSkillPlayable(cmdCfg.arrParams[0], graph);
                 return playable;
             default:
                 break;
@@ -21,43 +35,18 @@ public class CmdMgr : Singleton<CmdMgr>
     public CmdPlayableAdapter GetSkillPlayable(int skillID, PlayableGraphAdapter graph)
     {
         var skillCfg = GameSchedule.Instance.GetSkillCfg0(skillID);
-        switch (skillCfg.nType)
+        var customData = ClassPoolMgr.Instance.Pull<AttackCmdPlayableAdapterData>();
+        customData.arrParams = skillCfg.arrParams;
+        CmdPlayableAdapter result = (EnSkillBoxType)skillCfg.nType switch
         {
-            case 1:
-                {
-                    var customData = ClassPoolMgr.Instance.Pull<AttackCmdPlayableAdapterData>();
-                    customData.arrParams = skillCfg.arrParams;
-                    var playable = graph.Create<AttackCmdPlayableAdapter>(customData);
-                    ClassPoolMgr.Instance.Push(customData);
-                    return playable;
-                }
-            case 2:
-                {
-                    var customData = ClassPoolMgr.Instance.Pull<IdleCmdPlayableAdapterData>();
-                    customData.arrClip = skillCfg.arrParams;
-                    var playable = graph.Create<IdleCmdPlayableAdapter>(customData);
-                    ClassPoolMgr.Instance.Push(customData);
-                    return playable;
-                }
-            case 3:
-                {
-                    var customData = ClassPoolMgr.Instance.Pull<RunCmdPlayableAdapterData>();
-                    customData.arrClip = skillCfg.arrParams;
-                    var playable = graph.Create<RunCmdPlayableAdapter>(customData);
-                    ClassPoolMgr.Instance.Push(customData);
-                    return playable;
-                }
-            case 4:
-                {
-                    var customData = ClassPoolMgr.Instance.Pull<Skill2CmdPlayableAdapterData>();
-                    customData.arrParams = skillCfg.arrParams;
-                    var playable = graph.Create<Skill2CmdPlayableAdapter>(customData);
-                    ClassPoolMgr.Instance.Push(customData);
-                    return playable;
-                }
-            default:
-                break;
-        }
-        return null;
+            EnSkillBoxType.Link => graph.Create<AttackCmdPlayableAdapter>(customData),
+            EnSkillBoxType.Random => graph.Create<IdleCmdPlayableAdapter>(customData),
+            EnSkillBoxType.Singleton => graph.Create<RunCmdPlayableAdapter>(customData),
+            EnSkillBoxType.Loop => graph.Create<Skill2CmdPlayableAdapter>(customData),
+            EnSkillBoxType.Select => graph.Create<JumpDownCmdPlayableAdapter>(customData),
+            _ => null
+        };
+        ClassPoolMgr.Instance.Push(customData);
+        return result;
     }
 }

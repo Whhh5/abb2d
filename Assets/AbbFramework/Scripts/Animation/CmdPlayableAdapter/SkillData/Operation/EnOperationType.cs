@@ -3,6 +3,7 @@ public enum EnOperationType
     None,
     [EditorFieldName("算数")]
     Compare,
+    EnumCount,
 }
 public enum EnOperationCompareType
 {
@@ -13,4 +14,5 @@ public enum EnOperationCompareType
     Equal,
     [EditorFieldName(">")]
     Greater,
+    EnumCount,
 }

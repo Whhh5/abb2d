@@ -119,15 +119,3 @@ public abstract class CmdPlayableAdapterUserData: PlayableAdapterUserData
 {
 
 }
-public class JumpDownCmdPlayableAdapterUserData : IPlayableAdapterCustomData
-{
-    public int[] arrPArams;
-    //public EnComIndex index;
-    //public int[] arrClipID;
-    public void OnPoolDestroy()
-    {
-        arrPArams = null;
-        //index = EnComIndex.None;
-        //arrClipID = null;
-    }
-}
