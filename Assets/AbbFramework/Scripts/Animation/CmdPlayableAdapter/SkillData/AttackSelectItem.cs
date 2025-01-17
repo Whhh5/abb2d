@@ -12,7 +12,7 @@ public class AttackSelectItemUserData : IClassPoolUserData
         arrParams = null;
     }
 }
-public class AttackSelectItem : ISkillData<AttackSelectItemUserData>
+public class AttackSelectItem : ISkillData<AttackLinkSkillDataUserData>
 {
     //public EntityPropertyInfo propertyInfo = null;
     public EnEntityProperty target = EnEntityProperty.None;
@@ -27,11 +27,11 @@ public class AttackSelectItem : ISkillData<AttackSelectItemUserData>
         itemInfo = null;
         //propertyInfo = null;
     }
-    public void OnPoolInit(AttackSelectItemUserData userData)
+    public void OnPoolInit(AttackLinkSkillDataUserData userData)
     {
         var arrParams = userData.arrParams;
         var startIndex = 0;
-        var endIndex = arrParams.Length;
+        var endIndex = arrParams?.Length ?? 0;
 
         var gCount = startIndex >= endIndex ? default : arrParams[startIndex++];
         target = gCount < 1 ? default : (EnEntityProperty)arrParams[startIndex++];

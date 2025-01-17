@@ -4,7 +4,10 @@ using UnityEditor;
 using UnityEngine;
 
 
-public class SelectClipSkillDataEditor: AttackSelectItem
+//public class SelectClipSkillDataEditor: SelectClipSkillData
+//{
+
+//}
 public class SingletonClipSkillDataEditor : SingletonClipSkillData, IEditorItem
 {
     private List<int> m_ClipList = new();

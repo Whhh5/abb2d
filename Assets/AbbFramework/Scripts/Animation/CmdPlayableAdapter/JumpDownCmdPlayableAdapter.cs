@@ -18,7 +18,7 @@ public class JumpDownCmdPlayableAdapter : CmdPlayableAdapter
     }
     private void InitTemp()
     {
-        var 
+        //var 
     }
     public override void OnPoolInit(PlayableAdapterUserData userData)
     {
