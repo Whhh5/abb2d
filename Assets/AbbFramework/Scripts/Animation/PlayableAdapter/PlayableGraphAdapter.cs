@@ -272,7 +272,7 @@ public class PlayableGraphAdapter : IClassPool<PlayableGraphAdapterUserData>, IU
             var pos = hit.point;
             var ikDis = Vector3.Distance(pos, leftPos);
 
-            DebugDrawMgr.Instance.DrawSphere(pos, 0.1f, 0.01f);
+            //DebugDrawMgr.Instance.DrawSphere(pos, 0.1f, 0.01f);
 
             var weight2 = pos.y < leftPos.y
                 ? Mathf.Lerp(0, 1, 1 - Mathf.Pow(Mathf.Clamp01((ikDis - 0.1f) / 0.4f), 5))
@@ -299,7 +299,7 @@ public class PlayableGraphAdapter : IClassPool<PlayableGraphAdapterUserData>, IU
             var ikDis = Vector3.Distance(pos, rightPos);
 
             //Debug.DrawRay(pos, dir, Color.gray, 1);
-            DebugDrawMgr.Instance.DrawSphere(pos, 0.1f, 0.01f);
+            //DebugDrawMgr.Instance.DrawSphere(pos, 0.1f, 0.01f);
 
             var weight2 = pos.y < rightPos.y
                 ? Mathf.Lerp(0, 1, 1 - Mathf.Pow(Mathf.Clamp01((ikDis - 0.1f) / 0.4f), 5))

@@ -13,9 +13,10 @@ public class SkillTypeSelectDataEditor : SkillTypeSelectData, ISkillTypeEditor
     private List<bool> foldoutList = new();
     public void InitEditor()
     {
-        foreach (var item in itemInfo ?? new SkillTypeSelectItemInfo[0])
+        foreach (var item in arrItemInfo ?? new SkillTypeSelectItemInfo[0])
         {
             var editorData = EditorUtil.Copy<SkillTypeSelectItemInfoEditor>(item);
+            editorData.InitEditor();
             itemInfoEditorList.Add(editorData);
         }
         foldoutList = new(new bool[itemInfoEditorList.Count]);

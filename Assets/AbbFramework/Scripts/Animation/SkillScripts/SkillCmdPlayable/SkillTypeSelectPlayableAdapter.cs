@@ -30,7 +30,7 @@ public class SkillTypeSelectPlayableAdapter : SkillTypePlayableAdapter
 
         var velocity = Entity3DMgr.Instance.GetEntityVerticalVelocity(m_Graph);
 
-        var value = Mathf.RoundToInt(velocity);
+        var value = Mathf.RoundToInt(velocity * 100);
         _AtkLinkItemData = _SelectItem.CompareResult(value);
 
         var cipID = _AtkLinkItemData.GetClipID();

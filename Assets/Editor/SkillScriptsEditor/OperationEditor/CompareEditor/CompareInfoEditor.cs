@@ -79,8 +79,6 @@ public abstract class CompareInfoEditor : CompareInfo, ISkillTypeEditor, IOperat
     }
     public static SkillTypeSelectItemInfoEditor MenuOperationCompareClick(EnOperationCompareType compareType)
     {
-        Debug.LogError(compareType);
-
         var result = new SkillTypeSelectItemInfoEditor();
         var userData = new CommonSkillItemParamUserData();
         result.operationType = EnOperationType.Compare;

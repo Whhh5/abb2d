@@ -13,6 +13,8 @@ public struct PlayableGraphAnimJob : IAnimationJob
     public Quaternion lastLeftFootRot;
     public Vector3 lastRightFootPos;
     public Quaternion lastRightFootRot;
+
+    public float lastOffsetY;
     public void ProcessAnimation(AnimationStream stream)
     {
         var human = stream.AsHuman();
@@ -49,7 +51,11 @@ public struct PlayableGraphAnimJob : IAnimationJob
         var maxDis = Mathf.Max(dis1, dis2);
 
         var curBodyPos = human.bodyPosition;
-        var bodyPos = curBodyPos - Vector3.up * Mathf.Max(maxDis - human.leftFootHeight, 0);
+
+        var offsetY = Mathf.Max(maxDis - human.leftFootHeight, 0);
+        lastOffsetY = Mathf.Lerp(lastOffsetY, offsetY, 0.01f);
+
+        var bodyPos = curBodyPos - Vector3.up * lastOffsetY;
         human.bodyPosition = bodyPos;
 
         //human.

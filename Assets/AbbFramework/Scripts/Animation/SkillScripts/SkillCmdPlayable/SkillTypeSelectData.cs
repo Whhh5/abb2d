@@ -16,15 +16,15 @@ public class SkillTypeSelectData : ISkillTypeData<AttackLinkSkillDataUserData>
 {
     //public EntityPropertyInfo propertyInfo = null;
     public EnEntityProperty target = EnEntityProperty.None;
-    public SkillTypeSelectItemInfo[] itemInfo = null;
+    public SkillTypeSelectItemInfo[] arrItemInfo = null;
 
     public void OnPoolDestroy()
     {
         //ClassPoolMgr.Instance.Push(propertyInfo);
-        foreach (var item in itemInfo)
+        foreach (var item in arrItemInfo)
             ClassPoolMgr.Instance.Push(item);
 
-        itemInfo = null;
+        arrItemInfo = null;
         //propertyInfo = null;
     }
     public void OnPoolInit(AttackLinkSkillDataUserData userData)
@@ -46,27 +46,28 @@ public class SkillTypeSelectData : ISkillTypeData<AttackLinkSkillDataUserData>
         }
         {
 
-            itemInfo = new SkillTypeSelectItemInfo[clipItemCount];
+            arrItemInfo = new SkillTypeSelectItemInfo[clipItemCount];
             for (int i = 0; i < clipItemCount; i++)
             {
+                //var paramCount = arrParams[startIndex++];
                 var itemElementCount = arrParams[startIndex++];
                 var paramInfo = ClassPoolMgr.Instance.Pull<CommonSkillItemParamUserData>();
                 paramInfo.startIndex = startIndex;
                 paramInfo.arrParams = arrParams;
                 paramInfo.paramCount = itemElementCount;
                 var itemInfo = ClassPoolMgr.Instance.Pull<SkillTypeSelectItemInfo>(paramInfo);
-                ClassPoolMgr.Instance.Push(itemInfo);
+                ClassPoolMgr.Instance.Push(paramInfo);
                 startIndex += itemElementCount;
-                this.itemInfo[i] = itemInfo;
+                arrItemInfo[i] = itemInfo;
             }
         }
     }
 
     public SkillItemInfo CompareResult(int target)
     {
-        for (int i = 0; i < itemInfo.Length; i++)
+        for (int i = 0; i < arrItemInfo.Length; i++)
         {
-            var item = itemInfo[i];
+            var item = arrItemInfo[i];
             if (!item.operationInfo.CompareResult(target))
                 continue;
             return item.atkItemData;

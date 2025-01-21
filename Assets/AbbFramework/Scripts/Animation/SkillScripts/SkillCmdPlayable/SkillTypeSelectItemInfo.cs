@@ -58,6 +58,7 @@ public class SkillTypeSelectItemInfo : IClassPool<CommonSkillItemParamUserData>
         para.paramCount = operationInfoParamsCount;
         operationInfo = OperationFactory.Instance.CreateOperationData(operationType, para, childType);
         ClassPoolMgr.Instance.Push(para);
+        startIndex += operationInfoParamsCount;
 
         var atkItemParamCount = startIndex >= endIndex ? default : arrParams[startIndex++];
         atkItemData = ClassPoolMgr.Instance.Pull<SkillItemInfo>();

@@ -15,8 +15,10 @@ public class SkillTypeSelectItemInfoEditor : SkillTypeSelectItemInfo, ISkillType
     {
         var editorType = SkillFactroyEditor.GetOperationDataType(operationType, operationInfo.GetChildType());
         _OperationInfoEditor = EditorUtil.Copy<IOperationInfoEditor>(operationInfo, editorType);
+        _OperationInfoEditor.InitEditor();
 
         _AtkItemDataEditor = EditorUtil.Copy<SkillItemInfoEditor>(atkItemData);
+        _AtkItemDataEditor.InitEditor();
     }
     public void Draw()
     {
