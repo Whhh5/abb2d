@@ -6,7 +6,7 @@ public class ABBEventData : IClassPool<ABBEventDataUserData>
 {
     private int m_Count = 0;
     public int Count => m_Count;
-    private EnABBEvent m_EventType = EnABBEvent.EVENTDEFAULT;
+    private EnABBEvent m_EventType = EnABBEvent.NONE;
 
     private Dictionary<int, Dictionary<int, HashSet<IABBEventExecute>>> m_EventList = new();
 
@@ -14,6 +14,7 @@ public class ABBEventData : IClassPool<ABBEventDataUserData>
     {
         m_Count = 0;
         m_EventList.Clear();
+        m_EventType = EnABBEvent.NONE;
     }
 
     public void PoolConstructor()
@@ -40,7 +41,7 @@ public class ABBEventData : IClassPool<ABBEventDataUserData>
             sourceList = new();
             m_EventList.Add(sourceID, sourceList);
         }
-        if(!sourceList.TryGetValue(typeID, out var eventList))
+        if (!sourceList.TryGetValue(typeID, out var eventList))
         {
             eventList = new();
             sourceList.Add(typeID, eventList);
@@ -58,11 +59,11 @@ public class ABBEventData : IClassPool<ABBEventDataUserData>
     }
     public void FireEvent(int sourceID, int typeID, object userData)
     {
-        if(sourceID > 0)
+        if (sourceID > 0)
         {
             if (!m_EventList.TryGetValue(sourceID, out var sourceList))
                 return;
-            if(typeID > 0)
+            if (typeID > 0)
             {
                 if (!sourceList.TryGetValue(typeID, out var eventList))
                     return;
@@ -81,7 +82,8 @@ public class ABBEventData : IClassPool<ABBEventDataUserData>
                     }
                 }
             }
-        }else
+        }
+        else
         {
             foreach (var sourceList in m_EventList)
             {

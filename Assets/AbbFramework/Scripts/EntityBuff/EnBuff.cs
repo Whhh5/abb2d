@@ -11,11 +11,11 @@ public enum EnBuff
 {
     None,
     [EditorFieldName("禁止移动")]
-    NoMove,
+    NoMovement,
     [EditorFieldName("移动修改")]
-    MoveDown,
+    MovingChanges,
     [EditorFieldName("禁止跳跃")]
-    NoJump,
+    NoJumping,
     [EditorFieldName("禁止旋转")]
     NoRotation,
     [EditorFieldName("忽略质量")]

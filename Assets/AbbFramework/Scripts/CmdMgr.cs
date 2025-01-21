@@ -18,7 +18,7 @@ public class CmdMgr : Singleton<CmdMgr>
 {
 
 
-    public CmdPlayableAdapter GetPlayable(PlayableGraphAdapter graph, EnEntityCmd cmd)
+    public SkillTypePlayableAdapter GetPlayable(PlayableGraphAdapter graph, EnEntityCmd cmd)
     {
         var cmdCfg = GameSchedule.Instance.GetCmdCfg0((int)cmd);
         switch (cmdCfg.nType)
@@ -32,18 +32,18 @@ public class CmdMgr : Singleton<CmdMgr>
         return null;
     }
 
-    public CmdPlayableAdapter GetSkillPlayable(int skillID, PlayableGraphAdapter graph)
+    public SkillTypePlayableAdapter GetSkillPlayable(int skillID, PlayableGraphAdapter graph)
     {
         var skillCfg = GameSchedule.Instance.GetSkillCfg0(skillID);
-        var customData = ClassPoolMgr.Instance.Pull<AttackCmdPlayableAdapterData>();
+        var customData = ClassPoolMgr.Instance.Pull<SkillTypeLinkPlayableAdapterCustomData>();
         customData.arrParams = skillCfg.arrParams;
-        CmdPlayableAdapter result = (EnSkillBoxType)skillCfg.nType switch
+        SkillTypePlayableAdapter result = (EnSkillBoxType)skillCfg.nType switch
         {
-            EnSkillBoxType.Link => graph.Create<AttackCmdPlayableAdapter>(customData),
-            EnSkillBoxType.Random => graph.Create<IdleCmdPlayableAdapter>(customData),
-            EnSkillBoxType.Singleton => graph.Create<RunCmdPlayableAdapter>(customData),
-            EnSkillBoxType.Loop => graph.Create<Skill2CmdPlayableAdapter>(customData),
-            EnSkillBoxType.Select => graph.Create<JumpDownCmdPlayableAdapter>(customData),
+            EnSkillBoxType.Link => graph.Create<SkillTypeLinkPlayableAdapter>(customData),
+            EnSkillBoxType.Random => graph.Create<SkillTypeRandomPlayableAdapter>(customData),
+            EnSkillBoxType.Singleton => graph.Create<SkillTypeSingletonPlayableAdapter>(customData),
+            EnSkillBoxType.Loop => graph.Create<SkillTypeLoopPlayableAdapter>(customData),
+            EnSkillBoxType.Select => graph.Create<SkillTypeSelectPlayableAdapter>(customData),
             _ => null
         };
         ClassPoolMgr.Instance.Push(customData);

@@ -8,11 +8,11 @@ public class BuffMgr : Singleton<BuffMgr>
     {
         switch (buff)
         {
-            case EnBuff.NoJump:
+            case EnBuff.NoJumping:
                 return EnBuffType.Persistence;
-            case EnBuff.NoMove:
+            case EnBuff.NoMovement:
                 return EnBuffType.Persistence;
-            case EnBuff.MoveDown:
+            case EnBuff.MovingChanges:
                 return EnBuffType.Persistence;
             case EnBuff.NoRotation:
                 return EnBuffType.Persistence;
@@ -30,13 +30,13 @@ public class BuffMgr : Singleton<BuffMgr>
 
         switch (buff)
         {
-            case EnBuff.NoMove:
+            case EnBuff.NoMovement:
                 buffData = ClassPoolMgr.Instance.Pull<EntityNoMoveBuffData>(data);
                 break;
-            case EnBuff.NoJump:
+            case EnBuff.NoJumping:
                 buffData = ClassPoolMgr.Instance.Pull<EntityNoJumpBuffData>(data);
                 break;
-            case EnBuff.MoveDown:
+            case EnBuff.MovingChanges:
                 buffData = ClassPoolMgr.Instance.Pull<EntityMoveDownBuffData>(data);
                 break;
             case EnBuff.NoRotation:
@@ -59,7 +59,7 @@ public class BuffMgr : Singleton<BuffMgr>
     {
         switch (buff)
         {
-            case EnBuff.MoveDown:
+            case EnBuff.MovingChanges:
                 {
                     var data = ClassPoolMgr.Instance.Pull<EntityMoveDownBuffParamsUserData>();
                     data.value = arrParams[0] / 100f;

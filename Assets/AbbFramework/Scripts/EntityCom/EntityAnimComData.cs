@@ -42,7 +42,7 @@ public class EntityAnimComData : IEntity3DComData<Entity3DComDataUserData>, IUpd
     private Dictionary<PlayableAdapter, LayerMixerConnectInfo> m_Adapter2ConnectInfo = new();
     private List<PlayableAdapter> m_NoLoopPlayableList = new();
     private HashSet<EnEntityCmd> m_CreateAddList = new();
-    private Dictionary<EnEntityCmd, CmdPlayableAdapter> m_CmdAdapterDic = new();
+    private Dictionary<EnEntityCmd, SkillTypePlayableAdapter> m_CmdAdapterDic = new();
     private Dictionary<EnEntityCmdLevel, List<EnEntityCmd>> m_Level2Cmd = new();
 
     #region life
@@ -97,7 +97,7 @@ public class EntityAnimComData : IEntity3DComData<Entity3DComDataUserData>, IUpd
     #endregion
 
 
-    private CmdPlayableAdapter GetCmdPlayableAdapter(EnEntityCmd cmd)
+    private SkillTypePlayableAdapter GetCmdPlayableAdapter(EnEntityCmd cmd)
     {
         var cmdAdapter = CmdMgr.Instance.GetPlayable(m_PlayableGraph, cmd);
         cmdAdapter.SetEntityCmd(cmd);
@@ -152,7 +152,7 @@ public class EntityAnimComData : IEntity3DComData<Entity3DComDataUserData>, IUpd
         }
         return true;
     }
-    private void AddCmdData(CmdPlayableAdapter cmdAdapter)
+    private void AddCmdData(SkillTypePlayableAdapter cmdAdapter)
     {
         var cmd = cmdAdapter.GetEntityCmd();
         m_CmdAdapterDic.Add(cmd, cmdAdapter);
@@ -167,7 +167,7 @@ public class EntityAnimComData : IEntity3DComData<Entity3DComDataUserData>, IUpd
     }
     #endregion
 
-    public int ConnectLayerInput(EnEntityCmd cmd, CmdPlayableAdapter cmdAdapter, EnAnimLayer layer)
+    public int ConnectLayerInput(EnEntityCmd cmd, SkillTypePlayableAdapter cmdAdapter, EnAnimLayer layer)
     {
         if (!m_PlayableGraph.TryGetLayerMixerInfo(layer, out var layerInfo))
         {

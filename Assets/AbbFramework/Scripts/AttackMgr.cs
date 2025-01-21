@@ -40,7 +40,7 @@ public class AttackMgr : Singleton<AttackMgr>
         var count = data[startIndex++];
         ISkillScheduleAction  item = scheduleType switch
         {
-            EnAtkLinkScheculeType.Physics => ClassPoolMgr.Instance.Pull<AttackLinkPhysicsItem>(),
+            EnAtkLinkScheculeType.Physics => ClassPoolMgr.Instance.Pull<SkillItemPhysicsData>(),
             EnAtkLinkScheculeType.Effect => ClassPoolMgr.Instance.Pull<SkillEffectScheduleAction>(),
             EnAtkLinkScheculeType.Buff => ClassPoolMgr.Instance.Pull<SkillBuffScheduleAction>(),
             EnAtkLinkScheculeType.Behaviour => ClassPoolMgr.Instance.Pull<SkillBehaviourScheduleAction>(),

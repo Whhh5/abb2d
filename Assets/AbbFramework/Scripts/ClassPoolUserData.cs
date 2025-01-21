@@ -38,11 +38,11 @@ public class EntityBuffDataUserData : IClassPoolUserData
 public class LayerMixerInfoUserData : IClassPoolUserData
 {
     public EnAnimLayer layer;
-    public ScriptPlayable<AdapterPlayable> layerAdapter;
+    public ScriptPlayable<BridgePlayableAdapter> layerAdapter;
     public void OnPoolDestroy()
     {
         layer = EnAnimLayer.None;
-        layerAdapter = ScriptPlayable<AdapterPlayable>.Null;
+        layerAdapter = ScriptPlayable<BridgePlayableAdapter>.Null;
     }
 }
 public class PlayableAdapterUserData : IClassPoolUserData
