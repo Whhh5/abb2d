@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class OperationFactory : Singleton<OperationFactory>
 {
-    public IOperationInfo CreateOperationData(EnOperationType oprationType, IClassPoolUserData userData, params int[] childType)
+    public IOperationInfo CreateOperationData(EnOperationType oprationType, CommonSkillItemParamUserData userData, params int[] childType)
     {
         return oprationType switch
         {
@@ -13,13 +13,13 @@ public class OperationFactory : Singleton<OperationFactory>
         };
     }
 
-    private ICompareInfo CreateOperationComperaData(EnOperationCompareType comperaType, IClassPoolUserData userData)
+    public ICompareInfo CreateOperationComperaData(EnOperationCompareType comperaType, CommonSkillItemParamUserData userData)
     {
         return comperaType switch
         {
-            EnOperationCompareType.Less => ClassPoolMgr.Instance.Pull<CompareLessInfo>(),
-            EnOperationCompareType.Equal => ClassPoolMgr.Instance.Pull<CompareEqualInfo>(),
-            EnOperationCompareType.Greater => ClassPoolMgr.Instance.Pull<CompareGreaterInfo>(),
+            EnOperationCompareType.Less => ClassPoolMgr.Instance.Pull<CompareLessInfo>(userData),
+            EnOperationCompareType.Equal => ClassPoolMgr.Instance.Pull<CompareEqualInfo>(userData),
+            EnOperationCompareType.Greater => ClassPoolMgr.Instance.Pull<CompareGreaterInfo>(userData),
             _ => null,
         };
     }

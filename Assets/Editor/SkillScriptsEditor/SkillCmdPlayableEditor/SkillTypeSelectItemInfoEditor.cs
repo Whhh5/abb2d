@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class SkillTypeSelectItemInfoEditor : SkillTypeSelectItemInfo, ISkillTypeEditor
 {
-    private IOperationInfoEditor _OperationInfoEditor = null;
+    public IOperationInfoEditor _OperationInfoEditor = null;
     public SkillItemInfoEditor _AtkItemDataEditor = null;
 
 
@@ -16,7 +16,7 @@ public class SkillTypeSelectItemInfoEditor : SkillTypeSelectItemInfo, ISkillType
         var editorType = SkillFactroyEditor.GetOperationDataType(operationType, operationInfo.GetChildType());
         _OperationInfoEditor = EditorUtil.Copy<IOperationInfoEditor>(operationInfo, editorType);
 
-        _AtkItemDataEditor = EditorUtil.Copy<SkillItemInfoEditor>(_AtkItemDataEditor);
+        _AtkItemDataEditor = EditorUtil.Copy<SkillItemInfoEditor>(atkItemData);
     }
     public void Draw()
     {
@@ -34,6 +34,7 @@ public class SkillTypeSelectItemInfoEditor : SkillTypeSelectItemInfo, ISkillType
             {
                 _AtkItemDataEditor.Draw();
             }
+            EditorGUILayout.EndFadeGroup();
         }
         EditorGUILayout.EndVertical();
     }

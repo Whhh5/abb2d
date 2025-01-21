@@ -104,13 +104,18 @@ public class SkillTypeSelectDataEditor : SkillTypeSelectData, ISkillTypeEditor
                         continue;
                     }
 
-                    foldoutList[i] = EditorGUILayout.BeginFoldoutHeaderGroup(foldoutList[i], $"{i}");
+                    EditorGUILayout.BeginVertical();
                     {
-                        var editorData = itemInfoEditorList[i];
-                        editorData.Draw();
+                        if(foldoutList[i] = EditorGUILayout.BeginFoldoutHeaderGroup(foldoutList[i], $""))
+                        {
+                            var editorData = itemInfoEditorList[i];
+                            editorData.Draw();
+                        }
+                        EditorGUILayout.EndFoldoutHeaderGroup();
                     }
-                    EditorGUILayout.EndFoldoutHeaderGroup();
+                    EditorGUILayout.EndVertical();
                 }
+                EditorGUILayout.EndHorizontal();
             }
         }
         EditorGUILayout.EndVertical();

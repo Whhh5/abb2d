@@ -6,20 +6,27 @@ using UnityEngine;
 
 
 
-public class CompareLessInfoEditor : CompareLessInfo
+public class CompareLessInfoEditor : CompareInfoEditor
+{
+    public override EnOperationCompareType GetCompareType() => EnOperationCompareType.Less;
+}
+public class CompareEqualInfoEditor : CompareInfoEditor
+{
+    public override EnOperationCompareType GetCompareType() => EnOperationCompareType.Equal;
+}
+public class CompareGreaterInfoEditor : CompareInfoEditor
 {
 
+    public override EnOperationCompareType GetCompareType() => EnOperationCompareType.Greater;
 }
-public class CompareEqualInfoEditor : CompareEqualInfo
+public abstract class CompareInfoEditor : CompareInfo, ISkillTypeEditor, IOperationInfoEditor
 {
+    public override bool CompareResult(int target)
+    {
+        return true;
+    }
 
-}
-public class CompareGreaterInfoEditor : CompareGreaterInfo
-{
 
-}
-public abstract class CompareInfoEditor : CompareInfo, ISkillTypeEditor
-{
     private float _Value = -1;
     public void InitEditor()
     {
@@ -73,6 +80,15 @@ public abstract class CompareInfoEditor : CompareInfo, ISkillTypeEditor
     public static SkillTypeSelectItemInfoEditor MenuOperationCompareClick(EnOperationCompareType compareType)
     {
         Debug.LogError(compareType);
-        return null;
+
+        var result = new SkillTypeSelectItemInfoEditor();
+        var userData = new CommonSkillItemParamUserData();
+        result.operationType = EnOperationType.Compare;
+        result.operationInfo = OperationFactory.Instance.CreateOperationComperaData(compareType, userData);
+
+        result.atkItemData = new SkillItemInfoEditor();
+
+        result.InitEditor();
+        return result;
     }
 }
