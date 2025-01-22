@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-public class AttackLinkEffectItemEditor : SkillEffectScheduleAction, ISkillScheduleActionEditor
+public class SkillEffectScheduleActionEditor : SkillEffectScheduleAction, ISkillScheduleActionEditor
 {
     private List<int> m_TempParams = new(new int[2]);
     public void InitEditor()

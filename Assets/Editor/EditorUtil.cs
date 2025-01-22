@@ -111,15 +111,25 @@ public static class EditorUtil
         }
         EditorGUILayout.EndHorizontal();
     }
-}
 
-//// 创建一个自定义的属性绘制器
-//[CustomPropertyDrawer(typeof(EnBuffType))]
-//public class GameStateDrawer : PropertyDrawer
-//{
-//    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
-//    {
-//        // 绘制枚举选择框
-//        EditorGUI.PropertyField(position, property, label);
-//    }
-//}
+    public static void DrawEnum(ref Enum defValue)
+    {
+        var type = defValue.GetType();
+        var values = Enum.GetValues(type);
+        var menu = new GenericMenu();
+        var selectValue = defValue;
+        for (int i = 0; i < values.Length; i++)
+        {
+            var value = values.GetValue(i);
+            var eObj = (Enum)value;
+            var name = GetEnumName(eObj);
+            menu.AddItem(new(name), object.Equals(eObj, defValue), () =>
+            {
+                selectValue = eObj;
+            });
+        }
+        menu.ShowAsContext();
+        defValue = selectValue;
+        return;
+    }
+}

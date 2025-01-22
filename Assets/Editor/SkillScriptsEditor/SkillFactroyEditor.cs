@@ -18,6 +18,17 @@ public  static class SkillFactroyEditor
             _ => null,
         };
     }
+    public static Type GetScheduleEditorType(EnAtkLinkScheculeType scheduleType)
+    {
+        return scheduleType switch
+        {
+            EnAtkLinkScheculeType.Buff => typeof(SkillBuffScheduleActionEditor),
+            EnAtkLinkScheculeType.Effect => typeof(SkillEffectScheduleActionEditor),
+            EnAtkLinkScheculeType.Physics => typeof(SkillPhysicsScheduleActionEditor),
+            EnAtkLinkScheculeType.Behaviour => typeof(SkillBehaviourScheduleActionEditor),
+            _ => null
+        };
+    }
 
     public static Type GetOperationDataType(EnOperationType oprationType, params int[] childType)
     {
@@ -51,5 +62,13 @@ public  static class SkillFactroyEditor
             _ => null,
         };
         return buffData;
+    }
+    public static ISkillBehaviour GetSkillBehaviour(EnSkillBehaviourType type)
+    {
+        return type switch
+        {
+            EnSkillBehaviourType.Height => new SkillHeightBehaviourDataEditor(),
+            _ => null,
+        };
     }
 }

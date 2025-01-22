@@ -2,7 +2,7 @@
 
 
 
-public enum EnBehaviourType
+public enum EnSkillBehaviourType
 {
     None,
     [EditorFieldName("高度")]
@@ -12,14 +12,15 @@ public enum EnBehaviourType
 public class SkillBehaviourScheduleAction : ISkillScheduleAction<PoolNaNUserData>
 {
     public float schedule;
-    public EnBehaviourType behaviourType;
+    public EnSkillBehaviourType behaviourType;
     public int[] arrParams;
-
+    protected ISkillBehaviour _SkillBehaviour;
 
     private bool m_IsEffect = false;
     private EnAtkLinkScheculeType m_ScheduleType = EnAtkLinkScheculeType.None;
     public void OnPoolDestroy()
     {
+        SkillFactory.DestroySkillBehaviour(ref _SkillBehaviour);
         arrParams = null;
         m_ScheduleType = EnAtkLinkScheculeType.None;
         m_IsEffect = false;
@@ -44,11 +45,19 @@ public class SkillBehaviourScheduleAction : ISkillScheduleAction<PoolNaNUserData
         var endIndex = startIndex + arrCount;
         var gCount = startIndex >= endIndex ? default : data[startIndex++];
         schedule = gCount < 1 ? default : (data[startIndex++] / 100f);
-        behaviourType = gCount < 2 ? default : (EnBehaviourType)data[startIndex++];
+        behaviourType = gCount < 2 ? default : (EnSkillBehaviourType)data[startIndex++];
 
         var paramCount = startIndex >= endIndex ? default : data[startIndex++];
         arrParams = data.Copy(startIndex, paramCount);
         startIndex += paramCount;
+
+
+        var userData = ClassPoolMgr.Instance.Pull<CommonSkillItemParamUserData>();
+        userData.startIndex = startIndex;
+        userData.arrParams = data;
+        userData.paramCount = paramCount;
+        // _SkillBehaviour = SkillFactory.CreateSkillBehaviour(behaviourType, userData);
+        ClassPoolMgr.Instance.Push(userData);
     }
     public void Enter(int entityID)
     {

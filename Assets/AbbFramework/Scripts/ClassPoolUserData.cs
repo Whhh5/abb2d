@@ -78,7 +78,7 @@ public class GODataUserData : IClassPoolUserData
         target = EnLoadTarget.None;
     }
 }
-public class AttackLinkSkillDataUserData: AttackLinkUserData
+public class AttackLinkSkillDataUserData : AttackLinkUserData
 {
     public int[] arrParams;
 
@@ -108,14 +108,23 @@ public abstract class EntityDataUserData : IClassPoolUserData
 
     }
 }
-public abstract class PlayableBehaviourAdapterUserData: IClassPoolUserData
+public abstract class PlayableBehaviourAdapterUserData : IClassPoolUserData
 {
     public virtual void OnPoolDestroy()
     {
 
     }
 }
-public abstract class CmdPlayableAdapterUserData: PlayableAdapterUserData
+public abstract class CmdPlayableAdapterUserData : PlayableAdapterUserData
 {
 
+}
+
+public class SkillBehaviourUserData : IClassPoolUserData
+{
+    public int[] arrValue;
+    public void OnPoolDestroy()
+    {
+        arrValue = null;
+    }
 }

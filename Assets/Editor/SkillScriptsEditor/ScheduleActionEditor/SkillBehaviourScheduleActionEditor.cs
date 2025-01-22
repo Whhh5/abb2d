@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-public class AttackLinkBehaviourItemEditor : SkillBehaviourScheduleAction, ISkillScheduleActionEditor
+public class SkillBehaviourScheduleActionEditor : SkillBehaviourScheduleAction, ISkillScheduleActionEditor
 {
     private List<int> m_ParamsList = new();
 
@@ -16,7 +16,7 @@ public class AttackLinkBehaviourItemEditor : SkillBehaviourScheduleAction, ISkil
     {
         EditorGUILayout.BeginVertical();
         {
-            behaviourType = (EnBehaviourType)EditorGUILayout.EnumPopup(behaviourType, GUILayout.Width(100));
+            behaviourType = (EnSkillBehaviourType)EditorGUILayout.EnumPopup(behaviourType, GUILayout.Width(100));
             schedule = EditorGUILayout.Slider(schedule, 0, 1, GUILayout.Width(200));
             m_ParamsList[0] = Mathf.RoundToInt(EditorGUILayout.FloatField(m_ParamsList[0] / 100f, GUILayout.Width(100)) * 100);
         }

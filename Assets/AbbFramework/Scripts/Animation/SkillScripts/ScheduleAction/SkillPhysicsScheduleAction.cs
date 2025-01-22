@@ -10,7 +10,7 @@ public class PhysicsOverlapCallbackCustomData : IPhysicsColliderCallbackCustomDa
     public int atkValue;
     public int entityID;
 }
-public class SkillItemPhysicsData : IPhysicsParams, ISkillScheduleAction<PoolNaNUserData>
+public class SkillPhysicsScheduleAction : IPhysicsParams, ISkillScheduleAction<PoolNaNUserData>
 {
 
     public float atkSchedule;

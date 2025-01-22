@@ -21,7 +21,7 @@ public class AttackMgr : Singleton<AttackMgr>
         Entity3DMgr.Instance.AddEntityCmd(entityID2, EnEntityCmd.Injured);
 
         var entityPos = Entity3DMgr.Instance.GetEntityWorldPos(entityID2);
-        var atkPos = entityPos + new Vector3(Random.Range(-0.2f,0.2f), Random.Range(1.8f, 2.2f), Random.Range(-0.2f, 0.2f));
+        var atkPos = entityPos + new Vector3(Random.Range(-0.2f, 0.2f), Random.Range(1.8f, 2.2f), Random.Range(-0.2f, 0.2f));
         ShowView(atkPos, value);
     }
 
@@ -35,12 +35,12 @@ public class AttackMgr : Singleton<AttackMgr>
     }
 
 
-    public static ISkillScheduleAction  GetAtkLinkScheduleItem(EnAtkLinkScheculeType scheduleType, int[] data, ref int startIndex)
+    public static ISkillScheduleAction GetAtkLinkScheduleItem(EnAtkLinkScheculeType scheduleType, int[] data, ref int startIndex)
     {
         var count = data[startIndex++];
-        ISkillScheduleAction  item = scheduleType switch
+        ISkillScheduleAction item = scheduleType switch
         {
-            EnAtkLinkScheculeType.Physics => ClassPoolMgr.Instance.Pull<SkillItemPhysicsData>(),
+            EnAtkLinkScheculeType.Physics => ClassPoolMgr.Instance.Pull<SkillPhysicsScheduleAction>(),
             EnAtkLinkScheculeType.Effect => ClassPoolMgr.Instance.Pull<SkillEffectScheduleAction>(),
             EnAtkLinkScheculeType.Buff => ClassPoolMgr.Instance.Pull<SkillBuffScheduleAction>(),
             EnAtkLinkScheculeType.Behaviour => ClassPoolMgr.Instance.Pull<SkillBehaviourScheduleAction>(),

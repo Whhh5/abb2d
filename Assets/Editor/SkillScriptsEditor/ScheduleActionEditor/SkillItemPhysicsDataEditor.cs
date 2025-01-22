@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-public class SkillItemPhysicsDataEditor : SkillItemPhysicsData, ISkillScheduleActionEditor
+public class SkillPhysicsScheduleActionEditor : SkillPhysicsScheduleAction, ISkillScheduleActionEditor
 {
     private ISkillTypeEditor m_PhysicsResolveSphereEditor = null;
     public void InitEditor()

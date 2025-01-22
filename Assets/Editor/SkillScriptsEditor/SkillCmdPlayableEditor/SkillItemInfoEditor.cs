@@ -15,7 +15,7 @@ public class SkillItemInfoEditor : SkillItemInfo, ISkillTypeEditor
         {
             var data = m_ArrAtkLinkSchedule[i];
             var scheduleType = data.GetScheduleType();
-            var editorType = GetScheduleEditorType(scheduleType);
+            var editorType = SkillFactroyEditor.GetScheduleEditorType(scheduleType);
             var item = EditorUtil.Copy<ISkillScheduleActionEditor>(data, editorType);
             item.InitEditor();
             m_AtkLinkScheduleList.Add(item);
@@ -28,17 +28,6 @@ public class SkillItemInfoEditor : SkillItemInfo, ISkillTypeEditor
             buffEditorData.InitEditor();
             m_BuffDataList.Add(buffEditorData);
         }
-    }
-    public Type GetScheduleEditorType(EnAtkLinkScheculeType scheduleType)
-    {
-        return scheduleType switch
-        {
-            EnAtkLinkScheculeType.Buff => typeof(AttackLinkBuffItemEditor),
-            EnAtkLinkScheculeType.Effect => typeof(AttackLinkEffectItemEditor),
-            EnAtkLinkScheculeType.Physics => typeof(SkillItemPhysicsDataEditor),
-            EnAtkLinkScheculeType.Behaviour => typeof(AttackLinkBehaviourItemEditor),
-            _ => null
-        };
     }
     private void AddAtkLinkScheduleList(ISkillScheduleActionEditor item)
     {
@@ -167,7 +156,7 @@ public class SkillItemInfoEditor : SkillItemInfo, ISkillTypeEditor
                     var scheduleType = i;
                     var key = EditorUtil.GetEnumName(scheduleType);
                     menu.AddItem(new() { text = key }, false, () => {
-                        var type = GetScheduleEditorType(scheduleType);
+                        var type = SkillFactroyEditor.GetScheduleEditorType(scheduleType);
                         var insType = Activator.CreateInstance(type);
                         var value = insType as ISkillScheduleActionEditor;
                         value.SetScheduleType(scheduleType);
