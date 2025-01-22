@@ -13,7 +13,7 @@ public class SkillBehaviourScheduleAction : ISkillScheduleAction<PoolNaNUserData
 {
     public float schedule;
     public EnSkillBehaviourType behaviourType;
-    public int[] arrParams;
+    //public int[] arrParams;
     protected ISkillBehaviour _SkillBehaviour;
 
     private bool m_IsEffect = false;
@@ -21,7 +21,7 @@ public class SkillBehaviourScheduleAction : ISkillScheduleAction<PoolNaNUserData
     public void OnPoolDestroy()
     {
         SkillFactory.DestroySkillBehaviour(ref _SkillBehaviour);
-        arrParams = null;
+        //arrParams = null;
         m_ScheduleType = EnAtkLinkScheculeType.None;
         m_IsEffect = false;
     }
@@ -48,22 +48,23 @@ public class SkillBehaviourScheduleAction : ISkillScheduleAction<PoolNaNUserData
         behaviourType = gCount < 2 ? default : (EnSkillBehaviourType)data[startIndex++];
 
         var paramCount = startIndex >= endIndex ? default : data[startIndex++];
-        arrParams = data.Copy(startIndex, paramCount);
-        startIndex += paramCount;
-
+        //arrParams = data.Copy(startIndex, paramCount);
 
         var userData = ClassPoolMgr.Instance.Pull<CommonSkillItemParamUserData>();
         userData.startIndex = startIndex;
         userData.arrParams = data;
         userData.paramCount = paramCount;
-        // _SkillBehaviour = SkillFactory.CreateSkillBehaviour(behaviourType, userData);
+        _SkillBehaviour = SkillFactory.CreateSkillBehaviour(behaviourType, userData);
         ClassPoolMgr.Instance.Push(userData);
+        startIndex += paramCount;
     }
     public void Enter(int entityID)
     {
-        var height = arrParams[0] / 100f;
-        //var time = arrPArams[1] / 100f;
-        Entity3DMgr.Instance.SetEntityHeight(entityID, height, 1);
+        //var height = arrParams[0] / 100f;
+        ////var time = arrPArams[1] / 100f;
+        //Entity3DMgr.Instance.SetEntityHeight(entityID, height, 1);
+
+        _SkillBehaviour.Execute(entityID);
     }
 
     public void Exit()

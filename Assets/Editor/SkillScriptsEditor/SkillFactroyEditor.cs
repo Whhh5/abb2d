@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public  static class SkillFactroyEditor
+public static class SkillFactroyEditor
 {
 
     public static ISkillTypeEditor GetSkillTypeEditor(EnSkillBoxType type)
@@ -63,11 +63,11 @@ public  static class SkillFactroyEditor
         };
         return buffData;
     }
-    public static ISkillBehaviour GetSkillBehaviour(EnSkillBehaviourType type)
+    public static Type GetSkillBehaviourEditor(EnSkillBehaviourType type)
     {
         return type switch
         {
-            EnSkillBehaviourType.Height => new SkillHeightBehaviourDataEditor(),
+            EnSkillBehaviourType.Height => typeof(SkillHeightBehaviourDataEditor),
             _ => null,
         };
     }

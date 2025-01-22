@@ -5,12 +5,13 @@ using UnityEngine;
 
 public class SkillBehaviourScheduleActionEditor : SkillBehaviourScheduleAction, ISkillScheduleActionEditor
 {
-    private List<int> m_ParamsList = new();
-
+    private ISkillBehaviourEditor _SkillBehaviourEditor = null;
 
     public void InitEditor()
     {
-        m_ParamsList.AddRange(arrParams ?? new int[1]);
+        var type = SkillFactroyEditor.GetSkillBehaviourEditor(behaviourType);
+        _SkillBehaviourEditor = EditorUtil.Copy<ISkillBehaviourEditor>(_SkillBehaviour, type);
+        _SkillBehaviourEditor.InitEditor();
     }
     public void Draw()
     {
@@ -18,7 +19,7 @@ public class SkillBehaviourScheduleActionEditor : SkillBehaviourScheduleAction, 
         {
             behaviourType = (EnSkillBehaviourType)EditorGUILayout.EnumPopup(behaviourType, GUILayout.Width(100));
             schedule = EditorGUILayout.Slider(schedule, 0, 1, GUILayout.Width(200));
-            m_ParamsList[0] = Mathf.RoundToInt(EditorGUILayout.FloatField(m_ParamsList[0] / 100f, GUILayout.Width(100)) * 100);
+            _SkillBehaviourEditor.Draw();
         }
         EditorGUILayout.EndVertical();
     }
@@ -31,7 +32,8 @@ public class SkillBehaviourScheduleActionEditor : SkillBehaviourScheduleAction, 
 
         data.Insert(index, data.Count - index);
 
-        data.Add(m_ParamsList.Count);
-        data.AddRange(m_ParamsList);
+        index = data.Count;
+        _SkillBehaviourEditor.GetStringData(ref data);
+        data.Insert(index, data.Count - index);
     }
 }
