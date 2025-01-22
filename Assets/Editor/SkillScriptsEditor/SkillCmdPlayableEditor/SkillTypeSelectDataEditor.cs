@@ -74,6 +74,7 @@ public class SkillTypeSelectDataEditor : SkillTypeSelectData, ISkillTypeEditor
 
                     for (var i = EnOperationType.None + 1; i < EnOperationType.EnumCount; i++)
                     {
+                        var operationType = i;
                         var name = EditorUtil.GetEnumName(i);
 
                         var menuList = GetOperationMenu(i, name);

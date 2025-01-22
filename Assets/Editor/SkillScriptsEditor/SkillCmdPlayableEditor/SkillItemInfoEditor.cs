@@ -101,27 +101,17 @@ public class SkillItemInfoEditor : SkillItemInfo, ISkillTypeEditor
             EditorGUILayout.LabelField("buff", GUILayout.Width(50));
             if (GUILayout.Button("➕", GUILayout.Width(50)))
             {
-                var rect = new Rect()
-                {
-                    center = new Vector2(50, 100),
-                    width = 200,
-                };
-                List<GUIContent> contents = new();
-                Dictionary<int, EnBuff> index2Buff = new();
+                var menu = new GenericMenu();
                 for (var i = EnBuff.None + 1; i < EnBuff.EnumCount; i++)
                 {
-                    index2Buff.Add(contents.Count, i);
-                    var name = EditorUtil.GetEnumName(i);
-                    contents.Add(new() { text = name });
+                    var buff = i;
+                    var key = EditorUtil.GetEnumName(buff);
+                    menu.AddItem(new() { text = key }, false, () => {
+                        var type = SkillFactroyEditor.GetBuffDataEditor(buff);
+                        m_BuffDataList.Add(type);
+                    });
                 }
-
-                EditorUtility.DisplayCustomMenu(rect, contents.ToArray(), 0, (object userData, string[] options, int selected) =>
-                {
-                    var buff = index2Buff[selected];
-                    var type = SkillFactroyEditor.GetBuffDataEditor(buff);
-                    m_BuffDataList.Add(type);
-
-                }, null);
+                menu.ShowAsContext();
             }
         }
         EditorGUILayout.EndHorizontal();
@@ -170,32 +160,22 @@ public class SkillItemInfoEditor : SkillItemInfo, ISkillTypeEditor
             GUILayout.Label("进度事件检测", GUILayout.Width(100));
             if (GUILayout.Button("添加", GUILayout.Width(100)))
             {
-                var rect = new Rect()
-                {
-                    center = new Vector2(50, 100),
-                    width = 200,
-                };
-                List<GUIContent> contents = new();
-                var index2ScheduleType = new Dictionary<int, EnAtkLinkScheculeType>();
+                var menu = new GenericMenu();
 
                 for (var i = EnAtkLinkScheculeType.None + 1; i < EnAtkLinkScheculeType.EnumCount; i++)
                 {
-                    index2ScheduleType.Add(contents.Count, i);
-                    var name = EditorUtil.GetEnumName(i);
-                    contents.Add(new() { text = name });
+                    var scheduleType = i;
+                    var key = EditorUtil.GetEnumName(scheduleType);
+                    menu.AddItem(new() { text = key }, false, () => {
+                        var type = GetScheduleEditorType(scheduleType);
+                        var insType = Activator.CreateInstance(type);
+                        var value = insType as ISkillScheduleActionEditor;
+                        value.SetScheduleType(scheduleType);
+                        value.InitEditor();
+                        AddAtkLinkScheduleList(value);
+                    });
                 }
-
-                EditorUtility.DisplayCustomMenu(rect, contents.ToArray(), 0, (object userData, string[] options, int selected) =>
-                {
-                    var scheduleType = index2ScheduleType[selected];
-                    var type = GetScheduleEditorType(scheduleType);
-                    var insType = Activator.CreateInstance(type);
-                    var value = insType as ISkillScheduleActionEditor;
-                    value.SetScheduleType(scheduleType);
-                    value.InitEditor();
-                    AddAtkLinkScheduleList(value);
-
-                }, null);
+                menu.ShowAsContext();
 
             }
         }

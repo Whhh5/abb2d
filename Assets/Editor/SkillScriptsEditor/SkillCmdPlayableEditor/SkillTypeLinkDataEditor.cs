@@ -70,27 +70,17 @@ public class SkillTypeLinkDataEditor : SkillTypeLinkData, ISkillTypeEditor
             EditorGUILayout.LabelField("buff", GUILayout.Width(50));
             if (GUILayout.Button("➕", GUILayout.Width(50)))
             {
-                var rect = new Rect()
-                {
-                    center = new Vector2(50, 0),
-                    width = 200,
-                };
-                List<GUIContent> contents = new();
-                Dictionary<int, EnBuff> index2Buff = new();
+                var menu = new GenericMenu();
                 for (var i = EnBuff.None + 1; i < EnBuff.EnumCount; i++)
                 {
-                    index2Buff.Add(contents.Count, i);
-                    var name = EditorUtil.GetEnumName(i);
-                    contents.Add(new() { text = name });
+                    var buff = i;
+                    var key = EditorUtil.GetEnumName(buff);
+                    menu.AddItem(new() { text = key }, false, () => {
+                        var type = SkillFactroyEditor.GetBuffDataEditor(buff);
+                        m_ArrBuff.Add(type);
+                    });
                 }
-
-                EditorUtility.DisplayCustomMenu(rect, contents.ToArray(), 0, (object userData, string[] options, int selected) =>
-                {
-                    var buff = index2Buff[selected];
-                    var type = SkillFactroyEditor.GetBuffDataEditor(buff);
-                    m_ArrBuff.Add(type);
-
-                }, null);
+                menu.ShowAsContext();
             }
         }
         EditorGUILayout.EndHorizontal();

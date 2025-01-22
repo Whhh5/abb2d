@@ -216,26 +216,17 @@ public class SkillWindowEditor : EditorWindow
                 {
                     if (GUILayout.Button("新建"))
                     {
-
-                        var rect = new Rect()
-                        {
-                            center = Vector2.zero,
-                            width = 200,
-                        };
                         var contents = new List<GUIContent>();
                         var map = new Dictionary<string, EnSkillBoxType>();
+                        var menu = new GenericMenu();
                         for (var i = EnSkillBoxType.None + 1; i < EnSkillBoxType.EnumCount; i++)
                         {
-                            var key = i.ToString();
-                            contents.Add(new() { text = key });
-                            map.Add(key, i);
+                            var boxType = i;
+                            var key = EditorUtil.GetEnumName(boxType);
+                            menu.AddItem(new() { text = key }, false, () => { AddSkillItem(boxType); });
                         }
-                        EditorUtility.DisplayCustomMenu(rect, contents.ToArray(), 0, (object userData, string[] options, int selected) =>
-                        {
-                            var value = map[options[selected]];
-                            AddSkillItem(value);
 
-                        }, null);
+                        menu.ShowAsContext();
                     }
                 }
                 EditorGUILayout.EndHorizontal();
