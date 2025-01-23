@@ -108,7 +108,7 @@ public class SkillWindowEditor : EditorWindow
         linkData.InitEditor();
         m_DicSkilDrawData.Add(key, linkData);
     }
-    private void AddSkillItem(EnSkillBoxType skillType)
+    private int AddSkillItem(EnSkillBoxType skillType)
     {
         var skillCfg = new SkillCfgEditor();
         skillCfg.nType = (int)skillType;
@@ -120,6 +120,7 @@ public class SkillWindowEditor : EditorWindow
             break;
         }
         AddSkillItem(skillCfg);
+        return skillCfg.nSkillID;
     }
     private void ReloadData()
     {
@@ -193,8 +194,9 @@ public class SkillWindowEditor : EditorWindow
     {
         EditorGUILayout.BeginHorizontal();
         {
+            var style = GuiStyleUtil.CreateLayoutBoxBackgroud(new Color32(255 / 8, 255 / 8, 255 / 8, 255 / 8));
 
-            EditorGUILayout.BeginVertical();
+            EditorGUILayout.BeginVertical(style, GUILayout.Width(220));
             {
 
                 EditorGUILayout.BeginHorizontal(GUILayout.Width(200));
@@ -223,7 +225,13 @@ public class SkillWindowEditor : EditorWindow
                         {
                             var boxType = i;
                             var key = EditorUtil.GetEnumName(boxType);
-                            menu.AddItem(new() { text = key }, false, () => { AddSkillItem(boxType); });
+                            menu.AddItem(new() { text = key }, false, () =>
+                            {
+                                var skillID = AddSkillItem(boxType);
+
+                                m_CurSelectID = skillID;
+                                m_OpenList.Add(skillID);
+                            });
                         }
 
                         menu.ShowAsContext();
@@ -286,12 +294,22 @@ public class SkillWindowEditor : EditorWindow
                             var skillCfg = m_ID2SkillEditor[skillID];
                             var itemInfo = m_DicItemInfo[skillID];
 
-                            if (GUILayout.Button(skillCfg.strName, GUILayout.Width(100), GUILayout.Height(skillID == m_CurSelectID ? 40 : 20)))
+                            var content = new GUIContent()
                             {
-                                m_CurSelectID = skillID;
-                                m_ScrollPos3 = Vector3.zero;
+                                text = skillCfg.strName
+                            };
+                            var btnStyle = GuiStyleUtil.CreateButtonBackground();
+                            if (m_CurSelectID == skillID)
+                            {
+                                btnStyle.normal = btnStyle.active;
+                                content.image = btnStyle.active.background;
                             }
-                            if (GUILayout.Button("❌", GUILayout.Width(20)))
+                            //if (GUILayout.Button(content, btnStyle, GUILayout.Width(100), GUILayout.Height(30)))
+                            //{
+                            //    m_CurSelectID = skillID;
+                            //    m_ScrollPos3 = Vector3.zero;
+                            //}
+                            if (GuiStyleUtil.DrawButton(content, null, () =>
                             {
                                 if (skillID == m_CurSelectID)
                                 {
@@ -299,6 +317,10 @@ public class SkillWindowEditor : EditorWindow
                                 }
                                 m_OpenList.RemoveAt(i);
                                 i--;
+                            }))
+                            {
+                                m_CurSelectID = skillID;
+                                m_ScrollPos3 = Vector3.zero;
                             }
                         }
                     }

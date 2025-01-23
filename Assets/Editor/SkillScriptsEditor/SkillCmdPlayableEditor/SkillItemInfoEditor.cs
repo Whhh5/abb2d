@@ -38,8 +38,22 @@ public class SkillItemInfoEditor : SkillItemInfo, ISkillTypeEditor
         EditorGUILayout.BeginVertical();
         {
             _ClipID = EditorGUILayout.IntField("剪辑类型", _ClipID, GUILayout.Width(300));
-            canNextTime = EditorGUILayout.Slider("可以进行下一个动作的时间", canNextTime, 0, 1, GUILayout.Width(300));
-            atkEndTime = EditorGUILayout.Slider("攻击结束时间", atkEndTime, 0, 1, GUILayout.Width(300));
+
+            EditorGUILayout.BeginHorizontal();
+            {
+                EditorGUILayout.LabelField("可以进行下一个动作的时间", GUILayout.Width(150));
+                var rect = GUILayoutUtility.GetRect(150, 15, GUI.skin.box); // 设置进度条高度
+                canNextTime = GuiStyleUtil.DrawSlider(canNextTime, rect);
+            }
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginHorizontal();
+            {
+                EditorGUILayout.LabelField("攻击结束时间", GUILayout.Width(150));
+                var rect = GUILayoutUtility.GetRect(150, 15, GUI.skin.box); // 设置进度条高度
+                atkEndTime = GuiStyleUtil.DrawSlider(atkEndTime, rect);
+            }
+            EditorGUILayout.EndHorizontal();
 
             DrawBuff();
 
@@ -95,7 +109,8 @@ public class SkillItemInfoEditor : SkillItemInfo, ISkillTypeEditor
                 {
                     var buff = i;
                     var key = EditorUtil.GetEnumName(buff);
-                    menu.AddItem(new() { text = key }, false, () => {
+                    menu.AddItem(new() { text = key }, false, () =>
+                    {
                         var type = SkillFactroyEditor.GetBuffDataEditor(buff);
                         m_BuffDataList.Add(type);
                     });
@@ -116,7 +131,7 @@ public class SkillItemInfoEditor : SkillItemInfo, ISkillTypeEditor
                     EditorGUILayout.BeginHorizontal();
                     {
                         EditorGUILayout.LabelField(name, GUILayout.Width(50));
-                        if (GUILayout.Button("❌", GUILayout.Width(50)))
+                        if (GuiStyleUtil.DrawCloseButton())
                         {
                             m_BuffDataList.RemoveAt(i);
                         }
@@ -155,7 +170,8 @@ public class SkillItemInfoEditor : SkillItemInfo, ISkillTypeEditor
                 {
                     var scheduleType = i;
                     var key = EditorUtil.GetEnumName(scheduleType);
-                    menu.AddItem(new() { text = key }, false, () => {
+                    menu.AddItem(new() { text = key }, false, () =>
+                    {
                         var type = SkillFactroyEditor.GetScheduleEditorType(scheduleType);
                         var insType = Activator.CreateInstance(type);
                         var value = insType as ISkillScheduleActionEditor;

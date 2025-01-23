@@ -95,7 +95,7 @@ public static class CustomUnityToolbar
             }
             var pro2 = new ProcessStartInfo()
             {
-                FileName = $"/Users/qiuxiaohui/Projects/ExcelTools/ExcelTools/bin/Debug/net6.0/ExcelTools",
+                FileName = $"/Users/wangjiahao/Documents/MyProject/Exceltools/ExcelTools/bin/Debug/net6.0/ExcelTools",
                 RedirectStandardOutput = true, // 重定向标准输出
                 UseShellExecute = false, // 不使用系统外壳程序启动
                 CreateNoWindow = true, // 不创建新窗口
