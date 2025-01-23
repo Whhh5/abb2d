@@ -17,8 +17,8 @@ public class SkillBehaviourScheduleActionEditor : SkillBehaviourScheduleAction, 
     {
         EditorGUILayout.BeginVertical();
         {
-            behaviourType = (EnSkillBehaviourType)EditorGUILayout.EnumPopup(behaviourType, GUILayout.Width(100));
             schedule = EditorGUILayout.Slider(schedule, 0, 1, GUILayout.Width(200));
+            behaviourType = (EnSkillBehaviourType)EditorGUILayout.EnumPopup(behaviourType, GUILayout.Width(100));
             _SkillBehaviourEditor.Draw();
         }
         EditorGUILayout.EndVertical();

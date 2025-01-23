@@ -68,7 +68,7 @@ public class SkillTypeLinkDataEditor : SkillTypeLinkData, ISkillTypeEditor
         EditorGUILayout.BeginHorizontal();
         {
             EditorGUILayout.LabelField("buff", GUILayout.Width(50));
-            if (GUILayout.Button("➕", GUILayout.Width(50)))
+            if (GuiStyleUtil.DrawAddButton())
             {
                 var menu = new GenericMenu();
                 for (var i = EnBuff.None + 1; i < EnBuff.EnumCount; i++)
@@ -96,7 +96,7 @@ public class SkillTypeLinkDataEditor : SkillTypeLinkData, ISkillTypeEditor
                     EditorGUILayout.BeginHorizontal();
                     {
                         EditorGUILayout.LabelField(name, GUILayout.Width(50));
-                        if (GUILayout.Button("❌", GUILayout.Width(50)))
+                        if (GuiStyleUtil.DrawCloseButton())
                         {
                             m_ArrBuff.RemoveAt(i);
                         }
@@ -128,7 +128,7 @@ public class SkillTypeLinkDataEditor : SkillTypeLinkData, ISkillTypeEditor
                     m_CurSelectIndex = i;
                 }
             }
-            if (GUILayout.Button("➕", GUILayout.Width(30)))
+            if (GuiStyleUtil.DrawAddButton())
             {
                 var item = new SkillItemInfoEditor();
                 item.InitEditor();
@@ -140,7 +140,7 @@ public class SkillTypeLinkDataEditor : SkillTypeLinkData, ISkillTypeEditor
         if (m_CurSelectIndex < m_ArrAttackDataEditor.Count)
         {
             var data = m_ArrAttackDataEditor[m_CurSelectIndex];
-            if (GUILayout.Button("❌", GUILayout.Width(100)))
+            if (GuiStyleUtil.DrawCloseButton())
             {
                 m_ArrAttackDataEditor.RemoveAt(m_CurSelectIndex);
             }

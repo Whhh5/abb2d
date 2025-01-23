@@ -9,6 +9,8 @@ public class SkillItemInfoEditor : SkillItemInfo, ISkillTypeEditor
 {
     private List<ISkillScheduleActionEditor> m_AtkLinkScheduleList = new();
     private List<IBuffDaraEditor> m_BuffDataList = new();
+
+    private Dictionary<EnAtkLinkScheculeType, bool> _ScheduleFoldout = new();
     public void InitEditor()
     {
         for (int i = 0; i < m_ArrAtkLinkSchedule?.Length; i++)
@@ -37,11 +39,26 @@ public class SkillItemInfoEditor : SkillItemInfo, ISkillTypeEditor
     {
         EditorGUILayout.BeginVertical();
         {
-            _ClipID = EditorGUILayout.IntField("剪辑类型", _ClipID, GUILayout.Width(300));
+            EditorGUILayout.BeginHorizontal();
+            {
+                var txtContent = new GUIContent()
+                {
+                    text = "clip ID",
+                    tooltip = "ClipCfg -> id",
+                };
+                EditorGUILayout.LabelField(txtContent, GUILayout.Width(50));
+                _ClipID = EditorGUILayout.IntField(_ClipID, GUILayout.Width(50));
+            }
+            EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.BeginHorizontal();
             {
-                EditorGUILayout.LabelField("可以进行下一个动作的时间", GUILayout.Width(150));
+                var txtContent = new GUIContent()
+                {
+                    text = "next",
+                    tooltip = "可以进行下一个动作的时间",
+                };
+                EditorGUILayout.LabelField(txtContent, GUILayout.Width(50));
                 var rect = GUILayoutUtility.GetRect(150, 15, GUI.skin.box); // 设置进度条高度
                 canNextTime = GuiStyleUtil.DrawSlider(canNextTime, rect);
             }
@@ -49,7 +66,12 @@ public class SkillItemInfoEditor : SkillItemInfo, ISkillTypeEditor
 
             EditorGUILayout.BeginHorizontal();
             {
-                EditorGUILayout.LabelField("攻击结束时间", GUILayout.Width(150));
+                var txtContent = new GUIContent()
+                {
+                    text = "Atk End",
+                    tooltip = "攻击结束时间",
+                };
+                EditorGUILayout.LabelField(txtContent, GUILayout.Width(50));
                 var rect = GUILayoutUtility.GetRect(150, 15, GUI.skin.box); // 设置进度条高度
                 atkEndTime = GuiStyleUtil.DrawSlider(atkEndTime, rect);
             }
@@ -102,7 +124,7 @@ public class SkillItemInfoEditor : SkillItemInfo, ISkillTypeEditor
         EditorGUILayout.BeginHorizontal();
         {
             EditorGUILayout.LabelField("buff", GUILayout.Width(50));
-            if (GUILayout.Button("➕", GUILayout.Width(50)))
+            if (GuiStyleUtil.DrawAddButton())
             {
                 var menu = new GenericMenu();
                 for (var i = EnBuff.None + 1; i < EnBuff.EnumCount; i++)
@@ -202,42 +224,49 @@ public class SkillItemInfoEditor : SkillItemInfo, ISkillTypeEditor
 
         foreach (var item in dic)
         {
-            EditorGUILayout.BeginVertical();
+            var keyType = item.Key.GetType();
+            var fieldInfo = keyType.GetField(item.Key.ToString());
+            var enumName = fieldInfo.GetCustomAttribute<EditorFieldNameAttribute>();
+
+            if (!_ScheduleFoldout.ContainsKey(item.Key))
+                _ScheduleFoldout.Add(item.Key, true);
+
+            var boxStyle = GuiStyleUtil.CreateLayoutBoxBackgroud(new Color32(255, 255, 255, 50));
+            EditorGUILayout.BeginVertical(boxStyle);
             {
-                var keyType = item.Key.GetType();
-                var fieldInfo = keyType.GetField(item.Key.ToString());
-                var enumName = fieldInfo.GetCustomAttribute<EditorFieldNameAttribute>();
-                EditorGUILayout.BeginHorizontal(GUILayout.Height(20));
+                if (_ScheduleFoldout[item.Key] = EditorGUILayout.Foldout(_ScheduleFoldout[item.Key], enumName?.fieldName))
                 {
-                    //EditorGUILayout.Space(100);
-                    GUILayout.Button("", GUILayout.Width(200), GUILayout.Height(3));
-                    EditorGUILayout.LabelField(enumName?.fieldName ?? $"{item.Key}", GUILayout.Width(100));
-                    GUILayout.Button("", GUILayout.ExpandWidth(true), GUILayout.Height(3));
-                }
-                EditorGUILayout.EndHorizontal();
-                EditorGUILayout.BeginHorizontal();
-                {
-                    for (int i = 0; i < item.Value.Count; i++)
+                    EditorGUILayout.BeginHorizontal();
                     {
-                        var value = item.Value[i];
-                        EditorGUILayout.BeginVertical();
+                        boxStyle = GuiStyleUtil.CreateLayoutBoxBackgroud(new Color32(255, 0, 0, 255));
+                        for (int i = 0; i < item.Value.Count; i++)
                         {
-                            if (GUILayout.Button("❌", GUILayout.Width(50)))
+                            var value = item.Value[i];
+                            var rect = EditorGUILayout.BeginVertical(boxStyle, GUILayout.Width(320), GUILayout.ExpandWidth(false));
                             {
-                                m_AtkLinkScheduleList.Remove(value);
+                                var closeRect = new Rect(rect)
+                                {
+                                    x = rect.x + rect.width - 30,
+                                    y = rect.y - 30 / 1.5f,
+                                    width = 30,
+                                    height = 30,
+                                };
+                                if (GuiStyleUtil.DrawCloseButton(closeRect))
+                                {
+                                    m_AtkLinkScheduleList.Remove(value);
+                                }
+                                else
+                                {
+                                    value.Draw();
+                                }
                             }
-                            else
-                            {
-                                value.Draw();
-                            }
+                            EditorGUILayout.EndVertical();
                         }
-                        EditorGUILayout.EndVertical();
                     }
+                    EditorGUILayout.EndHorizontal();
                 }
-                EditorGUILayout.EndHorizontal();
             }
             EditorGUILayout.EndVertical();
-            GUILayout.Space(20);
         }
     }
 }

@@ -27,8 +27,18 @@ public static class GuiStyleUtil
         customBoxStyle.fontSize = 14;
         customBoxStyle.margin = new RectOffset(5, 10, 5, 10);
         customBoxStyle.padding = new RectOffset(10, 10, 10, 10);
-        customBoxStyle.normal.background = MakeTex(600, 1, new Color(col.r / 255f, col.g / 255f, col.b / 255f, col.a / 255f));
+        customBoxStyle.normal.background = MakeTex(1, 1, new Color(col.r / 255f, col.g / 255f, col.b / 255f, col.a / 255f));
         return customBoxStyle;
+    }
+    public static bool DrawCloseButton(Rect rect)
+    {
+        var myTexture = EditorLoad.LoadTexture2D(EnEditorRes.btn_close);
+        // 使用 Content 创建纹理按钮
+        GUIContent content = new GUIContent(myTexture);
+        // 绘制按钮
+        var result = GUI.Button(rect, content);
+
+        return result;
     }
     public static bool DrawCloseButton()
     {
@@ -39,17 +49,24 @@ public static class GuiStyleUtil
         buttonStyle.alignment = TextAnchor.MiddleCenter;
 
         // 使用 Content 创建纹理按钮
-        GUIContent content = new GUIContent(myTexture, "Click Me");
-
-        // 获取按钮的矩形区域
-        //Rect buttonRect = GUILayoutUtility.GetRect(30, 30, GUI.skin.button); // 固定宽高的按钮
-
+        GUIContent content = new GUIContent(myTexture);
         // 绘制按钮
         var result = GUILayout.Button(content, buttonStyle, GUILayout.Width(30), GUILayout.Height(30));
 
-        //// 绘制图像的原始大小
-        //Rect textureRect = new Rect(buttonRect.x, buttonRect.y, buttonRect.width, buttonRect.height);
-        //GUI.DrawTexture(textureRect, myTexture, ScaleMode.ScaleToFit, true);
+        return result;
+    }
+    public static bool DrawAddButton()
+    {
+        var myTexture = EditorLoad.LoadTexture2D(EnEditorRes.btn_add);
+
+        // 创建自定义按钮样式
+        GUIStyle buttonStyle = new GUIStyle(GUI.skin.button);
+        buttonStyle.alignment = TextAnchor.MiddleCenter;
+
+        // 使用 Content 创建纹理按钮
+        GUIContent content = new GUIContent(myTexture);
+        // 绘制按钮
+        var result = GUILayout.Button(content, buttonStyle, GUILayout.Width(30), GUILayout.Height(30));
 
         return result;
     }
@@ -143,9 +160,14 @@ public static class GuiStyleUtil
 
             alignment = TextAnchor.MiddleCenter,
         };
+
+        var areaRect = new Rect(rect)
+        {
+            width = rect.width + 0.5f,
+        };
         value = EditorGUI.IntField(txtRect, Mathf.RoundToInt(value * 100), txtStyle) / 100f;
 
-        if (rect.Contains(mousePos))
+        if (areaRect.Contains(mousePos))
         {
             switch (curE.type)
             {
@@ -180,7 +202,8 @@ public enum EnEditorRes
     btn_blue,
     btn_red,
     btn_orange,
-    btn_close
+    btn_close,
+    btn_add,
 }
 public static class EditorLoad
 {
@@ -190,6 +213,7 @@ public static class EditorLoad
         { EnEditorRes.btn_close, "Assets/Editor/ImageEditor/btn_close.png" },
         { EnEditorRes.btn_red, "Assets/Editor/ImageEditor/btn_red.png" },
         { EnEditorRes.btn_orange, "Assets/Editor/ImageEditor/btn_orange.png" },
+        { EnEditorRes.btn_add, "Assets/Editor/ImageEditor/btn_add.png" },
     };
     public static Texture2D LoadTexture2D(EnEditorRes res)
     {
