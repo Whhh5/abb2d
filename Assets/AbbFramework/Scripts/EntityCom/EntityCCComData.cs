@@ -3,6 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
+public interface IEntity3DCCCom : IEntity3DCom
+{
+    public CharacterController GetCC();
+    public bool IsGrounded();
+}
+
+
 public class EntityCCComData : IEntity3DComData<Entity3DComDataUserData>, IUpdate
 {
     private Entity3DData m_Entity3DData = null;
@@ -217,9 +224,4 @@ public class EntityCCComData : IEntity3DComData<Entity3DComDataUserData>, IUpdat
     {
         return m_IsCanRotation ? m_RotationSpeed : 0;
     }
-}
-public interface IEntity3DCCCom : IEntity3DCom
-{
-    public CharacterController GetCC();
-    public bool IsGrounded();
 }

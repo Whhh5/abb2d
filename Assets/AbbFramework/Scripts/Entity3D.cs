@@ -184,7 +184,7 @@ public abstract class Entity3D<T> : Entity3D
         m_Entity3DData = m_EntityData as T;
     }
 }
-public abstract class Entity3D : Entity
+public abstract class Entity3D : Entity, IEntityAICom
 {
     public static implicit operator int(Entity3D entity3D)
     {
