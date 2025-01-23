@@ -31,11 +31,11 @@ public class EntityBuffComData : IEntity3DComData<Entity3DComDataUserData>, IUpd
     {
     }
 
-    public void OnCreateGO(Entity3D entity)
+    public void OnCreateGO(int entityID)
     {
     }
 
-    public void OnDestroyGO()
+    public void OnDestroyGO(int entityID)
     {
     }
 

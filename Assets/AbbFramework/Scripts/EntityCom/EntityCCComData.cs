@@ -53,7 +53,7 @@ public class EntityCCComData : IEntity3DComData<Entity3DComDataUserData>, IUpdat
     {
         m_Entity3DData = null;
     }
-    public void OnDestroyGO()
+    public void OnDestroyGO(int entityID)
     {
         UpdateMgr.Instance.Unregistener(this);
         m_CC = null;
@@ -67,8 +67,10 @@ public class EntityCCComData : IEntity3DComData<Entity3DComDataUserData>, IUpdat
 
     }
 
-    public void OnCreateGO(Entity3D entity)
+    public void OnCreateGO(int entityID)
     {
+        var entityData = Entity3DMgr.Instance.GetEntity3DData(entityID);
+        var entity = entityData.GetEntity<Entity3D>();
         m_RigidCom = entity as IEntity3DCCCom;
         m_CC = m_RigidCom.GetCC();
         m_Tran = entity.transform;

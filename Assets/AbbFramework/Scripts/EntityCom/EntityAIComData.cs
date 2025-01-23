@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.EventSystems.EventTrigger;
 
 
 public class EntityAIComDataUserData : IClassPoolUserData
@@ -17,16 +18,18 @@ public interface IEntityAICom : IEntity3DCom
 public class EntityAIComData : IEntity3DComData<EntityAIComDataUserData>
 {
     private IEntityAICom _AICom = null;
-    public void OnCreateGO(Entity3D entity)
+    public void OnCreateGO(int entityID)
     {
-        _AICom = entity;
+        var entityData = Entity3DMgr.Instance.GetEntity3DData(entityID);
+        var entityMono = entityData.GetEntity<Entity3D>();
+        _AICom = entityMono;
 
-        EntityAIMgr.Instance.Register(this);
+        EntityAIMgr.Instance.Register(entityID);
     }
 
-    public void OnDestroyGO()
+    public void OnDestroyGO(int entityID)
     {
-        EntityAIMgr.Instance.Unregister(this);
+        EntityAIMgr.Instance.Unregister(entityID);
         _AICom = null;
     }
 

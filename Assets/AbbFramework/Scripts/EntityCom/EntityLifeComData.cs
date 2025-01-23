@@ -13,8 +13,9 @@ public sealed class EntityLifeComData : IEntity3DComData<PoolNaNUserData>
     {
     }
 
-    public void OnCreateGO(Entity3D entity)
+    public void OnCreateGO(int entityID)
     {
+        
     }
 
     public void PoolConstructor()
@@ -29,7 +30,7 @@ public sealed class EntityLifeComData : IEntity3DComData<PoolNaNUserData>
     {
     }
 
-    public void OnDestroyGO()
+    public void OnDestroyGO(int entityID)
     {
     }
 

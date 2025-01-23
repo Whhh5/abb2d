@@ -106,6 +106,14 @@ public abstract class EntityData : IClassPool<EntityDataUserData>
         if (m_IsLoadSuccess)
             m_Entity.SetParentTran();
     }
+    public T GetEntity<T>()
+        where T : Entity
+    {
+        if (!m_IsLoadSuccess)
+            return null;
+        var entity = m_Entity.GetEntity<T>();
+        return entity;
+    }
 }
 
 public abstract class Entity : MonoBehaviour
@@ -116,6 +124,11 @@ public abstract class Entity : MonoBehaviour
     {
         var entityData = EntityMgr.Instance.GetEntityData(entityDataID);
         m_EntityData = entityData;
+    }
+    public T GetEntity<T>()
+        where T : Entity
+    {
+        return this as T;
     }
     public virtual void LoadCompeletion()
     {

@@ -45,12 +45,12 @@ public abstract class Entity3DData : EntityData
         base.OnGOCreate();
         m_Entity3D = m_Entity as Entity3D;
         foreach (var item in m_EntityComs)
-            item.Value.OnCreateGO(m_Entity3D);
+            item.Value.OnCreateGO(m_EntityID);
     }
     public override void OnGODestroy()
     {
         foreach (var item in m_EntityComs)
-            item.Value.OnDestroyGO();
+            item.Value.OnDestroyGO(m_EntityID);
         m_EntityComs.Clear();
         foreach (var item in m_MonitorDic)
             item.Value.StopMonitor();
@@ -80,7 +80,7 @@ public abstract class Entity3DData : EntityData
         ClassPoolMgr.Instance.Push(data);
         m_EntityComs.Add(type, entityCom);
         if (m_IsLoadSuccess)
-            entityCom.OnCreateGO(m_Entity3D);
+            entityCom.OnCreateGO(m_EntityID);
         return true;
     }
     public bool RemoveEntityCom<T>()
@@ -91,7 +91,7 @@ public abstract class Entity3DData : EntityData
             return false;
         m_EntityComs.Remove(type);
         if (m_IsLoadSuccess)
-            entityCom.OnDestroyGO();
+            entityCom.OnDestroyGO(m_EntityID);
         entityCom.OnPoolDestroy();
         ClassPoolMgr.Instance.Push(entityCom);
         return true;

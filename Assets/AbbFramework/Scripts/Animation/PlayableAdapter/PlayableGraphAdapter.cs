@@ -258,12 +258,13 @@ public class PlayableGraphAdapter : IClassPool<PlayableGraphAdapterUserData>, IU
         m_PlayableJob.SetJobData(job);
     }
 
+    float rayLine = 0.5f;
 
     private void UpdateLeftFootIK(ref PlayableGraphAnimJob job)
     {
         var leftPos = job.lastLeftFootPos;
         var startPos = leftPos + Vector3.up * 1;
-        var dis = 1 + 0.5f;
+        var dis = 1 + rayLine;
         var count = Physics.RaycastNonAlloc(startPos, Vector3.down, m_ArrHit, dis);
         Debug.DrawLine(startPos, startPos + Vector3.down * dis, Color.red);
         if (count > 0)
@@ -275,7 +276,7 @@ public class PlayableGraphAdapter : IClassPool<PlayableGraphAdapterUserData>, IU
             //DebugDrawMgr.Instance.DrawSphere(pos, 0.1f, 0.01f);
 
             var weight2 = pos.y < leftPos.y
-                ? Mathf.Lerp(0, 1, 1 - Mathf.Pow(Mathf.Clamp01((ikDis - 0.1f) / 0.4f), 5))
+                ? Mathf.Lerp(0, 1, 1 - Mathf.Pow(Mathf.Clamp01((ikDis - 0.1f) / (rayLine - 0.1f)), 5))
                 : 1;
             job.leftFeatWorldPos = pos;
             job.leftFootIKWeight = weight2;
@@ -289,7 +290,7 @@ public class PlayableGraphAdapter : IClassPool<PlayableGraphAdapterUserData>, IU
     {
         var rightPos = job.lastRightFootPos;
         var startPos = rightPos + Vector3.up * 1;
-        var dis = 1 + 0.5f;
+        var dis = 1 + rayLine;
         var count = Physics.RaycastNonAlloc(startPos, Vector3.down, m_ArrHit, dis);
         Debug.DrawLine(startPos, startPos + Vector3.down * dis, Color.red);
         if (count > 0)
@@ -302,7 +303,7 @@ public class PlayableGraphAdapter : IClassPool<PlayableGraphAdapterUserData>, IU
             //DebugDrawMgr.Instance.DrawSphere(pos, 0.1f, 0.01f);
 
             var weight2 = pos.y < rightPos.y
-                ? Mathf.Lerp(0, 1, 1 - Mathf.Pow(Mathf.Clamp01((ikDis - 0.1f) / 0.4f), 5))
+                ? Mathf.Lerp(0, 1, 1 - Mathf.Pow(Mathf.Clamp01((ikDis - 0.1f) / (rayLine -0.1f)), 1))
                 : 1;
             job.rightFeatWorldPos = pos;
             job.rightFootIKWeight = weight2;

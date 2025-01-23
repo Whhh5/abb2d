@@ -70,7 +70,7 @@ public class EntityAnimComData : IEntity3DComData<Entity3DComDataUserData>, IUpd
     {
     }
 
-    public void OnDestroyGO()
+    public void OnDestroyGO(int entityID)
     {
         UpdateMgr.Instance.Unregistener(this);
         m_CreateAddList.Clear();
@@ -84,8 +84,10 @@ public class EntityAnimComData : IEntity3DComData<Entity3DComDataUserData>, IUpd
         m_Adapter2ConnectInfo.Clear();
         m_NoLoopPlayableList.Clear();
     }
-    public void OnCreateGO(Entity3D entity3D)
+    public void OnCreateGO(int entityID)
     {
+        var entity3DData = Entity3DMgr.Instance.GetEntity3DData(entityID);
+        var entity3D = entity3DData.GetEntity<Entity3D>();
         var animCom = entity3D.GetAnimator();
         m_PlayableGraph = PlayableGraphAdapter.Create(m_EntityID, animCom);
         foreach (var item in m_CreateAddList)
