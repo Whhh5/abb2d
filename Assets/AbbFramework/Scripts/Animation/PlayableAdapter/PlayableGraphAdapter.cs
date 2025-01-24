@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.Playables;
@@ -280,6 +281,12 @@ public class PlayableGraphAdapter : IClassPool<PlayableGraphAdapterUserData>, IU
                 : 1;
             job.leftFeatWorldPos = pos;
             job.leftFootIKWeight = weight2;
+
+
+            var leftForward = job.lastLeftFootRot * Vector3.forward;
+            var forward = Vector3.ProjectOnPlane(leftForward, hit.normal);
+            var dir = Quaternion.LookRotation(forward, hit.normal);
+            job.leftFootQuaternion = dir;
         }
         else
         {
@@ -307,6 +314,11 @@ public class PlayableGraphAdapter : IClassPool<PlayableGraphAdapterUserData>, IU
                 : 1;
             job.rightFeatWorldPos = pos;
             job.rightFootIKWeight = weight2;
+
+            var rightForward = job.lastRightFootRot * Vector3.forward;
+            var forward = Vector3.ProjectOnPlane(rightForward, hit.normal);
+            var dir = Quaternion.LookRotation(forward, hit.normal);
+            job.rightFootQuaternion = dir;
         }
         else
         {

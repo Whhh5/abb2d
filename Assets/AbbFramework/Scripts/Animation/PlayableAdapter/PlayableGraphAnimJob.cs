@@ -6,12 +6,15 @@ public struct PlayableGraphAnimJob : IAnimationJob
     public bool applyRootMotion;
     public float leftFootIKWeight;
     public float rightFootIKWeight;
+
     public Vector3 leftFeatWorldPos;
-    public Vector3 rightFeatWorldPos;
     public Quaternion leftFootQuaternion;
     public Vector3 lastLeftFootPos;
     public Quaternion lastLeftFootRot;
+
+    public Vector3 rightFeatWorldPos;
     public Vector3 lastRightFootPos;
+    public Quaternion rightFootQuaternion;
     public Quaternion lastRightFootRot;
 
     public float lastOffsetY;
@@ -26,17 +29,19 @@ public struct PlayableGraphAnimJob : IAnimationJob
         {
             leftFeatWorldPos += (lastLeftFootPos - leftFeatWorldPos).normalized * human.leftFootHeight;
             human.SetGoalPosition(AvatarIKGoal.LeftFoot, leftFeatWorldPos);
-            //human.SetGoalRotation(AvatarIKGoal.LeftFoot, leftFootQuaternion);
+            human.SetGoalRotation(AvatarIKGoal.LeftFoot, leftFootQuaternion);
 
             human.SetGoalWeightPosition(AvatarIKGoal.LeftFoot, leftFootIKWeight);
-            //human.SetGoalWeightRotation(AvatarIKGoal.LeftFoot, footIKWeight);
+            human.SetGoalWeightRotation(AvatarIKGoal.LeftFoot, leftFootIKWeight);
         }
 
         if (rightFootIKWeight != 0)
         {
             rightFeatWorldPos += (lastRightFootPos - rightFeatWorldPos).normalized * human.rightFootHeight;
             human.SetGoalPosition(AvatarIKGoal.RightFoot, rightFeatWorldPos);
+            human.SetGoalRotation(AvatarIKGoal.RightFoot, rightFootQuaternion);
             human.SetGoalWeightPosition(AvatarIKGoal.RightFoot, rightFootIKWeight);
+            human.SetGoalWeightRotation(AvatarIKGoal.RightFoot, rightFootIKWeight);
         }
 
 
