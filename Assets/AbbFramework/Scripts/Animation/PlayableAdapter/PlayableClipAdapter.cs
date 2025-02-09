@@ -35,6 +35,8 @@ public class PlayableClipAdapter : PlayableAdapter
         var clip = AnimMgr.Instance.GetClip(m_ClipID);
         m_ClipLength = clip.length;
         m_ClipPlayable = AnimationClipPlayable.Create(m_Graph.GetGraph(), clip);
+        m_ClipPlayable.SetApplyFootIK(false);
+        m_ClipPlayable.SetApplyPlayableIK(false);
         AddConnectRootAdapter(m_ClipPlayable, GlobalConfig.Int0, GlobalConfig.Float1);
     }
     public override float GetPlayTime()

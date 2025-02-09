@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 using Unity.VisualScripting;
 using UnityEditor.PackageManager;
 using UnityEngine;
@@ -23,6 +24,7 @@ public class PlayableGraphAdapter : IClassPool<PlayableGraphAdapterUserData>, IU
         var data = ClassPoolMgr.Instance.Pull<PlayableGraphAdapterUserData>();
         data.entityID = entityID;
         data.anim = animator;
+        animator.applyRootMotion = false;
         var playable = ClassPoolMgr.Instance.Pull<PlayableGraphAdapter>(data);
         ClassPoolMgr.Instance.Push(data);
         return playable;
@@ -56,6 +58,8 @@ public class PlayableGraphAdapter : IClassPool<PlayableGraphAdapterUserData>, IU
         m_Graph.SetTimeUpdateMode(DirectorUpdateMode.Manual);
         var output = AnimationPlayableOutput.Create(m_Graph, $"{userData.anim.name}-output", userData.anim);
         var jobData = new PlayableGraphAnimJob();
+        jobData.leftFootIKInfo.lowerLegHandle = userData.anim.BindStreamTransform(userData.anim.GetBoneTransform(HumanBodyBones.LeftLowerLeg));
+        jobData.rightFootIKInfo.lowerLegHandle = userData.anim.BindStreamTransform(userData.anim.GetBoneTransform(HumanBodyBones.RightLowerLeg));
         m_PlayableJob = AnimationScriptPlayable.Create<PlayableGraphAnimJob>(m_Graph, jobData);
         m_LayerMixerPlayable = AnimationLayerMixerPlayable.Create(m_Graph, (int)EnAnimLayer.EnumCount);
         m_PlayableJob.AddInput(m_LayerMixerPlayable, 0, 1);
@@ -259,79 +263,49 @@ public class PlayableGraphAdapter : IClassPool<PlayableGraphAdapterUserData>, IU
         m_PlayableJob.SetJobData(job);
     }
 
-    float rayLine = 0.5f;
+    float rayLine = 1f;
 
-    private void UpdateLeftFootIK(ref PlayableGraphAnimJob job)
+    private void UpdateLeftFootIK(ref FootIKInfo info)
     {
-        var leftPos = job.lastLeftFootPos;
-        var startPos = leftPos + Vector3.up * 1;
-        var dis = 1 + rayLine;
-        var count = Physics.RaycastNonAlloc(startPos, Vector3.down, m_ArrHit, dis);
-        Debug.DrawLine(startPos, startPos + Vector3.down * dis, Color.red);
-        if (count > 0)
+        var legDir = info.direction.normalized;
+        var leftPos = info.lastWorldPos;
+        var startPos = leftPos + -legDir * 1;
+        var dis = 10 + rayLine;
+        Debug.DrawLine(startPos, startPos + legDir * dis, Color.red);
+        //var count = Physics.RaycastNonAlloc(startPos, legDir, m_ArrHit, dis, (int)Mathf.Pow(2, (int)EnGameLayer.Terrain));
+        //if (count > 0)
+        //{
+        //    var hit = m_ArrHit[0];
+        if (Physics.Raycast(startPos, legDir, out var hit, dis, (int)Mathf.Pow(2, (int)EnGameLayer.Terrain)))
         {
-            var hit = m_ArrHit[0];
-            var pos = hit.point;
+            var pos = hit.point + hit.normal * 0.128f;
             var ikDis = Vector3.Distance(pos, leftPos);
 
-            //DebugDrawMgr.Instance.DrawSphere(pos, 0.1f, 0.01f);
+            DebugDrawMgr.Instance.DrawSphere(pos, 0.1f, 0.01f);
 
             var weight2 = pos.y < leftPos.y
-                ? Mathf.Lerp(0, 1, 1 - Mathf.Pow(Mathf.Clamp01((ikDis - 0.1f) / (rayLine - 0.1f)), 5))
+                ? Mathf.Lerp(0, 1, 1 - Mathf.Pow(Mathf.Clamp01(ikDis / rayLine), 1))
                 : 1;
-            job.leftFeatWorldPos = pos;
-            job.leftFootIKWeight = weight2;
+            info.worldPos = pos;
+            info.weight = weight2;
 
 
-            var leftForward = job.lastLeftFootRot * Vector3.forward;
+            var leftForward = info.lastQuaternion * Vector3.forward;
             var forward = Vector3.ProjectOnPlane(leftForward, hit.normal);
             var dir = Quaternion.LookRotation(forward, hit.normal);
-            job.leftFootQuaternion = dir;
+            info.quaternion = dir;
         }
         else
         {
-            job.leftFootIKWeight = 0;
+            info.weight = 0;
         }
-    }
-    private void UpdateRightFootIK(ref PlayableGraphAnimJob job)
-    {
-        var rightPos = job.lastRightFootPos;
-        var startPos = rightPos + Vector3.up * 1;
-        var dis = 1 + rayLine;
-        var count = Physics.RaycastNonAlloc(startPos, Vector3.down, m_ArrHit, dis);
-        Debug.DrawLine(startPos, startPos + Vector3.down * dis, Color.red);
-        if (count > 0)
-        {
-            var hit = m_ArrHit[0];
-            var pos = hit.point;
-            var ikDis = Vector3.Distance(pos, rightPos);
-
-            //Debug.DrawRay(pos, dir, Color.gray, 1);
-            //DebugDrawMgr.Instance.DrawSphere(pos, 0.1f, 0.01f);
-
-            var weight2 = pos.y < rightPos.y
-                ? Mathf.Lerp(0, 1, 1 - Mathf.Pow(Mathf.Clamp01((ikDis - 0.1f) / (rayLine -0.1f)), 1))
-                : 1;
-            job.rightFeatWorldPos = pos;
-            job.rightFootIKWeight = weight2;
-
-            var rightForward = job.lastRightFootRot * Vector3.forward;
-            var forward = Vector3.ProjectOnPlane(rightForward, hit.normal);
-            var dir = Quaternion.LookRotation(forward, hit.normal);
-            job.rightFootQuaternion = dir;
-        }
-        else
-        {
-            job.rightFootIKWeight = 0;
-        }
-
     }
     private void UpdateFootIK()
     {
         var job = m_PlayableJob.GetJobData<PlayableGraphAnimJob>();
 
-        UpdateLeftFootIK(ref job);
-        UpdateRightFootIK(ref job);
+        UpdateLeftFootIK(ref job.leftFootIKInfo);
+        UpdateLeftFootIK(ref job.rightFootIKInfo);
 
         m_PlayableJob.SetJobData(job);
     }

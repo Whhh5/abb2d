@@ -207,6 +207,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BodyObj: {fileID: 8215499710017636730}
+  m_Anim: {fileID: 3491591399519965664}
+  m_LeftFootIKRay: {fileID: 0}
   m_CCCom: {fileID: 369213293427551135}
 --- !u!1 &7965180349835809832
 GameObject:

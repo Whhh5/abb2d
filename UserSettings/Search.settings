@@ -11,6 +11,7 @@ showStatusBar = false
 scopes = {
 	"OpenInspectorPreview.66F56946" = "0"
 	"currentGroup.66F56946" = "asset"
+	"last_search.66F56946" = "time "
 }
 providers = {
 	find = {
@@ -56,6 +57,21 @@ providers = {
 	profilermarkers = {
 		active = false
 		priority = 100
+		defaultAction = null
+	}
+	presets_provider = {
+		active = false
+		priority = -10
+		defaultAction = null
+	}
+	journal = {
+		active = true
+		priority = 2500
+		defaultAction = null
+	}
+	archetype = {
+		active = true
+		priority = 2500
 		defaultAction = null
 	}
 }

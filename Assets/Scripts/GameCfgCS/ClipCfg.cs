@@ -12,4 +12,6 @@ public class ClipCfg : ICfg
 	[Newtonsoft.Json.JsonProperty()] public readonly System.Int32 nLayer;
 	// 资源ID
 	[Newtonsoft.Json.JsonProperty()] public readonly System.Int32 nAssetID;
+	// 是否启用脚部IK
+	[Newtonsoft.Json.JsonProperty()] public readonly System.Int32 bIsIK;
 }
