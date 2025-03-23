@@ -18,10 +18,10 @@ public class EntityMoveDownBuffDataEditor : IBuffDaraEditor
 
     public void Draw()
     {
-        EditorGUILayout.BeginHorizontal();
+        EditorGUILayout.BeginHorizontal(GUILayout.Width(100));
         {
             EditorGUILayout.LabelField("增量值", GUILayout.Width(40));
-            value = EditorGUILayout.FloatField(value, GUILayout.Width(200));
+            value = EditorGUILayout.FloatField(value, GUILayout.Width(50));
         }
         EditorGUILayout.EndHorizontal();
     }

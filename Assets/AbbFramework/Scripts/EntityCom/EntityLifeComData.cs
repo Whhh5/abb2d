@@ -1,70 +1,58 @@
 using UnityEngine;
 
-public sealed class EntityLifeComData : IEntity3DComData<PoolNaNUserData>
+public enum EnEntityStatus
 {
-    private int m_HealthPoint = -1;
-    private int m_MaxHealthPoint = -1;
+    None,
+    Normal,
+    Die,
+}
+public sealed class EntityLifeComData : Entity3DComData
+{
+    private int _CurHealthValue = -1;
+    private int _MaxHealthValue = -1;
 
-    public void OnPoolInit(PoolNaNUserData userData)
+    private EnEntityStatus _EntityStatus = EnEntityStatus.None;
+
+    public void SetEntityStatus(EnEntityStatus status)
     {
+        _EntityStatus = status;
+    }
+    public EnEntityStatus GetEntityStatus()
+    {
+        return _EntityStatus;
     }
 
-    public void OnPoolDestroy()
+    public int GetCurHealthValue()
     {
+        return _CurHealthValue;
     }
-
-    public void OnCreateGO(int entityID)
+    public void SetCurHealthValue(int value)
     {
-        
-    }
-
-    public void PoolConstructor()
-    {
-    }
-
-    public void OnPoolEnable()
-    {
-    }
-
-    public void PoolRelease()
-    {
-    }
-
-    public void OnDestroyGO(int entityID)
-    {
-    }
-
-    public int GetHealthPoint()
-    {
-        return m_HealthPoint;
-    }
-    public void SetHealthPoint(int value)
-    {
-        m_HealthPoint = Mathf.Clamp(value, 0, m_MaxHealthPoint);
+        _CurHealthValue = Mathf.Clamp(value, 0, _MaxHealthValue);
     }
     public void AddHealthPoint(int value)
     {
-        SetHealthPoint(m_HealthPoint + value);
+        SetCurHealthValue(_CurHealthValue + value);
     }
     public void RemoveHealthPoint(int value)
     {
-        SetHealthPoint(m_HealthPoint + value);
+        SetCurHealthValue(_CurHealthValue + value);
     }
-    public void SetMaxHealthPoint(int value)
+    public void SetMaxHealthValue(int value)
     {
-        m_MaxHealthPoint = value;
+        _MaxHealthValue = value;
     }
-    public int GetMaxHealthPoint()
+    public int GetMaxHealthValue()
     {
-        return m_MaxHealthPoint;
+        return _MaxHealthValue;
     }
     public float GetHealthPointSchedule()
     {
-        var schedule = (float)m_HealthPoint / m_MaxHealthPoint;
+        var schedule = (float)_CurHealthValue / _MaxHealthValue;
         return schedule;
     }
     public bool IsDie()
     {
-        return m_HealthPoint == 0;
+        return GetEntityStatus() == EnEntityStatus.Die;
     }
 }

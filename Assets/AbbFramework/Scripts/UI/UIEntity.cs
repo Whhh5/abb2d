@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public abstract class UIEntityData : EntityData
+public abstract class UIEntityData : GameEntityData
 {
     private UIEntity m_UIEntity = null;
     private Vector2 m_AnchoredPos2D;
@@ -24,7 +24,7 @@ public abstract class UIEntityData : EntityData
     }
 }
 
-public abstract class UIEntity: Entity
+public abstract class UIEntity: GameEntity
 {
     private RectTransform m_Rect = null;
     private UIEntityData m_UIEntityData = null;

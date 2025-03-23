@@ -124,6 +124,26 @@ public class GameManager : MonoBehaviour
     }
     private void OnDestroy()
     {
+
+    }
+    private void Update()
+    {
+        if ((m_CurInitSatge & EnManagerFuncType.OnEnableAsync) == EnManagerFuncType.None)
+        {
+            return;
+        }
+        // ���� update
+        if (m_ManagerList.TryGetValue(EnManagerFuncType.Update, out var list))
+        {
+            foreach (var item in list)
+            {
+                item.Update();
+            }
+        }
+    }
+
+    private void OnApplicationQuit()
+    {
         // ֹͣ start
         Debug.Log(" --------------------- ֹͣ OnDisable -----------------------");
         m_CurInitSatge &= ~EnManagerFuncType.OnEnableAsync;
@@ -148,21 +168,6 @@ public class GameManager : MonoBehaviour
         Debug.Log(" --------------------- ֹͣ Destroy ��� -----------------------");
         //ABBGOMgr.Instance.DestroyGO(m_GameManagerGoID);
         m_GameManagerGoID = -1;
-    }
-    private void Update()
-    {
-        if ((m_CurInitSatge & EnManagerFuncType.OnEnableAsync) == EnManagerFuncType.None)
-        {
-            return;
-        }
-        // ���� update
-        if (m_ManagerList.TryGetValue(EnManagerFuncType.Update, out var list))
-        {
-            foreach (var item in list)
-            {
-                item.Update();
-            }
-        }
     }
     #endregion
 }

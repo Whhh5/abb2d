@@ -59,6 +59,6 @@ public class EntityDirectionMonitorData : IEntityMonitorEntity<PoolNaNUserData>,
         var dir = m_Entity3DData.WorldPos - m_LastPos;
         m_LastPos = m_Entity3DData.WorldPos;
 
-        m_Entity3DData.SetDirType(dir);
+        //m_Entity3DData.SetDirType(dir);
     }
 }

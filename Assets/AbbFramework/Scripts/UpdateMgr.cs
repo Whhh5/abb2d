@@ -19,7 +19,7 @@ public class UpdateMgr : Singleton<UpdateMgr>
     public override void Update()
     {
         base.Update();
-        if(m_RemoveHash.Count > 0)
+        if (m_RemoveHash.Count > 0)
         {
             foreach (var item in m_RemoveHash)
                 m_UpdateHash.Remove(item);
@@ -35,6 +35,8 @@ public class UpdateMgr : Singleton<UpdateMgr>
 
         foreach (var item in m_UpdateHash)
         {
+            if (m_RemoveHash.Contains(item))
+                continue;
             item.Update();
         }
     }

@@ -16,7 +16,7 @@ public class LayerMixerCmdPlayableAdapter : SkillTypePlayableAdapter
     }
     public override EnAnimLayer GetOutputLayer()
     {
-        return EnAnimLayer.Layer2;
+        return EnAnimLayer.Bottom;
     }
     public override float GetPlayTime()
     {

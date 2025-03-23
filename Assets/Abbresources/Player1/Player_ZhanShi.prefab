@@ -105,7 +105,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BodyObj: {fileID: 8215499710017636730}
+  m_Anim: {fileID: 0}
+  m_LeftFootIKRay: {fileID: 0}
   m_CharacterController: {fileID: 0}
+  m_IsGroundTrigger: {fileID: 0}
+  m_TopPoint: {fileID: 0}
 --- !u!50 &7774622207586670429
 Rigidbody2D:
   serializedVersion: 5

@@ -57,7 +57,7 @@ public class ABBEventData : IClassPool<ABBEventDataUserData>
         eventList.Remove(eventExecute);
         m_Count--;
     }
-    public void FireEvent(int sourceID, int typeID, object userData)
+    public void FireEvent(int sourceID, int typeID, IClassPool userData)
     {
         if (sourceID > 0)
         {

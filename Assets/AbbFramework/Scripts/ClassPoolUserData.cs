@@ -19,10 +19,10 @@ public class ABBEventDataUserData : IClassPoolUserData
 }
 public class Entity3DComDataUserData : IClassPoolUserData
 {
-    public Entity3DData entity3DData;
+    public int entityID;
     public void OnPoolDestroy()
     {
-        entity3DData = null;
+        entityID = -1;
     }
 }
 public class EntityBuffDataUserData : IClassPoolUserData
@@ -101,6 +101,10 @@ public abstract class AttackLinkUserData : IClassPoolUserData
     public abstract void OnPoolDestroy();
 }
 
+public class MonsterBaseDataUserData: EntityDataUserData
+{
+    public int monsterID;
+}
 public abstract class EntityDataUserData : IClassPoolUserData
 {
     public virtual void OnPoolDestroy()
@@ -126,5 +130,51 @@ public class SkillBehaviourUserData : IClassPoolUserData
     public void OnPoolDestroy()
     {
         arrValue = null;
+    }
+}
+public sealed class GeneralIntUserData : IClassPoolUserData
+{
+    public int intValue;
+    public void OnPoolDestroy()
+    {
+        intValue = -1;
+    }
+}
+public sealed class GeneralInt2UserData : IClassPoolUserData
+{
+    public int intValue;
+    public int intValue2;
+    public void OnPoolDestroy()
+    {
+        intValue
+            = intValue2
+            = -1;
+    }
+}
+
+public class AIModuleUserData : IClassPoolUserData
+{
+    public int entityID;
+    public int aiModuleCfgID;
+    public int moduleDataID;
+    public virtual void OnPoolDestroy()
+    {
+        aiModuleCfgID
+            = entityID
+            = moduleDataID
+            = -1;
+    }
+}
+public sealed class AIRandomMoveModuleUserData : AIModuleUserData
+{
+    public EnAIRangeType rangeType = EnAIRangeType.None;
+    public int[] typeParams = null;
+    public Vector3 centerPos;
+    public override void OnPoolDestroy()
+    {
+        base.OnPoolDestroy();
+        rangeType = EnAIRangeType.None;
+        typeParams = null;
+        centerPos = Vector3.zero;
     }
 }

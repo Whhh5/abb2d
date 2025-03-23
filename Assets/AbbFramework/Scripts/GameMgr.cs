@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class GameMgr : Singleton<GameMgr>
@@ -11,9 +12,51 @@ public class GameMgr : Singleton<GameMgr>
         return m_GameSatus == gameStatus;
     }
 
-    public void EnterLevel(int level)
+    public async void EnterLevel(int level)
     {
-        var worldPos = new Vector3(-82.4530029f, 1.64600003f, 0);
-        PlayerMgr.Instance.CreatePlayerEntity(Vector3.up * 3);
+        //var worldPos = new Vector3(-82.4530029f, 1.64600003f, 0);
+        var playerEntityID = CreatePlayerEntity(1, Vector3.up * 3);
+        Entity3DMgr.Instance.SetEntityControllerType(playerEntityID, EnEntityControllerType.Manual);
+
+        // await CreateMonsterColony();
+    }
+
+
+    public int CreatePlayerEntity(int monsterID, Vector3 startPos)
+    {
+        var playerID = Entity3DMgr.Instance.CreateMonsterEntityData<PlayerEntityData>(monsterID);
+        var playerData = Entity3DMgr.Instance.GetEntity3DData<PlayerEntityData>(playerID);
+        playerData.SetPosition(startPos);
+        playerData.AddEntityCom<EntityAnimComData>();
+        playerData.AddEntityCom<EntityCCComData>();
+        playerData.AddEntityCom<EntityBuffComData>();
+        playerData.AddMonition<EntityDirectionMonitorData>();
+        Entity3DMgr.Instance.LoadEntity(playerID);
+
+        var monsterCfg = GameSchedule.Instance.GetMonsterCfg0(monsterID);
+        if (monsterCfg.nIdleCmdID > 0)
+        {
+            var animCom = playerData.GetEntityCom<EntityAnimComData>();
+            animCom.AddCmd((EnEntityCmd)monsterCfg.nIdleCmdID);
+        }
+        return playerID;
+    }
+
+    private async UniTask CreateMonsterColony()
+    {
+        var worldPosList = new Vector3[]
+        {
+            new(-10, 0, 0),
+            new(-10, 0, 50),
+            new(30, 0, -20),
+            new(30, 0, 50),
+            new(50, 0, 20),
+        };
+        for (int i = 0; i < worldPosList.Length; i++)
+        {
+            var worldPos = worldPosList[i];
+            MonsterColonyMgr.Instance.CreateMonsterColony(1, worldPos);
+            await UniTask.Delay(5000);
+        }
     }
 }

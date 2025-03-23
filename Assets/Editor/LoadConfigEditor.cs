@@ -47,6 +47,15 @@ public class LoadConfigEditor : MonoBehaviour
                     var unityPath = ABBUtil.GetUnityPathByFullPath(fullPath);
                     var targetType = $"{item.Value}{name}";
                     var index = targetList.Count;
+
+                    if (index == 408)
+                    {
+
+                    }
+                    if (name.Contains("texture_0"))
+                    {
+
+                    }
                     targetList.Add(targetType);
 
                     itemList.Add(new()
@@ -64,15 +73,11 @@ public class LoadConfigEditor : MonoBehaviour
 
     private static void WriteEnLoadTargetFile(List<AssetCfgEditor> data)
     {
-        var catalogObj = GameSchedule.ReadCfg("CfgCatalog", typeof(ExportExcelInfo));
-        var catalogList = catalogObj as ExportExcelInfo[];
-        var assetCatalog = Array.Find<ExportExcelInfo>(catalogList, (item) => item.excelInfo.excelName == "AssetCfg");
+        var assetCatalog = GameSchedule.ReadExportExcelInfo<AssetCfg>();
         var excelInfo = assetCatalog.excelInfo;
 
-        var excelPath = Path.Combine(ABBUtil.GetUnityRootPath(), "Misc", "Excel", "AssetCfg.xlsx");
-        var assetCfg = ExcelUtil.ReadExcel(excelPath);
+        var assetCfg = ExcelUtil.ReadExcel<AssetCfg>();
         var workbook = assetCfg.Workbook;
-        var worksheetCount = workbook.Worksheets.Count();
         var worksheet = workbook.Worksheets[1];
         var assetList = GameSchedule.ReadCfg<AssetCfg>();
         var path2Index = new Dictionary<string, int>();

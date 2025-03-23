@@ -19,7 +19,7 @@ public class BuffMgr : Singleton<BuffMgr>
             default:
                 return EnBuffType.Persistence;
         }
-        return EnBuffType.None;
+        //return EnBuffType.None;
     }
     public EntityBuffData CreateBuffData(EnBuff buff, int entityID)
     {

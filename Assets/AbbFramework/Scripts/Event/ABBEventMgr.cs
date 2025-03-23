@@ -31,7 +31,7 @@ public class ABBEventMgr : Singleton<ABBEventMgr>
             ClassPoolMgr.Instance.Push(evData);
         }
     }
-    public void FireExecute(EnABBEvent ev, int sourceID, int typeID, object userData)
+    public void FireExecute(EnABBEvent ev, int sourceID, int typeID, IClassPool userData)
     {
         if (!m_ActionList.TryGetValue(ev, out var evData))
             return;

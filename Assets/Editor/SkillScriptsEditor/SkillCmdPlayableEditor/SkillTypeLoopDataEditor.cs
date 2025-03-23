@@ -66,12 +66,20 @@ public class SkillTypeLoopDataEditor : SkillTypeLoopData, ISkillTypeEditor
         EditorGUILayout.BeginHorizontal();
         {
             EditorGUILayout.LabelField("buff", GUILayout.Width(50));
-            if (GuiStyleUtil.DrawAddButton())
+            var titleRect = GUILayoutUtility.GetLastRect();
+            var addRect = new Rect()
+            {
+                position = titleRect.position + new Vector2(titleRect.width, 0),
+                size = new Vector2(100, titleRect.height),
+            };
+            if (GuiStyleUtil.DrawAddButton(addRect))
             {
                 var menu = new GenericMenu();
                 for (var i = EnBuff.None + 1; i < EnBuff.EnumCount; i++)
                 {
                     var buff = i;
+                    if (m_ArrBuff.FindIndex((item) => item.Buff == buff) >= 0)
+                        continue;
                     var key = EditorUtil.GetEnumName(buff);
                     menu.AddItem(new() { text = key }, false, () =>
                     {

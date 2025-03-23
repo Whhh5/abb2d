@@ -30,6 +30,12 @@ public class SkillTypeLinkPlayableAdapter : SkillTypePlayableAdapter
         m_PortID = -1;
 
     }
+    public override bool IsPlayEnd()
+    {
+        if (!curAttackData._IsAutoRemove)
+            return false;
+        return base.IsPlayEnd();
+    }
     public override float GetPlayTime()
     {
         return m_CurClipAdapter.GetPlayTime();
@@ -37,6 +43,10 @@ public class SkillTypeLinkPlayableAdapter : SkillTypePlayableAdapter
     public override float GetUnitTime()
     {
         return m_CurClipAdapter.GetUnitTime();
+    }
+    public override EnAnimLayer GetOutputLayer()
+    {
+        return m_CurClipAdapter.GetOutputLayer();
     }
     public override void OnPoolInit(PlayableAdapterUserData userData)
     {
@@ -130,4 +140,5 @@ public class SkillTypeLinkPlayableAdapter : SkillTypePlayableAdapter
         }
         return true;
     }
+
 }

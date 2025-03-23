@@ -1,9 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Playables;
 using static Unity.Burst.Intrinsics.X86.Avx;
+using static UnityEditor.Progress;
 
 public enum EnEntityCmd
 {
@@ -18,7 +20,16 @@ public enum EnEntityCmd
     Skill3,
     Teleport,
     Injured, // 受伤
-    LayerMixer,
+
+    Monster0Idle,
+    Monster0Run,
+    Monster0Skill1,
+    Monster0Skill2,
+    Monster0Die,
+    Monster0Buff1,
+
+    PlayerBuff,
+    PlayerWalk,
 }
 public enum EnEntityCmdLevel
 {
@@ -33,67 +44,55 @@ public enum EnEntityCmdLevel
     Level100,
     MaxLevel,
 }
-public class EntityAnimComData : IEntity3DComData<Entity3DComDataUserData>, IUpdate
+public interface IEntityAnimCom : IEntity3DCom
 {
-    private int m_EntityID = -1;
-    private Entity3DData m_Entity3D = null;
+    public Animator GetAnimator();
+}
+public sealed class EntityAnimComData : Entity3DComDataGO<IEntityAnimCom>, IUpdate
+{
     private PlayableGraphAdapter m_PlayableGraph = null;
 
     private Dictionary<PlayableAdapter, LayerMixerConnectInfo> m_Adapter2ConnectInfo = new();
     private List<PlayableAdapter> m_NoLoopPlayableList = new();
     private HashSet<EnEntityCmd> m_CreateAddList = new();
+    private List<EnEntityCmd> _CurCmdList = new();
     private Dictionary<EnEntityCmd, SkillTypePlayableAdapter> m_CmdAdapterDic = new();
     private Dictionary<EnEntityCmdLevel, List<EnEntityCmd>> m_Level2Cmd = new();
 
     #region life
-    public void OnPoolDestroy()
+    public override void OnEnable()
     {
-        m_Entity3D = null;
-        m_EntityID = -1;
+        base.OnEnable();
+        UpdateMgr.Instance.Registener(this);
     }
-    public void OnPoolInit(Entity3DComDataUserData userData)
-    {
-        m_EntityID = userData.entity3DData.EntityID;
-        m_Entity3D = userData.entity3DData;
-
-    }
-
-    public void PoolConstructor()
-    {
-    }
-
-    public void OnPoolEnable()
-    {
-    }
-
-    public void PoolRelease()
-    {
-    }
-
-    public void OnDestroyGO(int entityID)
+    public override void OnDisable()
     {
         UpdateMgr.Instance.Unregistener(this);
+        base.OnDisable();
+    }
+    public override void OnDestroyGO()
+    {
+        base.OnDestroyGO();
         m_CreateAddList.Clear();
         var listKey = new List<EnEntityCmd>(m_CmdAdapterDic.Count);
         foreach (var item in m_CmdAdapterDic) listKey.Add(item.Key);
         foreach (var item in listKey) RemoveCmd(item);
         m_CmdAdapterDic.Clear();
+        _CurCmdList.Clear();
         m_Level2Cmd.Clear();
         PlayableGraphAdapter.OnDestroy(m_PlayableGraph);
         m_PlayableGraph = null;
         m_Adapter2ConnectInfo.Clear();
         m_NoLoopPlayableList.Clear();
     }
-    public void OnCreateGO(int entityID)
+    public override void OnCreateGO()
     {
-        var entity3DData = Entity3DMgr.Instance.GetEntity3DData(entityID);
-        var entity3D = entity3DData.GetEntity<Entity3D>();
-        var animCom = entity3D.GetAnimator();
-        m_PlayableGraph = PlayableGraphAdapter.Create(m_EntityID, animCom);
+        base.OnCreateGO();
+        var animCom = _GoCom.GetAnimator();
+        m_PlayableGraph = PlayableGraphAdapter.Create(_EntityID, animCom);
         foreach (var item in m_CreateAddList)
             AddCmd(item);
         m_CreateAddList.Clear();
-        UpdateMgr.Instance.Registener(this);
     }
 
     #endregion
@@ -112,7 +111,7 @@ public class EntityAnimComData : IEntity3DComData<Entity3DComDataUserData>, IUpd
         {
             if (!IsAddCmd(cmd))
                 return;
-            if (!m_Entity3D.IsLoadSuccess)
+            if (!Entity3DMgr.Instance.GetEntityIsLoadSuccess(_EntityID))
             {
                 m_CreateAddList.Add(cmd);
                 return;
@@ -121,6 +120,10 @@ public class EntityAnimComData : IEntity3DComData<Entity3DComDataUserData>, IUpd
             AddCmdData(cmdAdapter);
             ConnectLayerInput(cmd, cmdAdapter, cmdAdapter.GetOutputLayer());
             cmdAdapter.ExecuteCmd();
+
+            var cmdCfg = GameSchedule.Instance.GetCmdCfg0((int)cmd);
+            var applyRootMotion = cmdCfg.bApplyRootMotion;
+            SetApplyRootMotion(applyRootMotion > 0);
         }
         else
         {
@@ -128,7 +131,10 @@ public class EntityAnimComData : IEntity3DComData<Entity3DComDataUserData>, IUpd
         }
 
     }
-    
+    public EnEntityCmd GetCurCmd()
+    {
+        return _CurCmdList[^1];
+    }
     public void RemoveCmd(EnEntityCmd cmd)
     {
         var adapter = RemoveCmdData(cmd);
@@ -145,12 +151,30 @@ public class EntityAnimComData : IEntity3DComData<Entity3DComDataUserData>, IUpd
     public bool IsAddCmd(EnEntityCmd cmd)
     {
         var level = AnimMgr.Instance.GetCmdLevel(cmd);
+        var cmdCfg = GameSchedule.Instance.GetCmdCfg0((int)cmd);
         foreach (var item in m_CmdAdapterDic)
         {
             var level2 = AnimMgr.Instance.GetCmdLevel(item.Key);
             if (level2 >= level)
+            {
                 if (!item.Value.NextAnimLevelComdition())
-                    return false;
+                {
+                    if (cmdCfg.bIdleLayerPlay <= 0)
+                        return false;
+
+                    var cmdCfg2 = GameSchedule.Instance.GetCmdCfg0((int)item.Key);
+                    if (cmdCfg2.arrLayer != null)
+                    {
+                        for (int i = 0; i < cmdCfg2.arrLayer.Length; i++)
+                        {
+                            var itemLayer = cmdCfg2.arrLayer[i];
+                            var value = Array.FindIndex(cmdCfg.arrLayer, item => item == itemLayer);
+                            if (value >= 0)
+                                return false;
+                        }
+                    }
+                }
+            }
         }
         return true;
     }
@@ -158,13 +182,31 @@ public class EntityAnimComData : IEntity3DComData<Entity3DComDataUserData>, IUpd
     {
         var cmd = cmdAdapter.GetEntityCmd();
         m_CmdAdapterDic.Add(cmd, cmdAdapter);
+        _CurCmdList.Add(cmd);
     }
     private PlayableAdapter RemoveCmdData(EnEntityCmd cmd)
     {
         if (!m_CmdAdapterDic.TryGetValue(cmd, out var adapter))
             return null;
         m_CmdAdapterDic.Remove(cmd);
+        var index = _CurCmdList.IndexOf(cmd);
         adapter.RemoveCmd();
+
+        if (index == _CurCmdList.Count - 1)
+        {
+            if (_CurCmdList.Count <= 1)
+            {
+                SetApplyRootMotion(false);
+            }
+            else
+            {
+                var nextCmd = _CurCmdList[^2];
+                var cmdCfg = GameSchedule.Instance.GetCmdCfg0((int)nextCmd);
+                SetApplyRootMotion(cmdCfg.bApplyRootMotion > 0);
+            }
+        }
+        _CurCmdList.RemoveAt(index);
+
         return adapter;
     }
     #endregion

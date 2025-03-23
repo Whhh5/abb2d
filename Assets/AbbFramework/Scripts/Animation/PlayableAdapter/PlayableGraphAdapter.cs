@@ -1,8 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
-using Unity.VisualScripting;
-using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.Playables;
@@ -11,9 +7,11 @@ public enum EnAnimLayer
 {
     None = -1,
     Base = 0,
-    Layer1,
-    Layer2,
-    Layer3,
+    LowerBottom,
+    LowerTop,
+    Body,
+    Bottom,
+    Top,
     EnumCount,
 }
 public class PlayableGraphAdapter : IClassPool<PlayableGraphAdapterUserData>, IUpdate
@@ -21,10 +19,10 @@ public class PlayableGraphAdapter : IClassPool<PlayableGraphAdapterUserData>, IU
 
     public static PlayableGraphAdapter Create(int entityID, Animator animator)
     {
+        animator.applyRootMotion = false;
         var data = ClassPoolMgr.Instance.Pull<PlayableGraphAdapterUserData>();
         data.entityID = entityID;
         data.anim = animator;
-        animator.applyRootMotion = false;
         var playable = ClassPoolMgr.Instance.Pull<PlayableGraphAdapter>(data);
         ClassPoolMgr.Instance.Push(data);
         return playable;
@@ -39,6 +37,7 @@ public class PlayableGraphAdapter : IClassPool<PlayableGraphAdapterUserData>, IU
     }
 
     private PlayableGraph m_Graph = default;
+    private Animator _Anim = null;
     private int m_EntityID = -1;
     private AnimationLayerMixerPlayable m_LayerMixerPlayable;
     private Dictionary<EnAnimLayer, LayerMixerInfo> m_Layer2unusePortDic = new();
@@ -56,6 +55,7 @@ public class PlayableGraphAdapter : IClassPool<PlayableGraphAdapterUserData>, IU
         m_EntityID = userData.entityID;
         m_Graph = PlayableGraph.Create($"custom-{userData.anim.name}");
         m_Graph.SetTimeUpdateMode(DirectorUpdateMode.Manual);
+        _Anim = userData.anim;
         var output = AnimationPlayableOutput.Create(m_Graph, $"{userData.anim.name}-output", userData.anim);
         var jobData = new PlayableGraphAnimJob();
         jobData.leftFootIKInfo.lowerLegHandle = userData.anim.BindStreamTransform(userData.anim.GetBoneTransform(HumanBodyBones.LeftLowerLeg));
@@ -80,6 +80,7 @@ public class PlayableGraphAdapter : IClassPool<PlayableGraphAdapterUserData>, IU
         m_EnterLayerList.Clear();
         m_ExistLayerList.Clear();
         m_Layer2unusePortDic.Clear();
+        _Anim = null;
     }
 
     public void PoolRelease()
@@ -214,7 +215,6 @@ public class PlayableGraphAdapter : IClassPool<PlayableGraphAdapterUserData>, IU
         var count = info.GetConnectCount();
         return count;
     }
-    private RaycastHit[] m_ArrHit = new RaycastHit[1];
     public void Update()
     {
         UpdateFootIK();
@@ -261,6 +261,8 @@ public class PlayableGraphAdapter : IClassPool<PlayableGraphAdapterUserData>, IU
         var job = m_PlayableJob.GetJobData<PlayableGraphAnimJob>();
         job.applyRootMotion = applyRootMotion;
         m_PlayableJob.SetJobData(job);
+
+        _Anim.applyRootMotion = applyRootMotion;
     }
 
     float rayLine = 1f;
@@ -281,7 +283,7 @@ public class PlayableGraphAdapter : IClassPool<PlayableGraphAdapterUserData>, IU
             var pos = hit.point + hit.normal * 0.128f;
             var ikDis = Vector3.Distance(pos, leftPos);
 
-            DebugDrawMgr.Instance.DrawSphere(pos, 0.1f, 0.01f);
+            //DebugDrawMgr.Instance.DrawSphere(pos, 0.1f, 0.01f);
 
             var weight2 = pos.y < leftPos.y
                 ? Mathf.Lerp(0, 1, 1 - Mathf.Pow(Mathf.Clamp01(ikDis / rayLine), 1))

@@ -16,6 +16,16 @@ public partial class GameSchedule
 	private System.Collections.Generic.Dictionary<System.Int32, EffectCfg> m_DicEffectCfg0 = new();
 	private AssetCfg[] m_AssetCfg = null;
 	private System.Collections.Generic.Dictionary<System.Int32, AssetCfg> m_DicAssetCfg0 = new();
+	private CharacterCfg[] m_CharacterCfg = null;
+	private System.Collections.Generic.Dictionary<System.Int32, CharacterCfg> m_DicCharacterCfg0 = new();
+	private MonsterCfg[] m_MonsterCfg = null;
+	private System.Collections.Generic.Dictionary<System.Int32, MonsterCfg> m_DicMonsterCfg0 = new();
+	private MonsterColonyCfg[] m_MonsterColonyCfg = null;
+	private System.Collections.Generic.Dictionary<System.Int32, MonsterColonyCfg> m_DicMonsterColonyCfg0 = new();
+	private AIModuleCfg[] m_AIModuleCfg = null;
+	private System.Collections.Generic.Dictionary<System.Int32, AIModuleCfg> m_DicAIModuleCfg0 = new();
+	private AICfg[] m_AICfg = null;
+	private System.Collections.Generic.Dictionary<System.Int32, AICfg> m_DicAICfg0 = new();
 	public void Initialization()
 	{
 		for (int i = 0; i < m_ClipCfg.Length; i++)
@@ -58,6 +68,31 @@ public partial class GameSchedule
 			var cfg = m_AssetCfg[i];
 			m_DicAssetCfg0.Add(cfg.nAssetID, cfg);
 		}
+		for (int i = 0; i < m_CharacterCfg.Length; i++)
+		{
+			var cfg = m_CharacterCfg[i];
+			m_DicCharacterCfg0.Add(cfg.nCharacterID, cfg);
+		}
+		for (int i = 0; i < m_MonsterCfg.Length; i++)
+		{
+			var cfg = m_MonsterCfg[i];
+			m_DicMonsterCfg0.Add(cfg.nMonsterID, cfg);
+		}
+		for (int i = 0; i < m_MonsterColonyCfg.Length; i++)
+		{
+			var cfg = m_MonsterColonyCfg[i];
+			m_DicMonsterColonyCfg0.Add(cfg.nColonyID, cfg);
+		}
+		for (int i = 0; i < m_AIModuleCfg.Length; i++)
+		{
+			var cfg = m_AIModuleCfg[i];
+			m_DicAIModuleCfg0.Add(cfg.nModuleID, cfg);
+		}
+		for (int i = 0; i < m_AICfg.Length; i++)
+		{
+			var cfg = m_AICfg[i];
+			m_DicAICfg0.Add(cfg.nAIID, cfg);
+		}
 	}
 	public ClipCfg GetClipCfg0(System.Int32 nClipID)
 	{
@@ -90,5 +125,25 @@ public partial class GameSchedule
 	public AssetCfg GetAssetCfg0(System.Int32 nAssetID)
 	{
 		return m_DicAssetCfg0[nAssetID];
+	}
+	public CharacterCfg GetCharacterCfg0(System.Int32 nCharacterID)
+	{
+		return m_DicCharacterCfg0[nCharacterID];
+	}
+	public MonsterCfg GetMonsterCfg0(System.Int32 nMonsterID)
+	{
+		return m_DicMonsterCfg0[nMonsterID];
+	}
+	public MonsterColonyCfg GetMonsterColonyCfg0(System.Int32 nColonyID)
+	{
+		return m_DicMonsterColonyCfg0[nColonyID];
+	}
+	public AIModuleCfg GetAIModuleCfg0(System.Int32 nModuleID)
+	{
+		return m_DicAIModuleCfg0[nModuleID];
+	}
+	public AICfg GetAICfg0(System.Int32 nAIID)
+	{
+		return m_DicAICfg0[nAIID];
 	}
 }

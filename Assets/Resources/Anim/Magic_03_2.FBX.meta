@@ -1,7 +1,7 @@
 fileFormatVersion: 2
 guid: 3733d4789487b1347be90f206f795b0b
 ModelImporter:
-  serializedVersion: 21300
+  serializedVersion: 22200
   internalIDToNameTable: []
   externalObjects: {}
   materials:
@@ -16,8 +16,6 @@ ModelImporter:
     optimizeGameObjects: 0
     removeConstantScaleCurves: 1
     motionNodeName: Root
-    rigImportErrors: 
-    rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
@@ -56,14 +54,7 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events:
-      - time: 0.43386245
-        functionName: OnAnimationEvent
-        data: 
-        objectReferenceParameter: {instanceID: 0}
-        floatParameter: 1.45
-        intParameter: 18
-        messageOptions: 0
+      events: []
       transformMask:
       - path: 
         weight: 1
@@ -382,6 +373,7 @@ ModelImporter:
     addColliders: 0
     useSRGBMaterialColor: 1
     sortHierarchyByName: 0
+    importPhysicalCameras: 1
     importVisibility: 0
     importBlendShapes: 0
     importCameras: 0
@@ -409,6 +401,7 @@ ModelImporter:
     secondaryUVMinObjectScale: 1
     secondaryUVPackMargin: 4
     useFileScale: 1
+    strictVertexDataChecks: 0
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
@@ -1004,14 +997,12 @@ ModelImporter:
     - name: Bip001 R Finger21
       parentName: Bip001 R Finger2
       position: {x: -0.033397675, y: -0.00000015258789, z: -0.000000009536743}
-      rotation: {x: -0.000000022235321, y: 0.00000007450579, z: -0.00000006777553,
-        w: 1}
+      rotation: {x: -0.000000022235321, y: 0.00000007450579, z: -0.00000006777553, w: 1}
       scale: {x: 0.99999994, y: 0.9999997, z: 1}
     - name: Bip001 R Finger22
       parentName: Bip001 R Finger21
       position: {x: -0.033612862, y: 0.000000076293944, z: 0}
-      rotation: {x: 0.000000052386888, y: -0.00000004097818, z: 0.00000010049551,
-        w: 1}
+      rotation: {x: 0.000000052386888, y: -0.00000004097818, z: 0.00000010049551, w: 1}
       scale: {x: 0.9999996, y: 0.9999996, z: 1.0000002}
     - name: Bip001 R Finger3
       parentName: Bip001 R Hand
@@ -1021,14 +1012,12 @@ ModelImporter:
     - name: Bip001 R Finger31
       parentName: Bip001 R Finger3
       position: {x: -0.03069923, y: -0.000000076293944, z: 0}
-      rotation: {x: -0.000000026077029, y: 0.00000004097819, z: -0.00000003914465,
-        w: 1}
+      rotation: {x: -0.000000026077029, y: 0.00000004097819, z: -0.00000003914465, w: 1}
       scale: {x: 1.0000006, y: 1.0000005, z: 1.0000001}
     - name: Bip001 R Finger32
       parentName: Bip001 R Finger31
       position: {x: -0.03341343, y: 0.000000076293944, z: -0.000000009536743}
-      rotation: {x: 0.000000006519252, y: 0.000000100582824, z: 0.000000021245798,
-        w: 1}
+      rotation: {x: 0.000000006519252, y: 0.000000100582824, z: 0.000000021245798, w: 1}
       scale: {x: 1.0000004, y: 1.0000004, z: 0.99999994}
     - name: Bip001 R Finger1
       parentName: Bip001 R Hand
@@ -1053,8 +1042,7 @@ ModelImporter:
     - name: Bip001 R Finger41
       parentName: Bip001 R Finger4
       position: {x: -0.022029495, y: 0, z: 0.000000009536743}
-      rotation: {x: -0.00000015273689, y: -0.000000076368444, z: 0.00000011582232,
-        w: 1}
+      rotation: {x: -0.00000015273689, y: -0.000000076368444, z: 0.00000011582232, w: 1}
       scale: {x: 0.99999994, y: 1, z: 1.0000001}
     - name: Bip001 R Finger42
       parentName: Bip001 R Finger41
@@ -1089,8 +1077,7 @@ ModelImporter:
     - name: Bone035
       parentName: Bone034
       position: {x: -0.062039413, y: 0, z: 0}
-      rotation: {x: -0.000000119209275, y: 0.000000029802319, z: 0.000000052154057,
-        w: 1}
+      rotation: {x: -0.000000119209275, y: 0.000000029802319, z: 0.000000052154057, w: 1}
       scale: {x: 1.0000007, y: 1.0000002, z: 1.0000001}
     - name: Bip001 L Clavicle
       parentName: Bip001 Spine1
@@ -1140,14 +1127,12 @@ ModelImporter:
     - name: Bip001 L Finger31
       parentName: Bip001 L Finger3
       position: {x: -0.03069923, y: 0, z: 0}
-      rotation: {x: -0.0000000027939668, y: 0.000000003725289, z: -0.00000009403444,
-        w: 1}
+      rotation: {x: -0.0000000027939668, y: 0.000000003725289, z: -0.00000009403444, w: 1}
       scale: {x: 0.9999997, y: 0.9999997, z: 0.99999994}
     - name: Bip001 L Finger32
       parentName: Bip001 L Finger31
       position: {x: -0.033413466, y: 0, z: 0}
-      rotation: {x: -0.000000035390237, y: -0.00000007078049, z: -0.000000008294589,
-        w: 1}
+      rotation: {x: -0.000000035390237, y: -0.00000007078049, z: -0.000000008294589, w: 1}
       scale: {x: 1, y: 1.0000002, z: 1.0000002}
     - name: Bip001 L Finger2
       parentName: Bip001 L Hand
@@ -1157,8 +1142,7 @@ ModelImporter:
     - name: Bip001 L Finger21
       parentName: Bip001 L Finger2
       position: {x: -0.033397637, y: -0.00000015258789, z: 0.000000009536743}
-      rotation: {x: 0.000000057858408, y: 0.000000014901159, z: -0.000000071777315,
-        w: 1}
+      rotation: {x: 0.000000057858408, y: 0.000000014901159, z: -0.000000071777315, w: 1}
       scale: {x: 0.9999998, y: 1.0000001, z: 0.9999996}
     - name: Bip001 L Finger22
       parentName: Bip001 L Finger21
@@ -1178,8 +1162,7 @@ ModelImporter:
     - name: Bip001 L Finger12
       parentName: Bip001 L Finger11
       position: {x: -0.028626595, y: -0.00000015258789, z: -0.000000009536743}
-      rotation: {x: 0.00000005774197, y: -0.000000041909495, z: 0.00000004103274,
-        w: 1}
+      rotation: {x: 0.00000005774197, y: -0.000000041909495, z: 0.00000004103274, w: 1}
       scale: {x: 1, y: 0.99999994, z: 1.0000002}
     - name: Bip001 L Finger4
       parentName: Bip001 L Hand
@@ -1234,8 +1217,7 @@ ModelImporter:
     - name: Bone039
       parentName: Bone038
       position: {x: -0.06151787, y: 0, z: -0.000000057220458}
-      rotation: {x: 0.000000089406946, y: -0.000000052154054, z: -0.000000007450579,
-        w: 1}
+      rotation: {x: 0.000000089406946, y: -0.000000052154054, z: -0.000000007450579, w: 1}
       scale: {x: 1.0000001, y: 1.0000005, z: 1.0000008}
     - name: Bone007
       parentName: Bip001 Spine1
@@ -1245,8 +1227,7 @@ ModelImporter:
     - name: Bone008
       parentName: Bone007
       position: {x: -0.17266569, y: 0, z: 0}
-      rotation: {x: 0.0000000136699905, y: 0.00000003038698, z: 0.00000011175881,
-        w: 1}
+      rotation: {x: 0.0000000136699905, y: 0.00000003038698, z: 0.00000011175881, w: 1}
       scale: {x: 1.0000001, y: 0.9999998, z: 1}
     - name: Bone009
       parentName: Bone008
@@ -1256,8 +1237,7 @@ ModelImporter:
     - name: Bone010
       parentName: Bone009
       position: {x: -0.17976944, y: 0, z: -0.000000009536743}
-      rotation: {x: -0.00000032816067, y: 0.0000000014841534, z: 0.000000067055396,
-        w: 1}
+      rotation: {x: -0.00000032816067, y: 0.0000000014841534, z: 0.000000067055396, w: 1}
       scale: {x: 1.0000002, y: 0.99999994, z: 1}
     - name: Bone011
       parentName: Bone010
@@ -1317,8 +1297,7 @@ ModelImporter:
     - name: Bone026
       parentName: Bone025
       position: {x: -0.108903795, y: 0.000000009536743, z: 0}
-      rotation: {x: 0.00000008940696, y: 0.000000014901159, z: 0.000000104308114,
-        w: 1}
+      rotation: {x: 0.00000008940696, y: 0.000000014901159, z: 0.000000104308114, w: 1}
       scale: {x: 1.0000001, y: 1, z: 1.0000002}
     - name: Bone027
       parentName: Bone026
@@ -1343,8 +1322,7 @@ ModelImporter:
     - name: Bone031
       parentName: Bone030
       position: {x: -0.072356336, y: 0.00000025749205, z: 0}
-      rotation: {x: -0.0000013131646, y: -0.00000006705505, z: -0.00000002980256,
-        w: 1}
+      rotation: {x: -0.0000013131646, y: -0.00000006705505, z: -0.00000002980256, w: 1}
       scale: {x: 1.0000001, y: 0.99999994, z: 1.0000002}
     - name: Bip001 L Thigh
       parentName: Bip001 Pelvis
@@ -1448,13 +1426,13 @@ ModelImporter:
     hasTranslationDoF: 1
     hasExtraRoot: 0
     skeletonHasParents: 1
-  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: abfb172e6791926458927003895f0432,
-    type: 3}
+  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: abfb172e6791926458927003895f0432, type: 3}
   autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 3
   humanoidOversampling: 1
   avatarSetup: 2
   addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  importBlendShapeDeformPercent: 0
   remapMaterialsIfMaterialImportModeIsNone: 0
   additionalBone: 0
   userData: '{"$type":"System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object,

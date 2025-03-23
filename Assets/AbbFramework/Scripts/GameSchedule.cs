@@ -78,4 +78,13 @@ public partial class GameSchedule : Singleton<GameSchedule>
         var cfg = JsonConvert.DeserializeObject(ass.text, arrType);
         return cfg;
     }
+    public static ExportExcelInfo ReadExportExcelInfo<T>()
+        where T: ICfg
+    {
+        var cfgName = typeof(T).Name;
+        var catalogObj = GameSchedule.ReadCfg("CfgCatalog", typeof(ExportExcelInfo));
+        var catalogList = catalogObj as ExportExcelInfo[];
+        var skillCatalog = Array.Find<ExportExcelInfo>(catalogList, (item) => item.excelInfo.excelName == cfgName);
+        return skillCatalog;
+    }
 }

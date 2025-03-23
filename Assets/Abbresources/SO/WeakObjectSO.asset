@@ -1,0 +1,112 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5b654f49be724f82b8dadc9a2d59af2, type: 3}
+  m_Name: WeakObjectSO
+  m_EditorClassIdentifier: 
+  _Keys:
+  - BubbleMat
+  - BubbleMat2
+  - Bullet
+  - New Material
+  - PlaneMat
+  - SoldierEntity
+  - UnitEntity
+  - ZombieEntity
+  _values:
+  - GlobalId:
+      SceneObjectIdentifier0: 2100000
+      SceneObjectIdentifier1: 0
+      AssetGUID:
+        Value:
+          x: 774006573
+          y: 1430446867
+          z: 1990940045
+          w: 2514720267
+      IdentifierType: 3
+    GenerationType: 1
+  - GlobalId:
+      SceneObjectIdentifier0: 2100000
+      SceneObjectIdentifier1: 0
+      AssetGUID:
+        Value:
+          x: 1719765905
+          y: 1531261891
+          z: 1484734872
+          w: 4180305819
+      IdentifierType: 3
+    GenerationType: 1
+  - GlobalId:
+      SceneObjectIdentifier0: 2130242880250083954
+      SceneObjectIdentifier1: 0
+      AssetGUID:
+        Value:
+          x: 652149367
+          y: 2280978320
+          z: 1215970280
+          w: 4139540015
+      IdentifierType: 1
+    GenerationType: 1
+  - GlobalId:
+      SceneObjectIdentifier0: 2100000
+      SceneObjectIdentifier1: 0
+      AssetGUID:
+        Value:
+          x: 795670005
+          y: 1145402777
+          z: 908008341
+          w: 1581727424
+      IdentifierType: 3
+    GenerationType: 1
+  - GlobalId:
+      SceneObjectIdentifier0: 2100000
+      SceneObjectIdentifier1: 0
+      AssetGUID:
+        Value:
+          x: 861446991
+          y: 1346483875
+          z: 726603906
+          w: 2817577317
+      IdentifierType: 3
+    GenerationType: 1
+  - GlobalId:
+      SceneObjectIdentifier0: 5866252019947854881
+      SceneObjectIdentifier1: 0
+      AssetGUID:
+        Value:
+          x: 3689162291
+          y: 3712529941
+          z: 18232210
+          w: 64296502
+      IdentifierType: 1
+    GenerationType: 1
+  - GlobalId:
+      SceneObjectIdentifier0: 3059715341524942877
+      SceneObjectIdentifier1: 0
+      AssetGUID:
+        Value:
+          x: 3207951466
+          y: 3645517606
+          z: 317184396
+          w: 906772638
+      IdentifierType: 1
+    GenerationType: 1
+  - GlobalId:
+      SceneObjectIdentifier0: 125701134342694381
+      SceneObjectIdentifier1: 0
+      AssetGUID:
+        Value:
+          x: 2989254245
+          y: 3712903034
+          z: 83232179
+          w: 2435920341
+      IdentifierType: 1
+    GenerationType: 1

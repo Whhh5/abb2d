@@ -1,11 +1,14 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.RefAndLookup;
 using UnityEditor;
 using UnityEditor.PackageManager.UI;
 using UnityEngine;
+using static Codice.CM.WorkspaceServer.WorkspaceTreeDataStore;
 
 public static class EditorUtil
 {
@@ -131,5 +134,120 @@ public static class EditorUtil
         menu.ShowAsContext();
         defValue = selectValue;
         return;
+    }
+
+    static GUIContent _ClipContent = new GUIContent()
+    {
+        text = "clip ID",
+        tooltip = "ClipCfg -> id",
+    };
+    static public void DrawClipID(int clipID, Action<int> selectID)
+    {
+        EditorGUILayout.BeginHorizontal();
+        {
+            EditorGUILayout.LabelField(_ClipContent, GUILayout.Width(50));
+
+            var content = new GUIContent()
+            {
+                text = $"{clipID}",
+            };
+            var clipCfgList = ExcelUtil.ReadEditorCfgList<ClipCfg>();
+            var assetCfgList = ExcelUtil.ReadEditorCfgList<AssetCfg>();
+            if (clipID > 0)
+            {
+                var clipCfg = clipCfgList.Find(value => value.nClipID == clipID);
+                if (clipCfg != null)
+                {
+                    var assetCfg = assetCfgList.Find(value => value.nAssetID == clipCfg.nAssetID);
+                    var asset = AssetDatabase.LoadAssetAtPath<AnimationClip>(assetCfg.strPath);
+                    content.text += $"-{asset.name}";
+
+                    EditorGUILayout.ObjectField(asset, asset.GetType(), false, GUILayout.Width(100));
+                }
+                else
+                {
+                    content.text += "-Error";
+                }
+            }
+            if (GUILayout.Button(content, GUILayout.Width(200)))
+            {
+                var menu = new GenericMenu();
+
+                for (int j = 0; j < clipCfgList.Count; j++)
+                {
+                    var item = clipCfgList[j];
+                    var itemAssetCfg = assetCfgList.Find(value => value.nAssetID == item.nAssetID);
+                    var itemAsset = AssetDatabase.LoadAssetAtPath<AnimationClip>(itemAssetCfg.strPath);
+                    menu.AddItem(new()
+                    {
+                        text = $"{item.nClipID}-{itemAsset.name}"
+                    }, item.nClipID == clipID, () =>
+                    {
+                        selectID(item.nClipID);
+                    });
+                }
+                menu.ShowAsContext();
+            }
+        }
+        EditorGUILayout.EndHorizontal();
+    }
+    static GUIContent _AssetContent = new GUIContent()
+    {
+        text = "AssetID:",
+        tooltip = "AssetCfg -> id",
+    };
+    static public void DrawAssetID<T>(int assetID, Action<int> selectID, Func<AssetCfg, bool> isShow)
+        where T : UnityEngine.Object
+    {
+        EditorGUILayout.BeginHorizontal(GUILayout.Width(250), GUILayout.ExpandWidth(false));
+        {
+            EditorGUILayout.LabelField(_AssetContent, GUILayout.Width(50));
+
+            var content = new GUIContent()
+            {
+                text = $"{assetID}",
+            };
+            var assetCfgList = ExcelUtil.ReadEditorCfgList<AssetCfg>();
+            if (assetID > 0)
+            {
+                var assetCfg = assetCfgList.Find(value => value.nAssetID == assetID);
+                if (assetCfg != null && AssetDatabase.LoadAssetAtPath<T>(assetCfg.strPath))
+                {
+                    var name = Path.GetFileName(assetCfg.strPath);
+                    content.text += $"-{name}";
+                }
+                else
+                {
+                    content.text += "-Error";
+                }
+            }
+            else
+            {
+                content.text += "-Error";
+            }
+            if (GUILayout.Button(content, GUILayout.Width(190), GUILayout.ExpandWidth(false)))
+            {
+                var menu = new GenericMenu();
+
+                for (int j = 0; j < assetCfgList.Count; j++)
+                {
+                    var itemAssetCfg = assetCfgList[j];
+                    if (isShow != null && !isShow(itemAssetCfg))
+                        continue;
+                    var itemAsset = AssetDatabase.LoadAssetAtPath<T>(itemAssetCfg.strPath);
+                    if (itemAsset == null)
+                        continue;
+                    menu.AddItem(new()
+                    {
+                        text = $"{itemAssetCfg.nAssetID}-{itemAssetCfg.enName}",
+                    }, itemAssetCfg.nAssetID == assetID, () =>
+                    {
+                        selectID(itemAssetCfg.nAssetID);
+                    });
+                }
+                menu.ShowAsContext();
+            }
+        }
+        EditorGUILayout.EndHorizontal();
     }
 }

@@ -30,10 +30,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 5175209978910336729}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &972982762847130263
 GameObject:
@@ -246,6 +246,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_MainCamera: {fileID: 3659354222074089898}
+  _UICamera: {fileID: 4309702686377889350}
   m_URPCamera: {fileID: 1587386687699674151}
   m_VirtualCamera: {fileID: 1815953125904626384}
 --- !u!114 &1827766019816271100
@@ -261,6 +262,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_MainCanvas: {fileID: 5635760564663322656}
+  _CanvasRect: {fileID: 5175209978910336729}
   m_UIRootRect: {fileID: 6432249979216190106}
   m_UITipsRootRect: {fileID: 0}
 --- !u!1 &2786083064228918421

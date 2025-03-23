@@ -104,7 +104,9 @@ public class SkillPhysicsScheduleAction : IPhysicsParams, ISkillScheduleAction<P
             atkValue = atkValue,
             entityID = entityID,
         };
-        PhysicsMgr.Instance.PhysicsOverlap(physicsResolve, entityID, 1 << (int)EnGameLayer.Monster, PhysicsOverlapCallback, data);
+        var monsterData = Entity3DMgr.Instance.GetMonsterEntityData(entityID);
+        var layer = monsterData.GetEnemyLayer();
+        PhysicsMgr.Instance.PhysicsOverlap(physicsResolve, entityID, layer, PhysicsOverlapCallback, data);
     }
 
     public void Exit()
@@ -121,15 +123,13 @@ public class SkillPhysicsScheduleAction : IPhysicsParams, ISkillScheduleAction<P
     {
         m_IsAtked = isEffect;
     }
-    private void PhysicsOverlapCallback(Collider[] colliders, IPhysicsColliderCallbackCustomData customData)
+    private void PhysicsOverlapCallback(ref int[] entityIDs, ref int count, IPhysicsColliderCallbackCustomData customData)
     {
         var data = customData as PhysicsOverlapCallbackCustomData;
-        var pos = Entity3DMgr.Instance.GetEntityWorldPos(data.entityID);
-        foreach (var item in colliders)
+        for (int i = 0; i < count; i++)
         {
-            var com = item.GetComponent<Entity3D>();
-            AttackMgr.Instance.AttackEntity(data.entityID, com, data.atkValue);
-            Debug.DrawLine(pos, item.ClosestPoint(pos), Color.red, 1);
+            var entityID = entityIDs[i];
+            AttackMgr.Instance.AttackEntity(data.entityID, entityID, data.atkValue);
         }
     }
 

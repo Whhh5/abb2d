@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.DOTweenEditor;
+using DG.Tweening;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -22,7 +24,7 @@ public static class GuiStyleUtil
     }
     public static GUIStyle CreateLayoutBoxBackgroud(Color32 col)
     {
-        GUIStyle customBoxStyle = new GUIStyle(GUI.skin.box);
+        var customBoxStyle = new GUIStyle(GUI.skin.box);
         customBoxStyle.normal.textColor = Color.white;
         customBoxStyle.fontSize = 14;
         customBoxStyle.margin = new RectOffset(5, 10, 5, 10);
@@ -34,7 +36,7 @@ public static class GuiStyleUtil
     {
         var myTexture = EditorLoad.LoadTexture2D(EnEditorRes.btn_close);
         // 使用 Content 创建纹理按钮
-        GUIContent content = new GUIContent(myTexture);
+        var content = new GUIContent(myTexture);
         // 绘制按钮
         var result = GUI.Button(rect, content);
 
@@ -45,13 +47,25 @@ public static class GuiStyleUtil
         var myTexture = EditorLoad.LoadTexture2D(EnEditorRes.btn_close);
 
         // 创建自定义按钮样式
-        GUIStyle buttonStyle = new GUIStyle(GUI.skin.button);
+        var buttonStyle = new GUIStyle(GUI.skin.button);
         buttonStyle.alignment = TextAnchor.MiddleCenter;
 
         // 使用 Content 创建纹理按钮
         GUIContent content = new GUIContent(myTexture);
         // 绘制按钮
         var result = GUILayout.Button(content, buttonStyle, GUILayout.Width(30), GUILayout.Height(30));
+
+        return result;
+    }
+
+    public static bool DrawAddButton(Rect rect)
+    {
+        var myTexture = EditorLoad.LoadTexture2D(EnEditorRes.btn_add);
+
+        // 使用 Content 创建纹理按钮
+        var content = new GUIContent(myTexture);
+        // 绘制按钮
+        var result = GUI.Button(rect, content);
 
         return result;
     }
@@ -60,7 +74,7 @@ public static class GuiStyleUtil
         var myTexture = EditorLoad.LoadTexture2D(EnEditorRes.btn_add);
 
         // 创建自定义按钮样式
-        GUIStyle buttonStyle = new GUIStyle(GUI.skin.button);
+        var buttonStyle = new GUIStyle(GUI.skin.button);
         buttonStyle.alignment = TextAnchor.MiddleCenter;
 
         // 使用 Content 创建纹理按钮
@@ -70,16 +84,31 @@ public static class GuiStyleUtil
 
         return result;
     }
-    public static bool DrawButton(GUIContent content, GUIStyle style = null, Action closeCB = null)
+    public static bool DrawButton(Rect rect, Color bgColor, string title, Color txtColor)
+    {
+        var style = new GUIStyle(GUI.skin.button);
+        var isBtn = GUI.Button(rect, new GUIContent() { }, style);
+        var labelStyle = new GUIStyle(GUI.skin.label)
+        {
+            normal = { textColor = txtColor },
+            hover = { textColor = txtColor },
+            active = { textColor = txtColor },
+            alignment = TextAnchor.MiddleCenter,
+        };
+        EditorGUI.DrawRect(rect, bgColor);
+        GUI.Label(rect, new GUIContent() { text = title }, labelStyle);
+        return isBtn;
+    }
+    public static bool DrawButton(GUIContent content, GUIStyle style = null, Action closeCB = null, float width = 100, float height = 30)
     {
         var closeT2D = EditorLoad.LoadTexture2D(EnEditorRes.btn_close);
 
         // 创建自定义按钮样式
-        GUIStyle buttonStyle = new GUIStyle(GUI.skin.button);
+        var buttonStyle = new GUIStyle(GUI.skin.button);
         buttonStyle.alignment = TextAnchor.MiddleCenter;
 
         // 获取按钮的矩形区域
-        Rect buttonRect = GUILayoutUtility.GetRect(GUIContent.none, GUI.skin.button, GUILayout.Width(100), GUILayout.Height(30)); // 固定宽高的按钮
+        Rect buttonRect = GUILayoutUtility.GetRect(GUIContent.none, GUI.skin.button, GUILayout.Width(width), GUILayout.Height(height)); // 固定宽高的按钮
 
         var closeSizeX = Mathf.Min(buttonRect.width / 2, buttonRect.height);
         var closeRect = new Rect(buttonRect)
@@ -141,7 +170,7 @@ public static class GuiStyleUtil
 
         // 计算填充部分
         float fillWidth = rect.width * value;
-        Rect fillRect = new Rect(rect.x, rect.y, fillWidth, rect.height);
+        var fillRect = new Rect(rect.x, rect.y, fillWidth, rect.height);
         EditorGUI.DrawRect(fillRect, Color.green); // 填充颜色
 
 
@@ -165,7 +194,11 @@ public static class GuiStyleUtil
         {
             width = rect.width + 0.5f,
         };
-        value = EditorGUI.IntField(txtRect, Mathf.RoundToInt(value * 100), txtStyle) / 100f;
+        var newValeu = EditorGUI.IntField(txtRect, Mathf.RoundToInt(value * 100), txtStyle);
+        if (newValeu != Mathf.RoundToInt(value * 100))
+        {
+            value = Mathf.Clamp(newValeu / 100f, 0, 100);
+        }
 
         if (areaRect.Contains(mousePos))
         {

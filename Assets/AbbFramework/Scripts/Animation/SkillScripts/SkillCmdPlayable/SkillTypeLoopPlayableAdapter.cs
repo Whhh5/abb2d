@@ -15,6 +15,10 @@ public class SkillTypeLoopPlayableAdapter : SkillTypePlayableAdapter
     private SkillTypeLoopData m_AttackLink = null;
     private SkillItemInfo CurAtkLinkItemData => m_AttackLink.GetData((int)m_StepIndex);
 
+    public override EnAnimLayer GetOutputLayer()
+    {
+        return m_PlayableAdapter.GetOutputLayer();
+    }
     protected override void OnDestroy()
     {
         PlayableAdapter.Destroy(m_PlayableAdapter);
@@ -72,7 +76,11 @@ public class SkillTypeLoopPlayableAdapter : SkillTypePlayableAdapter
 
     public override bool IsPlayEnd()
     {
-        return m_StepIndex == EnCmdStep.Step1 ? false : base.IsPlayEnd();
+        if (!CurAtkLinkItemData._IsAutoRemove)
+            return false;
+        if (m_StepIndex == EnCmdStep.Step1)
+            return false;
+        return base.IsPlayEnd();
     }
     public override int GetPlayCount()
     {
@@ -165,4 +173,5 @@ public class SkillTypeLoopPlayableAdapter : SkillTypePlayableAdapter
         }
         return true;
     }
+
 }

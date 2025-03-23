@@ -7,8 +7,8 @@ public class AutoReferenceAttribute : Attribute
 {
     public string objName;
     public AutoReferenceAttribute() { }
-    public AutoReferenceAttribute(string name)
+    public AutoReferenceAttribute(object name)
     {
-        objName = name;
+        objName = name.ToString();
     }
 }

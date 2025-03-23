@@ -54,9 +54,8 @@ public class PlayableMixerAdapter : PlayableAdapter
     public override void OnPoolInit(PlayableAdapterUserData userData)
     {
         base.OnPoolInit(userData);
-        if (userData is not PlayableAdapterUserData playableData)
-            return;
-        var data = (PlayableMixerAdapterData)playableData.customData;
+
+        var data = (PlayableMixerAdapterData)userData.customData;
         m_MixerPlayable = AnimationMixerPlayable.Create(m_Graph.GetGraph(), GlobalConfig.Int2);
         AddConnectRootAdapter(m_MixerPlayable);
 
@@ -123,5 +122,10 @@ public class PlayableMixerAdapter : PlayableAdapter
         m_MixerPlayable.SetInputWeight(GlobalConfig.Int1, 1 - slider);
         m_MixerPlayable.SetInputWeight(GlobalConfig.Int0, slider);
         return true;
+    }
+
+    public override EnAnimLayer GetOutputLayer()
+    {
+        return m_To.GetOutputLayer();
     }
 }

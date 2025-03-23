@@ -16,6 +16,7 @@ public class PlayableClipAdapter : PlayableAdapter
     private AnimationClipPlayable m_ClipPlayable;
     private int m_ClipID = -1;
     private float m_ClipLength = -1;
+    private EnAnimLayer _AnimLayer = EnAnimLayer.None;
     protected override void OnDestroy()
     {
         m_ClipPlayable.Destroy();
@@ -32,6 +33,8 @@ public class PlayableClipAdapter : PlayableAdapter
         var clipData = (PlayableClipAdapterData)playableData.customData;
 
         m_ClipID = clipData.clipID;
+        var clipCfg = GameSchedule.Instance.GetClipCfg0(m_ClipID);
+        _AnimLayer = (EnAnimLayer)clipCfg.nLayer;
         var clip = AnimMgr.Instance.GetClip(m_ClipID);
         m_ClipLength = clip.length;
         m_ClipPlayable = AnimationClipPlayable.Create(m_Graph.GetGraph(), clip);
@@ -46,5 +49,10 @@ public class PlayableClipAdapter : PlayableAdapter
     public override float GetUnitTime()
     {
         return m_ClipLength;
+    }
+
+    public override EnAnimLayer GetOutputLayer()
+    {
+        return _AnimLayer;
     }
 }

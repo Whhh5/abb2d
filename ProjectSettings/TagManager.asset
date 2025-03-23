@@ -14,8 +14,8 @@ TagManager:
   - Player
   - Monster
   - Terrain
-  - 
-  - 
+  - Friendly
+  - Zombie
   - 
   - 
   - 

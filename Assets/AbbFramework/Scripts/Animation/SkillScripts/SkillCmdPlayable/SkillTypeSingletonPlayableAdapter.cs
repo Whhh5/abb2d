@@ -32,4 +32,9 @@ public class SkillTypeSingletonPlayableAdapter : SkillTypePlayableAdapter
     {
         return m_CurClipAdapter.GetPlayTime();
     }
+
+    public override EnAnimLayer GetOutputLayer()
+    {
+        return m_CurClipAdapter.GetOutputLayer();
+    }
 }

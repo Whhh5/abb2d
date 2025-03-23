@@ -4,32 +4,43 @@ using System.Collections.Generic;
 
 public class EntityMgr : Singleton<EntityMgr>
 {
-    private Dictionary<int, EntityData> m_EntityDataMap = new();
+    private Dictionary<int, GameEntityData> m_EntityDataMap = new();
 
-    public EntityData GetEntityData(int entityID)
+    public GameEntityData GetEntityData(int entityID)
     {
         if (!m_EntityDataMap.TryGetValue(entityID, out var entityData))
             return null;
         return entityData;
     }
     public T GetEntityData<T>(int entityID)
-        where T: EntityData
+        where T: GameEntityData
     {
         var entityData = GetEntityData(entityID);
         if (entityData is not T tData)
             return null;
         return tData;
     }
-
-    public int CreateEntityData<T>()
-        where T: EntityData, new()
+    public bool IsValid(int entityID)
+    {
+        var result = m_EntityDataMap.ContainsKey(entityID);
+        return result;
+    }
+    public int CreateEntityData<T>(IClassPoolUserData userData)
+        where T : GameEntityData, new()
     {
         var entityID = ABBUtil.GetTempKey();
-        var entityData = ClassPoolMgr.Instance.Pull<T>();
+        var entityData = ClassPoolMgr.Instance.Pull<T>(userData);
         entityData.SetEntityID(entityID);
         entityData.SetLoadStatus(EnLoadStatus.Start);
         entityData.Create();
         m_EntityDataMap.Add(entityID, entityData);
+        return entityID;
+    }
+
+    public int CreateEntityData<T>()
+        where T: GameEntityData, new()
+    {
+        var entityID = CreateEntityData<T>(null);
         return entityID;
     }
     public void RecycleEntityData(int entityID)
@@ -66,7 +77,7 @@ public class EntityMgr : Singleton<EntityMgr>
         entityData.SetIsLoadSuccess(true);
         entityData.OnGOCreate();
         var go = ABBGOMgr.Instance.GetGo(goID);
-        var goEntity = go.GetComponent<Entity>();
+        var goEntity = go.GetComponent<GameEntity>();
         goEntity.SetEntityID(entityID);
         goEntity.LoadCompeletion();
     }

@@ -16,6 +16,7 @@ public class PhysicsResolveBox : IPhysicsResolve
     protected float m_PosOffsetX;
     protected float m_PosOffsetY;
 
+    private int[] _TempEntityIDs = new int[20];
     public async void Execute(int entityID, int layer, PhysicsColliderCallback callback, IPhysicsColliderCallbackCustomData cusomData)
     {
         var entityPos = Entity3DMgr.Instance.GetEntityWorldPos(entityID);
@@ -42,9 +43,9 @@ public class PhysicsResolveBox : IPhysicsResolve
         {
             var centre = startPos + (i + 0.5f) * m_UnitSizeZ * boxRotForward;
 
-            var colliders = Physics.OverlapBox(centre, unitHalfSize, Quaternion.Euler(targetRot), layer);
+            var idCount = EntityUtil.PhysicsOverlapBox(ref _TempEntityIDs, centre, unitHalfSize, Quaternion.Euler(rot), layer);
             DebugDrawMgr.Instance.DrawBox(centre, unitHalfSize, targetRot, 0.5f);
-            callback(colliders, cusomData);
+            callback(ref _TempEntityIDs, ref idCount, cusomData);
             await UniTask.WaitForSeconds(interval);
         }
     }

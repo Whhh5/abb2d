@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using UnityEngine;
 
 
@@ -10,10 +11,8 @@ public interface IEntity3DCCCom : IEntity3DCom
 }
 
 
-public class EntityCCComData : IEntity3DComData<Entity3DComDataUserData>, IUpdate
+public sealed class EntityCCComData : Entity3DComDataGO<IEntity3DCCCom>, IUpdate
 {
-    private Entity3DData m_Entity3DData = null;
-    private IEntity3DCCCom m_RigidCom = null;
     private CharacterController m_CC = null;
     private Transform m_Tran = null;
     // 方向
@@ -21,7 +20,7 @@ public class EntityCCComData : IEntity3DComData<Entity3DComDataUserData>, IUpdat
     // 移动
     private bool m_IsCanMove = true;
     private float m_MoveSpeed = 5;
-    private float m_MoveSpeedIncrements = 5;
+    private float m_MoveSpeedIncrements = 1;
     // 跳跃
     private bool m_IsCanJump = true;
     private float m_JumpSpeed = 1;
@@ -38,67 +37,89 @@ public class EntityCCComData : IEntity3DComData<Entity3DComDataUserData>, IUpdat
     private float m_RotationSpeed = 1f;
     private bool m_IsCanRotation = true;
 
-    public void PoolConstructor()
+    public override void OnPoolDestroy()
     {
+        base.OnPoolDestroy();
     }
-
-    public void OnPoolEnable()
+    public override void OnDestroyGO()
     {
-    }
-
-    public void PoolRelease()
-    {
-    }
-    public void OnPoolDestroy()
-    {
-        m_Entity3DData = null;
-    }
-    public void OnDestroyGO(int entityID)
-    {
-        UpdateMgr.Instance.Unregistener(this);
+        base.OnDestroyGO();
         m_CC = null;
-        m_RigidCom = null;
         m_Tran = null;
+
+        m_MoveDirection = Vector3.zero;
+        m_IsCanMove = true;
+        m_MoveSpeed = 5;
+        m_MoveSpeedIncrements = 1;
+
+        m_IsCanJump = true;
+        m_JumpSpeed = 1;
+        m_JumpSpeedIncrements = 1;
+        m_JumpHeight = 7;
+        
+        m_IsGravity = true;
+        m_VerticalVelocity = -2;
+        m_Gravity = 20;
+        m_IsJumping = false;
+        m_JumpCount = 0;
+        m_JumpMaxCount = 3;
+        
+        m_RotationSpeed = 1f;
+        m_IsCanRotation = true;
     }
 
-    public void OnPoolInit(Entity3DComDataUserData userData)
+    public override void OnPoolInit(Entity3DComDataUserData userData)
     {
-        m_Entity3DData = userData.entity3DData;
+        base.OnPoolInit(userData);
 
     }
 
-    public void OnCreateGO(int entityID)
+    public override void OnEnable()
     {
-        var entityData = Entity3DMgr.Instance.GetEntity3DData(entityID);
-        var entity = entityData.GetEntity<Entity3D>();
-        m_RigidCom = entity as IEntity3DCCCom;
-        m_CC = m_RigidCom.GetCC();
-        m_Tran = entity.transform;
+        base.OnEnable();
         UpdateMgr.Instance.Registener(this);
+    }
+
+    public override void OnDisable()
+    {
+        base.OnDisable();
+        UpdateMgr.Instance.Unregistener(this);
+    }
+    public override void OnCreateGO()
+    {
+        base.OnCreateGO();
+        var entityData = Entity3DMgr.Instance.GetEntity3DData(_EntityID);
+        var entity = entityData.GetEntityComponent<Entity3D>();
+        m_CC = _GoCom.GetCC();
+        m_Tran = entity.transform;
     }
 
     public void IncrementMove(Vector3 motion)
     {
-        if (!m_Entity3DData.IsLoadSuccess)
+        if (!Entity3DMgr.Instance.GetEntityIsLoadSuccess(_EntityID))
             return;
         m_CC.Move(motion);
     }
     public void Jump(float height)
     {
-        if (!m_Entity3DData.IsLoadSuccess)
+        if (!Entity3DMgr.Instance.GetEntityIsLoadSuccess(_EntityID))
             return;
         m_CC.Move(Vector3.up * height);
+        //var curPosition = m_Entity3DData.WorldPos;
+        //m_Entity3DData.SetPosition(curPosition + Vector3.up * height);
     }
     public bool IsGrounded()
     {
-        if (!m_Entity3DData.IsLoadSuccess)
+        if (!Entity3DMgr.Instance.GetEntityIsLoadSuccess(_EntityID))
             return true;
-        return m_RigidCom.IsGrounded();
+        return _GoCom.IsGrounded();
     }
 
     public void Update()
     {
-        m_Entity3DData.SetPosition(m_Tran.position);
+        if (!Entity3DMgr.Instance.GetEntityIsLoadSuccess(_EntityID))
+            return;
+        Entity3DMgr.Instance.SetEntityWorldPos(_EntityID, m_Tran.position);
     }
 
     public void SetMoveDirection(Vector3 direction)
@@ -116,6 +137,10 @@ public class EntityCCComData : IEntity3DComData<Entity3DComDataUserData>, IUpdat
     public void SetMoveSpeedIncrements(float increments)
     {
         m_MoveSpeedIncrements = increments;
+    }
+    public float GetMoveSpeedIncrements()
+    {
+        return m_MoveSpeedIncrements;
     }
     public void AddMoveSpeedIncrements(float increments)
     {
@@ -220,10 +245,11 @@ public class EntityCCComData : IEntity3DComData<Entity3DComDataUserData>, IUpdat
     }
     public void SetRotationSpeed(float rotationSpeed)
     {
-        m_RotationSpeed =rotationSpeed;
+        m_RotationSpeed = rotationSpeed;
     }
     public float GetRotationSpeed()
     {
         return m_IsCanRotation ? m_RotationSpeed : 0;
     }
+
 }

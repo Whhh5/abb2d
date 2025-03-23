@@ -19,9 +19,9 @@ public class PhysicsResolveSphere : IPhysicsResolve
 
         var pos = entityPos + forward * m_PosOffsetZ + up * m_PosOffsetY + right * m_PosOffsetX;
 
-        var colliders = Physics.OverlapSphere(pos, m_Radius, layer);
+        ref var enittyIDs = ref EntityUtil.PhysicsOverlapSphere(out var count, pos, m_Radius, layer);
         DebugDrawMgr.Instance.DrawSphere(pos, m_Radius, 0.5f);
-        callback.Invoke(colliders, cusomData);
+        callback.Invoke(ref enittyIDs, ref count, cusomData);
     }
 
     public void SetParams(ref int[] arrParams, int startIndex)

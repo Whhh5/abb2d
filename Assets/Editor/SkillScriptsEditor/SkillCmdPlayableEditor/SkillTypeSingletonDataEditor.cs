@@ -11,6 +11,7 @@ using UnityEngine;
 public class SkillTypeSingletonDataEditor : SkillTypeSingletonData, ISkillTypeEditor
 {
     private List<int> m_ClipList = new();
+    //private SkillItemInfoEditor[] _ItemInfoList = new SkillItemInfoEditor[1];
 
     public void InitEditor()
     {
@@ -27,17 +28,9 @@ public class SkillTypeSingletonDataEditor : SkillTypeSingletonData, ISkillTypeEd
             }
             for (int i = 0; i < m_ClipList.Count; i++)
             {
-                var clipID = m_ClipList[i];
-
-                EditorGUILayout.BeginHorizontal();
-                {
-                    m_ClipList[i] = EditorGUILayout.IntField("clipID:", clipID, GUILayout.Width(200));
-                    if (GUILayout.Button("❌", GUILayout.Width(50)))
-                    {
-                        m_ClipList.RemoveAt(i);
-                    }
-                }
-                EditorGUILayout.EndHorizontal();
+                var index = i;
+                var clipID = m_ClipList[index];
+                EditorUtil.DrawClipID(clipID, value => m_ClipList[index] = value);
             }
         }
         EditorGUILayout.EndVertical();

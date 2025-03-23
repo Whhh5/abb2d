@@ -19,8 +19,8 @@ public unsafe class PlayAnimationSample : MonoBehaviour
     private AnimationClip m_Clip5 = null;
     [SerializeField]
     private Animator m_Animator = null;
-    [SerializeField]
-    private float m_ModeTime = 0;
+    //[SerializeField]
+    //private float m_ModeTime = 0;
 
     private PlayableGraph m_PlayableGraph = default;
     [Range(0, 1)]

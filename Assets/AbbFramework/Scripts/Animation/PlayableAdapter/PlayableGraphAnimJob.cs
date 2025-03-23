@@ -2,6 +2,7 @@ using System.IO;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using UnityEngine;
 using UnityEngine.Animations;
+using UnityEngine.Rendering;
 
 
 public struct FootIKInfo
@@ -23,6 +24,7 @@ public struct PlayableGraphAnimJob : IAnimationJob
     public bool isActivity;
     public bool applyRootMotion;
     public float lastOffsetY;
+    public TransformStreamHandle rootHandle;
 
     public FootIKInfo leftFootIKInfo;
     public FootIKInfo rightFootIKInfo;
@@ -59,7 +61,8 @@ public struct PlayableGraphAnimJob : IAnimationJob
 
     private void UpdateFootData(ref AnimationStream stream, ref AnimationHumanStream human, ref FootIKInfo info, AvatarIKGoal iKGoal)
     {
-        info.direction = info.lowerLegHandle.GetRotation(stream) * -Vector3.right;
+        var footPos = human.GetGoalPosition(iKGoal);
+        info.direction = Vector3.Normalize(footPos - info.lowerLegHandle.GetPosition(stream));
 
         info.lastWorldPos = human.GetGoalPosition(iKGoal);
         info.lastQuaternion = human.GetGoalRotation(iKGoal);
@@ -90,11 +93,20 @@ public struct PlayableGraphAnimJob : IAnimationJob
 
     public void ProcessRootMotion(AnimationStream stream)
     {
+        //stream.velocity = Vector3.one;
+        //return;
+        //if (!applyRootMotion)
+        //{
+        //    stream.velocity = Vector3.one;
+        //    return;
+        //}
+        //// 获取默认的根运动位移和旋转
+        //Vector3 defaultDeltaPosition = stream.rootMotionPosition;
+        //Quaternion defaultDeltaRotation = stream.rootMotionRotation;
+        //// 修改位移，根据自定义速度乘数调整
+        //Vector3 customDeltaPosition = defaultDeltaPosition;
+        //// 应用修改后的根运动
+        //stream.velocity = stream.velocity;
 
-        if (!applyRootMotion)
-        {
-            stream.velocity = Vector3.zero;
-            return;
-        }
     }
 }

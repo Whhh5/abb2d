@@ -10,13 +10,19 @@ public class CameraMgr : SingletonMono<CameraMgr>
     [SerializeField]
     private Camera m_MainCamera;
     [SerializeField]
+    private Camera _UICamera;
+    [SerializeField]
     private UniversalAdditionalCameraData m_URPCamera = null;
     [SerializeField]
     private CinemachineVirtualCamera m_VirtualCamera = null;
-    private int m_LookAtDataGoID = -1;
-    private CameraLookAtData m_LookAtData = null;
+
+    private int m_LookAtEntityID = -1;
 
 
+    public UniversalAdditionalCameraData GetURPCamera()
+    {
+        return m_URPCamera;
+    }
     protected override void Start()
     {
         base.Start();
@@ -24,31 +30,34 @@ public class CameraMgr : SingletonMono<CameraMgr>
     }
     protected override void OnDestroy()
     {
-        m_LookAtDataGoID
+        m_LookAtEntityID
             = -1;
         m_MainCamera = null;
         m_URPCamera = null;
         m_VirtualCamera = null;
         base.OnDestroy();
     }
-    public void SetLookAtTran(int goID)
+    public void SetLookAtTran(int entityID)
     {
-        m_LookAtDataGoID = goID;
-        if (m_VirtualCamera != null)
-        {
-            var goLockAtData = ABBGOMgr.Instance.GetGoCom<CameraLookAtData>(goID);
-            m_LookAtData = goLockAtData;
-            m_VirtualCamera.LookAt = goLockAtData.lookAtTran;
-            m_VirtualCamera.Follow = goLockAtData.followTran;
-        }
+        m_LookAtEntityID = entityID;
+    }
+    public void SetVirtualCameraTrackTran(Transform follow, Transform lookAt)
+    {
+        m_VirtualCamera.LookAt = lookAt;
+        m_VirtualCamera.Follow = follow;
     }
     public void ClearLookAt()
     {
-        m_LookAtData = null;
+        m_VirtualCamera.LookAt = null;
+        m_VirtualCamera.Follow = null;
     }
     public Camera GetMainCamera()
     {
         return m_MainCamera;
+    }
+    public Camera GetUICamera()
+    {
+        return _UICamera;
     }
     public Vector3 GetCameraWorldPos()
     {
@@ -67,20 +76,5 @@ public class CameraMgr : SingletonMono<CameraMgr>
     public Vector3 GetCameraUp()
     {
         return m_MainCamera.transform.up;
-    }
-
-    private void Update()
-    {
-        //if (m_LookAtData == null)
-        //    return;
-        //var tran = m_VirtualCamera.transform;
-        //var curPos = tran.transform.position;
-        //var toPos = m_LookAtData.followTran.position;
-        //var lookAtPos = m_LookAtData.lookAtTran.position;
-        //var pos = Vector3.Lerp(curPos, toPos, ABBUtil.GetTimeDelta() * 5);
-
-        //var forword = toPos - lookAtPos;
-        //m_VirtualCamera.ForceCameraPosition(pos, Quaternion.Euler(Vector3.zero));
-
     }
 }

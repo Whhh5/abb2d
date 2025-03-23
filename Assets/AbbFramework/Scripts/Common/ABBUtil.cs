@@ -111,5 +111,18 @@ public static class ABBUtil
 
         return Quaternion.Euler(eulerAngles);
     }
+
+	public static Vector2 GetMousePoint()
+	{
+		return Input.mousePosition;
+    }
+    public static Vector2 GetMousePositionDelta()
+    {
+        return Input.mousePositionDelta;
+    }
+    public static float GetMouseScrollDelta()
+    {
+        return Input.mouseScrollDelta.y;
+    }
 }
 

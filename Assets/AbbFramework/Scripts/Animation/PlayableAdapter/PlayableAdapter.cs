@@ -188,10 +188,7 @@ public abstract class PlayableAdapter : IClassPool<PlayableAdapterUserData>
         var schedule = GetPlaySchedule();
         return Mathf.FloorToInt(schedule);
     }
-    public virtual EnAnimLayer GetOutputLayer()
-    {
-        return EnAnimLayer.Layer1;
-    }
+    public abstract EnAnimLayer GetOutputLayer();
     // 是否播放结束
     public virtual bool IsPlayEnd()
     {

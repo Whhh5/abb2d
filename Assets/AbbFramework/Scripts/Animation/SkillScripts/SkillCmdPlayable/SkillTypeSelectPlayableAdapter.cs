@@ -16,6 +16,11 @@ public class SkillTypeSelectPlayableAdapter : SkillTypePlayableAdapter
         _Clipadapter = null;
     }
 
+
+    public override EnAnimLayer GetOutputLayer()
+    {
+        return _Clipadapter.GetOutputLayer();
+    }
     public override void OnPoolInit(PlayableAdapterUserData userData)
     {
         base.OnPoolInit(userData);
@@ -36,6 +41,12 @@ public class SkillTypeSelectPlayableAdapter : SkillTypePlayableAdapter
         var cipID = _AtkLinkItemData.GetClipID();
         _Clipadapter = m_Graph.CreateClipPlayableAdapter(cipID);
         AddConnectRootAdapter(_Clipadapter);
+    }
+    public override bool IsPlayEnd()
+    {
+        if (!_AtkLinkItemData._IsAutoRemove)
+            return false;
+        return base.IsPlayEnd();
     }
     public override void ExecuteCmd()
     {

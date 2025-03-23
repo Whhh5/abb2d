@@ -8,6 +8,12 @@ using System.Diagnostics;
 using System.IO;
 using static PlasticPipe.PlasticProtocol.Messages.NegotiationCommand;
 using Unity.Plastic.Newtonsoft.Json;
+using Unity.Entities;
+using Unity.Entities.Conversion;
+//using Unity.Entities.Serialization;
+using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
+using Unity.Entities.UniversalDelegates;
 #if UNITY_2019_1_OR_NEWER
 using UnityEngine.UIElements;
 #else
@@ -69,13 +75,17 @@ public static class CustomUnityToolbar
 
     }
 
-    private static BaseType baseType = new();
+    //private static BaseType baseType = new();
     /// <summary>
     /// 绘制左侧的元素
     /// </summary>
     private static void GUILeft()
     {
         GUILayout.BeginHorizontal();
+        if (GUILayout.Button("Create Blob Asset"))
+        {
+            //CreateBlobAsset();
+        }
         if (GUILayout.Button("Update Load Target"))
         {
             LoadConfigEditor.CreateLoadConfigJson();
@@ -181,9 +191,9 @@ public static class CustomUnityToolbar
             var arrCfg = new ClipCfg2[] { cfg22, cfg22 };
             var json = JsonConvert.SerializeObject(arrCfg);
             var str2 = "{\"nClipID\":1,\"strName\":\"111\",\"fLength\":2.33,\"nAssetCfgID\":1}";
-            var str4 = "{\"nClipID\":1,\"strName\":\"111\",\"fLength\":2.33,\"nAssetCfgID\":1}";
-            var str5 = "[{\"nClipID\":1,\"strName\":\"111\",\"fLength\":2.33,\"nAssetCfgID\":1},{\"nClipID\":1,\"strName\":\"111\",\"fLength\":2.33,\"nAssetCfgID\":1}]";
-            var str6 = "[{\"nClipID\":1,\"strName\":\"111\",\"fLength\":2.33,\"nAssetCfgID\":1}]";
+            //var str4 = "{\"nClipID\":1,\"strName\":\"111\",\"fLength\":2.33,\"nAssetCfgID\":1}";
+            //var str5 = "[{\"nClipID\":1,\"strName\":\"111\",\"fLength\":2.33,\"nAssetCfgID\":1},{\"nClipID\":1,\"strName\":\"111\",\"fLength\":2.33,\"nAssetCfgID\":1}]";
+            //var str6 = "[{\"nClipID\":1,\"strName\":\"111\",\"fLength\":2.33,\"nAssetCfgID\":1}]";
 
             var str3 = JsonConvert.DeserializeObject(json, typeof(ClipCfg[]));
             var cfg = JsonConvert.DeserializeObject<ClipCfg2>(str2);
@@ -203,13 +213,106 @@ public static class CustomUnityToolbar
             MonsterMgr.Instance.CreateMonster(1, hit[0].point + Vector3.up * 2);
         }
     }
-}
 
-public class BaseType
-{
+    //public static Entity ConvertGameObjectToEntity(GameObject prefab)
+    //{
+    //    //Unity.Entities.Conversion.LiveConversionSettings.
+    //    var entityMgr = World.DefaultGameObjectInjectionWorld.EntityManager;
+    //    var entity = entityMgr.CreateEntity(typeof(AttackComponent));
+    //    entityMgr.GetComponentTypes(entity, Allocator.Temp);
+    //    entityMgr.SetComponentData<AttackComponent>(entity, new AttackComponent()
+    //    {
+    //        faction = EnFaction.Zombie,
+    //        timer = 1,
+    //        timerMax = 2,
+    //    });
 
-}
-public class ChildType : BaseType
-{
+    //    return entity;
+    //}
+    //private unsafe static void CreateBlobAsset()
+    //{
+    //    var testObj = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Scenes/Ecs Sample/UnitEntity.prefab");
 
+    //    var blobBuilder = new BlobBuilder(Allocator.Temp);
+    //    ref var blobData = ref blobBuilder.ConstructRoot<MyBlobData>();
+    //    var builderArray = blobBuilder.Allocate(ref blobData.IntArray, 5);
+    //    var entityArray = blobBuilder.Allocate(ref blobData.entityArray, 1);
+    //    entityArray[0] = new AttackComponent()
+    //    {
+    //        faction = EnFaction.Zombie,
+    //        timer = 1,
+    //        timerMax = 2,
+    //    };
+
+    //    for (int i = 0; i < 5; i++)
+    //    {
+    //        builderArray[i] = i;
+    //    }
+    //    blobBuilder.AllocateString(ref blobData.StrValue, "sjbaduagosdoa");
+    //    var blobRef = blobBuilder.CreateBlobAssetReference<MyBlobData>(Allocator.Temp);
+    //    //var legnth = blobBuilder.
+    //    blobBuilder.Dispose();
+
+
+    //    var str = blobBuilder.ToString();
+    //    //var strByte = str
+
+    //    int dataLength = UnsafeUtility.SizeOf<MyBlobData>();
+    //    var intSize = UnsafeUtility.SizeOf<int>();
+    //    //var strSize = UnsafeUtility.SizeOf<BlobString>();
+    //    dataLength += builderArray.Length * intSize;// + strSize;
+
+    //    var filePath = Path.Combine(ABBUtil.GetUnityRootPath(), "Misc/AssetBlob.bin");
+    //    unsafe
+    //    {
+    //        var dataPtr = (byte*)blobRef.GetUnsafePtr();
+
+    //        using (var writer = new BinaryWriter(File.Open(filePath, FileMode.OpenOrCreate)))
+    //        {
+    //            writer.Write(dataLength);
+
+    //            for (int i = 0; i < dataLength; i++)
+    //            {
+    //                writer.Write(dataPtr[i]);
+    //            }
+    //        }
+    //    }
+    //    blobRef.Dispose();
+    //    //BlobAssetSerializeExtensions.Write(new Unity.Entities.Serialization.StreamBinaryWriter())
+
+
+    //    using (var reader = new BinaryReader(File.Open(filePath, FileMode.Open)))
+    //    {
+    //        var length = reader.ReadInt32();
+
+    //        byte* dataPtr = (byte*)UnsafeUtility.Malloc(length, 1, Allocator.Temp);
+    //        for (int i = 0; i < length; i++)
+    //        {
+    //            dataPtr[i] = reader.ReadByte();
+    //        }
+
+    //        var blobAsset = BlobAssetReference<MyBlobData>.Create((void*)dataPtr, length);
+
+    //        for (int i = 0; i < blobAsset.Value.IntArray.Length; i++)
+    //        {
+    //            EcsUtil.DebugLog(blobAsset.Value.IntArray[i]);
+    //        }
+    //        EcsUtil.DebugLog(blobAsset.Value.StrValue.Length);
+    //        EcsUtil.DebugLog(blobAsset.Value.entityArray[0].faction);
+    //    }
+    //}
 }
+//public struct MyBlobData
+//{
+//    public BlobArray<int> IntArray;
+//    public BlobString StrValue;
+//    public BlobArray<AttackComponent> entityArray;
+//}
+//public class BaseType
+//{
+
+//}
+//public class ChildType : BaseType
+//{
+
+//}

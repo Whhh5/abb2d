@@ -64,6 +64,6 @@ public class AtkNumEntity : Entity3D<AtkNumEntityData>
     protected override void Update()
     {
         base.Update();
-        m_BodyObj.transform.LookAt(CameraMgr.Instance.GetCameraWorldPos());
+        // m_BodyObj.transform.LookAt(CameraMgr.Instance.GetCameraWorldPos());
     }
 }

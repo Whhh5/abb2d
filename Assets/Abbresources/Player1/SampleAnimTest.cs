@@ -6,11 +6,11 @@ using UnityEngine.Playables;
 
 public class SampleAnimTest : MonoBehaviour
 {
-    [SerializeField]
-    private Animator m_Anim = null;
-    [SerializeField]
-    private AnimationClip m_Clip = null;
-    PlayableGraphAdapter graph2 = null;
+    //[SerializeField]
+    //private Animator m_Anim = null;
+    //[SerializeField]
+    //private AnimationClip m_Clip = null;
+    //PlayableGraphAdapter graph2 = null;
     private void Awake()
     {
         //graph2 = PlayableGraphAdapter.Create(, m_Anim);

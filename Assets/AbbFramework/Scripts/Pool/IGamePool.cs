@@ -2,14 +2,24 @@
 using System.Collections;
 
 
-public interface IClassPoolUserData: IClassPool
+public interface IClassPoolUserData : IClassPoolDestroy
+{
+
+}
+public interface IClassPoolInit : IClassPool
 {
     void IClassPool.PoolConstructor() { }
-    void IClassPool.OnPoolInit<T>(T userData) { }
     void IClassPool.OnPoolEnable() { }
     void IClassPool.PoolRelease() { }
 }
-
+public interface IClassPoolDestroy : IClassPoolInit
+{
+    void IClassPool.OnPoolInit<T>(T userData) { }
+}
+public interface IClassPoolNone : IClassPoolDestroy
+{
+    void IClassPool.OnPoolDestroy() { }
+}
 public interface IClassPool
 {
     public void PoolConstructor();
@@ -20,8 +30,16 @@ public interface IClassPool
 
     public void PoolRelease();
 }
-public interface IClassPool<T>: IClassPool
-    where T: class, IClassPoolUserData
+
+public interface IClassPoolInit<T> : IClassPool<T>
+    where T : class, IClassPoolUserData
+{
+    void IClassPool.PoolConstructor() { }
+    void IClassPool.OnPoolEnable() { }
+    void IClassPool.PoolRelease() { }
+}
+public interface IClassPool<T> : IClassPool
+    where T : class, IClassPoolUserData
 {
     public void OnPoolInit(T userData);
 

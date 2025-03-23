@@ -14,26 +14,43 @@ public enum EnAtkLinkScheculeType
     Behaviour,
     EnumCount,
 }
+public class EventBattleInfo: IClassPoolNone
+{
+    public int entityID1;
+    public int entityID2;
+    public int toValue;
+    public int fromValue;
+}
 public class AttackMgr : Singleton<AttackMgr>
 {
     public void AttackEntity(int entityID, int entityID2, int value)
     {
-        Entity3DMgr.Instance.AddEntityCmd(entityID2, EnEntityCmd.Injured);
+        var curHealthValue = Entity3DMgr.Instance.GetEntityHealthValue(entityID2);
+        var health = curHealthValue - value;
+        Entity3DMgr.Instance.SetEntityHealthValue(entityID2, curHealthValue - value);
+        if (health > 0)
+        {
+            Entity3DMgr.Instance.AddEntityCmd(entityID2, EnEntityCmd.Injured);
+        }
+        else
+        {
+            var monsterID = EntityUtil.EntityID2MonsterID(entityID2);
+            var monsterCfg = GameSchedule.Instance.GetMonsterCfg0(monsterID);
+            if (monsterCfg.nDieCmdID > 0)
+            {
+                Entity3DMgr.Instance.AddEntityCmd(entityID2, (EnEntityCmd)monsterCfg.nDieCmdID);
+            }
+            Entity3DMgr.Instance.DieEntity(entityID2);
+        }
 
-        var entityPos = Entity3DMgr.Instance.GetEntityWorldPos(entityID2);
-        var atkPos = entityPos + new Vector3(Random.Range(-0.2f, 0.2f), Random.Range(1.8f, 2.2f), Random.Range(-0.2f, 0.2f));
-        ShowView(atkPos, value);
+        var userData = ClassPoolMgr.Instance.Pull<EventBattleInfo>();
+        userData.entityID1 = entityID;
+        userData.entityID2 = entityID2;
+        userData.fromValue = curHealthValue;
+        userData.toValue = curHealthValue - value;
+        ABBEventMgr.Instance.FireExecute(EnABBEvent.EVENT_BATTLE_INFO, 0, 0, userData);
+        ClassPoolMgr.Instance.Push(userData);
     }
-
-    private void ShowView(Vector3 pos, int value)
-    {
-        var entityID = Entity3DMgr.Instance.CreateEntityData<AtkNumEntityData>();
-        var atkNumData = Entity3DMgr.Instance.GetEntity3DData<AtkNumEntityData>(entityID);
-        atkNumData.SetPosition(pos);
-        atkNumData.SetNumValue(value);
-        Entity3DMgr.Instance.LoadEntity(entityID);
-    }
-
 
     public static ISkillScheduleAction GetAtkLinkScheduleItem(EnAtkLinkScheculeType scheduleType, int[] data, ref int startIndex)
     {

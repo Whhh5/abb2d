@@ -10,5 +10,13 @@ public class UILevelWindowData : UIWindowData
 }
 public class UILevelWindow : UIWindow
 {
-    
+    public override void OnHide()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public override void OnShow()
+    {
+        throw new System.NotImplementedException();
+    }
 }

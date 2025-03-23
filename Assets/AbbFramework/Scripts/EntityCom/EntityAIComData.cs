@@ -1,55 +1,115 @@
-using System.Collections;
+
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.EventSystems.EventTrigger;
 
 
-public class EntityAIComDataUserData : IClassPoolUserData
+public sealed class EntityAIComData : Entity3DComData, IUpdate
 {
-    public void OnPoolDestroy()
+    private int _CurAIModuleID = -1;
+    //private Dictionary<int, List<int>> _Level2ModuleIDs = new();
+    //private List<int> _Levels = new();
+
+    public override void OnPoolDestroy()
     {
-
-    }
-}
-public interface IEntityAICom : IEntity3DCom
-{
-
-}
-public class EntityAIComData : IEntity3DComData<EntityAIComDataUserData>
-{
-    private IEntityAICom _AICom = null;
-    public void OnCreateGO(int entityID)
-    {
-        var entityData = Entity3DMgr.Instance.GetEntity3DData(entityID);
-        var entityMono = entityData.GetEntity<Entity3D>();
-        _AICom = entityMono;
-
-        EntityAIMgr.Instance.Register(entityID);
+        base.OnPoolDestroy();
+        _CurAIModuleID
+            = -1;
+        //_Levels.Clear();
+        //_Level2ModuleIDs.Clear();
     }
 
-    public void OnDestroyGO(int entityID)
+    public override void OnDisable()
     {
-        EntityAIMgr.Instance.Unregister(entityID);
-        _AICom = null;
+        StopCurModuleData();
+        UpdateMgr.Instance.Unregistener(this);
+        base.OnDisable();
+    }
+    public override void OnEnable()
+    {
+        base.OnEnable();
+
+        UpdateMgr.Instance.Registener(this);
     }
 
-    public void OnPoolDestroy()
+    public override void OnPoolInit(Entity3DComDataUserData userData)
     {
+        base.OnPoolInit(userData);
+    }
+    private void StopCurModuleData()
+    {
+        if (_CurAIModuleID <= 0)
+            return;
+        if (!EntityAIMgr.Instance.TryGetAIModuleData(_CurAIModuleID, out var moduleData))
+            return;
+        moduleData.Finish();
+        _CurAIModuleID = -1;
+    }
+    public void Update()
+    {
+        if (!EntityUtil.IsValid(_EntityID))
+        {
+            StopCurModuleData();
+            return;
+        }
+        var nextAIModuleID = GetNextModuleID();
+        if (!EntityAIMgr.Instance.TryGetAIModuleData(nextAIModuleID, out var nextModuleData))
+            return;
+        var moduleCfgID = nextModuleData.GetAIModuleCfgID();
+        var level = GameSchedule.Instance.GetAIModuleCfg0(moduleCfgID).nLevel;
+
+        if (nextAIModuleID == _CurAIModuleID)
+        {
+            if (!EntityAIMgr.Instance.TryGetAIModuleData(_CurAIModuleID, out var moduleData))
+                return;
+            if (moduleData.IsNextModule())
+            {
+                moduleData.Reexecute();
+            }
+            return;
+        }
+
+
+        if (EntityAIMgr.Instance.AIModuleIDIsValid(_CurAIModuleID))
+        {
+            if (!EntityAIMgr.Instance.TryGetAIModuleData(_CurAIModuleID, out var moduleData))
+                return;
+            var curLevel = GameSchedule.Instance.GetAIModuleCfg0(moduleData.GetAIModuleCfgID()).nLevel;
+
+            var isNext = level > curLevel ? moduleData.IsBreak() : moduleData.IsNextModule();
+            if (isNext)
+            {
+                moduleData.Finish();
+                nextModuleData.PreExecute();
+                nextModuleData.Execute();
+                _CurAIModuleID = nextAIModuleID;
+            }
+        }
+        else
+        {
+            nextModuleData.PreExecute();
+            nextModuleData.Execute();
+            _CurAIModuleID = nextAIModuleID;
+        }
+    }
+    private int GetNextModuleID()
+    {
+        if (!EntityAIMgr.Instance.TryGetEntityAIInfo(_EntityID, out var aiInfo))
+            return -1;
+        ref var keyList = ref aiInfo.GetKeyList();
+        for (int j = 0; j < keyList.Count; j++)
+        {
+            var cfgID = keyList[^(j + 1)];
+            if (!aiInfo.TryGetModuleList(cfgID, out var moduleList))
+                continue;
+            var index = Random.Range(0, moduleList.Count - 1);
+            var moduleID = moduleList[index];
+            if (!EntityAIMgr.Instance.TryGetAIModuleData(moduleID, out var moduleData))
+                continue;
+            if (!moduleData.IsExecute())
+                continue;
+            return moduleID;
+        }
+        return -1;
     }
 
-    public void OnPoolEnable()
-    {
-    }
-
-    public void OnPoolInit(EntityAIComDataUserData userData)
-    {
-    }
-
-    public void PoolConstructor()
-    {
-    }
-
-    public void PoolRelease()
-    {
-    }
 }

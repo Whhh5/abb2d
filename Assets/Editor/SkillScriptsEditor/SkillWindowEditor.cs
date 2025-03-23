@@ -3,10 +3,18 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using DG.DOTweenEditor;
+using DG.Tweening;
+using DG.Tweening.Core;
 using Newtonsoft.Json;
+using TMPro;
+using Unity.Entities.UniversalDelegates;
 using UnityEditor;
 using UnityEngine;
-
+using UnityEngine.Animations;
+using UnityEngine.Playables;
+using UnityEngine.Timeline;
+using static Codice.Client.BaseCommands.Import.Commit;
 
 public interface ISkillItem
 {
@@ -39,64 +47,89 @@ public class SkillWindowEditor : EditorWindow
             m_ScrollPos[index] = pos;
         }
     }
-    private Dictionary<int, ItemInfo> m_DicItemInfo = new();
+    private class SkillViewInfo
+    {
+        public int m_CurSelectID = -1;
+        public List<int> m_OpenList = new();
+        public Dictionary<int, ItemInfo> m_DicItemInfo = new();
+
+        public void OnEnable()
+        {
+
+        }
+        public void OnDisable()
+        {
+            m_CurSelectID = -1;
+            m_OpenList.Clear();
+            m_DicItemInfo.Clear();
+        }
+    }
+    private Dictionary<int, SkillViewInfo> _MonsterSkillViewInfos = new();
+    private SkillViewInfo CurSkillViewInfo => _CurMonsterID > 0
+        ? _MonsterSkillViewInfos[_CurMonsterID]
+        : new();
     private Dictionary<int, SkillCfgEditor> m_ID2SkillEditor = new();
     private Dictionary<int, ISkillTypeEditor> m_DicSkilDrawData = new();
-    private int m_CurSelectID = -1;
-    private List<int> m_OpenList = new();
+    private List<MonsterCfgEditor> _MonsterCfg = new();
+    private Dictionary<int, int> _MonsterID2Index = new();
+    private int _CurMonsterID = -1;
+    private bool _IsSimulation = false;
+    private MonsterCfgEditor CurMonsterCfg => _CurMonsterID > 0
+        ? _MonsterCfg[_MonsterID2Index[_CurMonsterID]]
+        : new();
 
     private void OnEnable()
     {
-        LoadData();
+        LoadCfgData();
+
     }
 
     private void OnDisable()
     {
+        ClearPlayable();
+        CurSkillViewInfo.OnDisable();
+        _MonsterSkillViewInfos.Clear();
         m_ID2SkillEditor.Clear();
-        m_DicItemInfo.Clear();
+        _MonsterCfg.Clear();
+        _MonsterID2Index.Clear();
         m_DicSkilDrawData.Clear();
-        m_OpenList.Clear();
+        _CurMonsterID = -1;
     }
 
-    private void LoadData()
+    private void LoadCfgData()
     {
-
-        //m_DicSkillItem = GameSchedule.ReadCfg("SkillCfg", typeof(SkillCfgEditor)) as SkillCfgEditor[];
-
-        var catalogObj = GameSchedule.ReadCfg("CfgCatalog", typeof(ExportExcelInfo));
-        var excelPath = Path.Combine(ABBUtil.GetUnityRootPath(), "Misc", "Excel", "SkillCfg.xlsx");
-        var excelPackage = ExcelUtil.ReadExcel(excelPath);
-        var workbook = excelPackage.Workbook;
-        var workSheetCount = excelPackage.Workbook.Worksheets.Count();
-        var workSheet = excelPackage.Workbook.Worksheets[1];
-        var catalogList = catalogObj as ExportExcelInfo[];
-        var skillCatalog = Array.Find<ExportExcelInfo>(catalogList, (item) => item.excelInfo.excelName == "SkillCfg");
-        var skillEditorType = typeof(SkillCfgEditor);
-        var fields = skillEditorType.GetFields(BindingFlags.Public | BindingFlags.Instance);
-        for (int i = skillCatalog.excelInfo.dataStartRow; i <= workSheet.Dimension.End.Row; i++)
+        InitMonsterData();
+        InitSkillCfgData();
+    }
+    private void InitMonsterData()
+    {
+        _MonsterCfg = ExcelUtil.ReadEditorCfgData<MonsterCfg, MonsterCfgEditor>();
+        for (int i = 0; i < _MonsterCfg.Count; i++)
         {
-            if (!workSheet.IsValid(i))
-                continue;
-            var insSkillCfgEditor = Activator.CreateInstance<SkillCfgEditor>();
-            for (int j = 0; j < fields.Length; j++)
+            var cfg = _MonsterCfg[i];
+            _MonsterID2Index.Add(cfg.nMonsterID, i);
+            var data = new SkillViewInfo();
+            _MonsterSkillViewInfos.Add(cfg.nMonsterID, data);
+
+            for (int k = 0; k < cfg.arrSkillGroup.Length; k++)
             {
-                var field = fields[j];
-                if (!skillCatalog.field2ColList.TryGetValue(field.Name, out var col))
-                    goto next;
-                var excelStr = workSheet.GetValue<string>(i, col);
-                var jsonStr = JsonConvert.DeserializeObject(excelStr, field.FieldType);
-                var value = Convert.ChangeType(jsonStr, field.FieldType);
-                field.SetValue(insSkillCfgEditor, value);
+                var skillID = cfg.arrSkillGroup[k];
+                data.m_DicItemInfo.Add(skillID, new());
             }
-            AddSkillItem(insSkillCfgEditor);
-        next:;
+
+            data.OnEnable();
         }
 
+    }
+    private void InitSkillCfgData()
+    {
+        var skillCfgList = ExcelUtil.ReadEditorCfgData<SkillCfg, SkillCfgEditor>();
+        for (int i = 0; i < skillCfgList.Count; i++)
+            AddSkillItem(skillCfgList[i]);
     }
     private void AddSkillItem(SkillCfgEditor skillCfg)
     {
         var key = skillCfg.nSkillID;
-        m_DicItemInfo.Add(key, new());
         m_ID2SkillEditor.Add(key, skillCfg);
 
         var linkData = SkillFactroyEditor.GetSkillTypeEditor((EnSkillBoxType)skillCfg.nType);
@@ -107,14 +140,15 @@ public class SkillWindowEditor : EditorWindow
         (linkData as IClassPool).OnPoolInit(data);
         linkData.InitEditor();
         m_DicSkilDrawData.Add(key, linkData);
+        CurSkillViewInfo.m_DicItemInfo.Add(key, new());
     }
     private int AddSkillItem(EnSkillBoxType skillType)
     {
         var skillCfg = new SkillCfgEditor();
         skillCfg.nType = (int)skillType;
-        for (int i = 1; i < m_DicItemInfo.Count + 2; i++)
+        for (int i = 1; i < m_ID2SkillEditor.Count + 2; i++)
         {
-            if (m_DicItemInfo.ContainsKey(i))
+            if (m_ID2SkillEditor.ContainsKey(i))
                 continue;
             skillCfg.nSkillID = i;
             break;
@@ -122,68 +156,54 @@ public class SkillWindowEditor : EditorWindow
         AddSkillItem(skillCfg);
         return skillCfg.nSkillID;
     }
-    private void ReloadData()
+    private void SaveSkillCfgData()
     {
-        OnDisable();
+        var skillCfgList = new List<SkillCfgEditor>();
 
-        OnEnable();
-    }
-
-    private void SaveData()
-    {
-        var list = new List<SkillCfgEditor>(m_DicSkilDrawData.Count);
-        var catalogObj = GameSchedule.ReadCfg("CfgCatalog", typeof(ExportExcelInfo));
-        var excelPath = Path.Combine(ABBUtil.GetUnityRootPath(), "Misc", "Excel", "SkillCfg.xlsx");
-        var excelPackage = ExcelUtil.ReadExcel(excelPath);
-        var workbook = excelPackage.Workbook;
-        var workSheetCount = excelPackage.Workbook.Worksheets.Count();
-        var workSheet = excelPackage.Workbook.Worksheets[1];
-        var catalogList = catalogObj as ExportExcelInfo[];
-        var skillCatalog = Array.Find<ExportExcelInfo>(catalogList, (item) => item.excelInfo.excelName == "SkillCfg");
-        var skillEditorType = typeof(SkillCfgEditor);
-        var fields = skillEditorType.GetFields(BindingFlags.Public | BindingFlags.Instance);
-        var rowIndex = skillCatalog.excelInfo.dataStartRow;
         foreach (var cfg in m_ID2SkillEditor)
         {
             var key = cfg.Key;
             var item = cfg.Value;
-            var itemInfo = m_DicItemInfo[key];
             var drawItem = m_DicSkilDrawData[key];
-            if (itemInfo.isDelect)
-                continue;
             var listData = new List<int>();
             drawItem.GetStringData(ref listData);
             item.arrParams = listData.ToArray();
-            workSheet.SetValue(rowIndex, 1, "*");
-            workSheet.Cells[rowIndex, 1].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-            for (int i = 0; i < fields.Length; i++)
-            {
-                var field = fields[i];
-                if (!skillCatalog.field2ColList.TryGetValue(field.Name, out var col))
-                    continue;
-                var value = field.GetValue(item);
-                var jsonValue = JsonConvert.SerializeObject(value);
-                workSheet.SetValue(rowIndex, col, jsonValue);
-            }
-            rowIndex++;
-            //list.Add(skillCfg);
+            skillCfgList.Add(item);
         }
-        for (int i = rowIndex; i <= workSheet.Dimension.End.Row; i++)
-        {
-            for (int j = 1; j <= workSheet.Dimension.End.Column; j++)
-            {
-                workSheet.SetValue(i, j, null);
-            }
-        }
+        ExcelUtil.SaveExcel<SkillCfg, SkillCfgEditor>(skillCfgList);
+    }
 
-        excelPackage.Save();
-
-        var result = EditorUtility.DisplayDialog("excel", "save success", "ok", "open");
-        if (!result)
+    private void SaveMonsterCfgData()
+    {
+        for (int i = 0; i < _MonsterCfg.Count; i++)
         {
-            excelPackage.File.OpenFile();
+            var monsterCfg = _MonsterCfg[i];
+            var monsterViewInfo = _MonsterSkillViewInfos[monsterCfg.nMonsterID];
+
+            foreach (var item in monsterViewInfo.m_DicItemInfo)
+            {
+                var skillID = item.Key;
+                if (item.Value.isDelect)
+                {
+                    if (monsterCfg.arrSkillGroup.Contains(skillID))
+                    {
+                        var list = monsterCfg.arrSkillGroup.ToList();
+                        list.Remove(skillID);
+                        monsterCfg.arrSkillGroup = list.ToArray();
+                    }
+                }
+                else
+                {
+                    if (!monsterCfg.arrSkillGroup.Contains(skillID))
+                    {
+                        var list = monsterCfg.arrSkillGroup.ToList();
+                        list.Add(skillID);
+                        monsterCfg.arrSkillGroup = list.ToArray();
+                    }
+                }
+            }
         }
-        excelPackage.Dispose();
+        ExcelUtil.SaveExcel<MonsterCfg, MonsterCfgEditor>(_MonsterCfg);
     }
 
     private Vector2 m_ScrollPos1 = Vector2.zero;
@@ -198,163 +218,522 @@ public class SkillWindowEditor : EditorWindow
 
             EditorGUILayout.BeginVertical(style, GUILayout.Width(220));
             {
+                EditorGUILayout.BeginHorizontal(GUILayout.Width(200));
+                {
+                    if (_CurMonsterID > 0)
+                    {
+                        var monsterCfg = _MonsterCfg[_MonsterID2Index[_CurMonsterID]];
+                        EditorGUILayout.LabelField($"{monsterCfg.nMonsterID}:{monsterCfg.strName}", GUILayout.Width(100));
+                    }
+                    if (GUILayout.Button("Monster"))
+                    {
+                        ShowSelectMonsterMenu();
+                    }
+                }
+                EditorGUILayout.EndHorizontal();
 
                 EditorGUILayout.BeginHorizontal(GUILayout.Width(200));
                 {
                     if (GUILayout.Button("保存"))
                     {
-                        SaveData();
+                        SaveSkillCfgData();
+                        SaveMonsterCfgData();
                     }
                     if (GUILayout.Button("重载"))
                     {
-                        ReloadData();
-                        m_CurSelectID = -1;
-                        m_OpenList.Clear();
+                        OnDisable();
+                        OnEnable();
                     }
                 }
                 EditorGUILayout.EndHorizontal();
-                GUILayout.Label("skill list");
-                EditorGUILayout.BeginHorizontal(GUILayout.Width(200));
-                {
-                    if (GUILayout.Button("新建"))
-                    {
-                        var contents = new List<GUIContent>();
-                        var map = new Dictionary<string, EnSkillBoxType>();
-                        var menu = new GenericMenu();
-                        for (var i = EnSkillBoxType.None + 1; i < EnSkillBoxType.EnumCount; i++)
-                        {
-                            var boxType = i;
-                            var key = EditorUtil.GetEnumName(boxType);
-                            menu.AddItem(new() { text = key }, false, () =>
-                            {
-                                var skillID = AddSkillItem(boxType);
 
-                                m_CurSelectID = skillID;
-                                m_OpenList.Add(skillID);
-                            });
-                        }
 
-                        menu.ShowAsContext();
-                    }
-                }
-                EditorGUILayout.EndHorizontal();
-                m_ScrollPos1 = EditorGUILayout.BeginScrollView(m_ScrollPos1, GUILayout.Width(200));
+                if (_CurMonsterID > 0)
                 {
-                    foreach (var item in m_ID2SkillEditor)
+                    var btnContent = new GUIContent()
                     {
-                        var key = item.Key;
-                        var cfg = item.Value;
-                        EditorGUILayout.BeginHorizontal();
-                        {
-                            var itemInfo = m_DicItemInfo[key];
-                            if (itemInfo.isDelect)
-                            {
-                                GUILayout.Label(cfg.strName);
-                            }
-                            else
-                            {
-                                if (GUILayout.Button(cfg.strName))
-                                {
-                                    m_CurSelectID = key;
-                                    m_ScrollPos3 = Vector3.zero;
-                                    if (!m_OpenList.Contains(key))
-                                        m_OpenList.Add(key);
-                                }
-                            }
-                            if (GUILayout.Button(itemInfo.isDelect ? "❌" : "✅", GUILayout.Width(50)))
-                            {
-                                itemInfo.isDelect = !itemInfo.isDelect;
-                                if (itemInfo.isDelect)
-                                {
-                                    m_OpenList.Remove(key);
-                                    if (m_CurSelectID == key)
-                                    {
-                                        m_CurSelectID = -1;
-                                    }
-                                }
-                            }
-                        }
-                        EditorGUILayout.EndHorizontal();
+                        text = _IsSimulation ? "取消预览" : "启用预览",
+                    };
+                    var btnStyle = GuiStyleUtil.CreateLayoutBoxBackgroud(new Color32(255, 255, 255, 255));
+                    var btnRect = GUILayoutUtility.GetRect(1, 999, 1, 40, GUILayout.ExpandWidth(true));
+                    EditorGUI.DrawRect(btnRect, _IsSimulation ? Color.green : Color.gray);
+                    if (GUI.Button(btnRect, btnContent, btnStyle))
+                    {
+                        _IsSimulation = !_IsSimulation;
+                        if (_IsSimulation)
+                            CreatePlayable();
+                        else
+                            ClearPlayable();
                     }
+                    GUILayout.Label("skill list");
+                    EditorGUILayout.BeginHorizontal(GUILayout.Width(200));
+                    {
+                        if (GUILayout.Button("添加"))
+                        {
+                            ShowAddSkillMenu();
+                        }
+                        if (GUILayout.Button("新建"))
+                        {
+                            ShowCreateSkillMenu();
+                        }
+                    }
+                    EditorGUILayout.EndHorizontal();
+                    DrawSkillSelectView();
                 }
-                EditorGUILayout.EndScrollView();
             }
             EditorGUILayout.EndVertical();
 
-
-            EditorGUILayout.BeginVertical();
+            if (_CurMonsterID > 0)
             {
-                m_ScrollPos2 = EditorGUILayout.BeginScrollView(m_ScrollPos2, GUILayout.Height(30));
+                EditorGUILayout.BeginVertical();
                 {
-                    EditorGUILayout.BeginHorizontal();
-                    {
-                        for (var i = 0; i < m_OpenList.Count; i++)
-                        {
-                            var skillID = m_OpenList[i];
-                            var skillCfg = m_ID2SkillEditor[skillID];
-                            var itemInfo = m_DicItemInfo[skillID];
+                    DrawOpenSkillNavigation();
 
-                            var content = new GUIContent()
-                            {
-                                text = skillCfg.strName
-                            };
-                            var btnStyle = GuiStyleUtil.CreateButtonBackground();
-                            if (m_CurSelectID == skillID)
-                            {
-                                btnStyle.normal = btnStyle.active;
-                                content.image = btnStyle.active.background;
-                            }
-                            //if (GUILayout.Button(content, btnStyle, GUILayout.Width(100), GUILayout.Height(30)))
-                            //{
-                            //    m_CurSelectID = skillID;
-                            //    m_ScrollPos3 = Vector3.zero;
-                            //}
-                            if (GuiStyleUtil.DrawButton(content, null, () =>
-                            {
-                                if (skillID == m_CurSelectID)
-                                {
-                                    m_CurSelectID = -1;
-                                }
-                                m_OpenList.RemoveAt(i);
-                                i--;
-                            }))
-                            {
-                                m_CurSelectID = skillID;
-                                m_ScrollPos3 = Vector3.zero;
-                            }
-                        }
-                    }
-                    EditorGUILayout.EndHorizontal();
+                    GUILayout.Space(20);
+
+                    DrawSkillView();
                 }
-                EditorGUILayout.EndScrollView();
-                GUILayout.Space(20);
-
-
-                m_ScrollPos3 = EditorGUILayout.BeginScrollView(m_ScrollPos3);
-                {
-                    EditorGUILayout.BeginHorizontal();
-                    {
-                        if (m_DicSkilDrawData.TryGetValue(m_CurSelectID, out var linkData))
-                        {
-                            var cfg = m_ID2SkillEditor[m_CurSelectID];
-                            EditorGUILayout.BeginVertical();
-                            {
-                                EditorGUILayout.BeginHorizontal();
-                                {
-                                    cfg.strName = EditorGUILayout.TextField(cfg.strName, GUILayout.Width(200));
-                                }
-                                EditorGUILayout.EndHorizontal();
-                                linkData.Draw();
-                            }
-                            EditorGUILayout.EndVertical();
-                        }
-                    }
-                    EditorGUILayout.EndHorizontal();
-                }
-                EditorGUILayout.EndScrollView();
+                EditorGUILayout.EndVertical();
             }
-            EditorGUILayout.EndVertical();
         }
         EditorGUILayout.EndHorizontal();
+        //this.Repaint();
+    }
+
+
+
+
+
+
+
+
+
+    private void ShowAddSkillMenu()
+    {
+        var menu = new GenericMenu();
+        foreach (var item in m_ID2SkillEditor)
+        {
+            var skillID = item.Key;
+            if (CurSkillViewInfo.m_DicItemInfo.ContainsKey(skillID))
+                continue;
+            var skillName = item.Value.strName;
+            var guiContent = new GUIContent()
+            {
+                text = $"{skillID}: {skillName}",
+            };
+            menu.AddItem(guiContent, false, () =>
+            {
+                CurSkillViewInfo.m_DicItemInfo.Add(skillID, new());
+            });
+        }
+        menu.ShowAsContext();
+    }
+    private void ShowSelectMonsterMenu()
+    {
+        var menu = new GenericMenu();
+        for (int i = 0; i < _MonsterCfg.Count; i++)
+        {
+            var monsterCfg = _MonsterCfg[i];
+            var monsterID = monsterCfg.nMonsterID;
+            var guiContent = new GUIContent()
+            {
+                text = $"{monsterID}: {monsterCfg.strName}",
+            };
+            menu.AddItem(guiContent, monsterID == _CurMonsterID, () =>
+            {
+                if (_CurMonsterID == monsterID)
+                    return;
+                _CurMonsterID = monsterID;
+                if (_IsSimulation)
+                {
+                    ClearPlayable();
+                    CreatePlayable();
+                }
+
+            });
+        }
+        menu.ShowAsContext();
+    }
+    private void ShowCreateSkillMenu()
+    {
+        var contents = new List<GUIContent>();
+        var map = new Dictionary<string, EnSkillBoxType>();
+        var menu = new GenericMenu();
+        for (var i = EnSkillBoxType.None + 1; i < EnSkillBoxType.EnumCount; i++)
+        {
+            var boxType = i;
+            var key = EditorUtil.GetEnumName(boxType);
+            menu.AddItem(new() { text = key }, false, () =>
+            {
+                var skillID = AddSkillItem(boxType);
+
+                CurSkillViewInfo.m_CurSelectID = skillID;
+                CurSkillViewInfo.m_OpenList.Add(skillID);
+                if (_IsSimulation)
+                    InitSimulationData();
+            });
+        }
+
+        menu.ShowAsContext();
+    }
+
+    private void DrawSkillSelectView()
+    {
+        m_ScrollPos1 = EditorGUILayout.BeginScrollView(m_ScrollPos1, GUILayout.Width(200));
+        {
+            foreach (var item in CurSkillViewInfo.m_DicItemInfo)
+            {
+                var key = item.Key;
+                var itemInfo = item.Value;
+
+                if (!m_ID2SkillEditor.TryGetValue(key, out var cfg))
+                {
+                    GUILayout.Label($"error id:{key}");
+                    itemInfo.isDelect = true;
+                    continue;
+                }
+                EditorGUILayout.BeginHorizontal();
+                {
+                    if (itemInfo.isDelect)
+                    {
+                        GUILayout.Label(cfg.strName);
+                    }
+                    else
+                    {
+                        if (GUILayout.Button(cfg.strName))
+                        {
+                            CurSkillViewInfo.m_CurSelectID = key;
+                            m_ScrollPos3 = Vector3.zero;
+                            if (!CurSkillViewInfo.m_OpenList.Contains(key))
+                                CurSkillViewInfo.m_OpenList.Add(key);
+                            if (_IsSimulation)
+                                InitSimulationData();
+                        }
+                    }
+                    if (GUILayout.Button(itemInfo.isDelect ? "❌" : "✅", GUILayout.Width(50)))
+                    {
+                        itemInfo.isDelect = !itemInfo.isDelect;
+                        if (itemInfo.isDelect)
+                        {
+                            CurSkillViewInfo.m_OpenList.Remove(key);
+                            if (CurSkillViewInfo.m_CurSelectID == key)
+                            {
+                                CurSkillViewInfo.m_CurSelectID = -1;
+                            }
+                        }
+                    }
+                }
+                EditorGUILayout.EndHorizontal();
+            }
+        }
+        EditorGUILayout.EndScrollView();
+    }
+
+    private void DrawOpenSkillNavigation()
+    {
+        m_ScrollPos2 = EditorGUILayout.BeginScrollView(m_ScrollPos2, GUILayout.Height(30));
+        {
+            EditorGUILayout.BeginHorizontal();
+            {
+                for (var i = 0; i < CurSkillViewInfo.m_OpenList.Count; i++)
+                {
+                    var skillID = CurSkillViewInfo.m_OpenList[i];
+                    var skillCfg = m_ID2SkillEditor[skillID];
+
+                    var content = new GUIContent()
+                    {
+                        text = skillCfg.strName
+                    };
+                    var btnStyle = GuiStyleUtil.CreateButtonBackground();
+                    if (CurSkillViewInfo.m_CurSelectID == skillID)
+                    {
+                        btnStyle.normal = btnStyle.active;
+                        content.image = btnStyle.active.background;
+                    }
+                    if (GuiStyleUtil.DrawButton(content, null, () =>
+                    {
+                        if (skillID == CurSkillViewInfo.m_CurSelectID)
+                        {
+                            CurSkillViewInfo.m_CurSelectID = -1;
+                        }
+                        CurSkillViewInfo.m_OpenList.RemoveAt(i);
+                        i--;
+                    }))
+                    {
+                        CurSkillViewInfo.m_CurSelectID = skillID;
+                        m_ScrollPos3 = Vector3.zero;
+
+                        if (_IsSimulation)
+                            InitSimulationData();
+                    }
+                }
+            }
+            EditorGUILayout.EndHorizontal();
+        }
+        EditorGUILayout.EndScrollView();
+    }
+
+    private void DrawSkillView()
+    {
+        if (_IsSimulation)
+        {
+            DrawSimulationView();
+        }
+        DrawSkillData();
+    }
+
+    private void DrawSkillData()
+    {
+        m_ScrollPos3 = EditorGUILayout.BeginScrollView(m_ScrollPos3);
+        {
+            EditorGUILayout.BeginHorizontal();
+            {
+                if (m_DicSkilDrawData.TryGetValue(CurSkillViewInfo.m_CurSelectID, out var linkData))
+                {
+                    var cfg = m_ID2SkillEditor[CurSkillViewInfo.m_CurSelectID];
+                    EditorGUILayout.BeginVertical();
+                    {
+                        EditorGUILayout.BeginHorizontal();
+                        {
+                            var labelContent = new GUIContent()
+                            {
+                                text = $"{cfg.nSkillID}",
+                                image = EditorLoad.LoadTexture2D(EnEditorRes.btn_red),
+                            };
+                            EditorGUILayout.LabelField(labelContent, GUILayout.Width(30));
+                            cfg.strName = EditorGUILayout.TextField(cfg.strName, GUILayout.Width(200));
+                        }
+                        EditorGUILayout.EndHorizontal();
+
+                        if (_IsSimulation && linkData is ISkillSimulationEditor simulationEditor)
+                        {
+                            simulationEditor.UpdateSimulation(_LastUpdateTime);
+                        }
+                        else
+                        {
+                            linkData.Draw();
+                        }
+                    }
+                    EditorGUILayout.EndVertical();
+                }
+            }
+            EditorGUILayout.EndHorizontal();
+        }
+        EditorGUILayout.EndScrollView();
+
+    }
+
+
+
+    private float _CurSliderValue = 0;
+    private bool _IsPlaying = false;
+    private Tweener _TweenCore = null;
+
+    private void DrawSimulationView()
+    {
+
+        EditorGUILayout.BeginVertical();
+        {
+            EditorGUILayout.BeginHorizontal();
+            {
+                EditorGUILayout.ObjectField(_SimulationObj, typeof(GameObject), true, GUILayout.Width(100));
+                EditorGUILayout.ObjectField(_PrefabObj, typeof(GameObject), true, GUILayout.Width(100));
+            }
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginHorizontal();
+            {
+                var style2 = new GUIStyle(GUI.skin.label)
+                {
+                    alignment = TextAnchor.MiddleCenter,
+                };
+                var labelRect = GUILayoutUtility.GetRect(new GUIContent(), GUI.skin.label, GUILayout.Width(30), GUILayout.Height(20));
+
+                GUI.Label(labelRect, "0", style2);
+
+                var rect = GUILayoutUtility.GetRect(new GUIContent(), GUI.skin.box, GUILayout.ExpandWidth(true), GUILayout.Height(20));
+
+                var height = 1f;
+                var lineRect = new Rect()
+                {
+                    position = rect.position + new Vector2(0, (rect.height - height) / 2),
+                    size = new Vector2(rect.width, height),
+                };
+                EditorGUI.DrawRect(lineRect, Color.gray);
+
+                var labelRect2 = GUILayoutUtility.GetRect(new GUIContent(), GUI.skin.label, GUILayout.Width(30), GUILayout.Height(20));
+                GUI.Label(labelRect2, _MaxTime.ToString("0.0"), style2);
+
+                var rectSlider = _LastUpdateTime / _MaxTime;
+                var weight = 30f;
+                var height2 = 15;
+                var hitRect = new Rect()
+                {
+                    center = new Vector2(rect.position.x + rect.width * rectSlider - weight * 0.5f, rect.position.y + (rect.height - height2) / 2),
+                    size = new Vector2(weight, height2),
+                };
+                EditorGUI.DrawRect(hitRect, new Color(0.5f, 0.5f, 0.5f, 0.5f));
+                var style = new GUIStyle(GUI.skin.label)
+                {
+                    alignment = TextAnchor.MiddleCenter,
+                    normal = { textColor = Color.green },
+                };
+                GUI.Label(hitRect, $"{_LastUpdateTime:0.0}", style);
+            }
+            EditorGUILayout.EndHorizontal();
+
+            {
+                var rect = GUILayoutUtility.GetRect(new GUIContent(), GUI.skin.box, GUILayout.ExpandWidth(true), GUILayout.Height(50));
+                _CurSliderValue = GuiStyleUtil.DrawSlider(_CurSliderValue, rect);
+            }
+
+            GUILayout.Space(10);
+
+            EditorGUILayout.BeginHorizontal();
+            {
+
+                var playRect = GUILayoutUtility.GetRect(new GUIContent(), GUI.skin.button, GUILayout.Width(100), GUILayout.Height(30));
+
+                var title = _IsPlaying ? "Stop" : "Pause";
+                var bgColor = _IsPlaying ? Color.yellow : Color.grey;
+                var txtColor = _IsPlaying ? Color.blue : Color.white;
+                if (GuiStyleUtil.DrawButton(playRect, bgColor, title, txtColor))
+                {
+                    _IsPlaying = !_IsPlaying;
+                    KillDotween();
+                    if (_IsPlaying)
+                    {
+                        var start = _CurSliderValue;
+                        var end = 1f;
+                        var time = _MaxTime * (1 - start);
+                        var lastTime = start;
+
+                        _TweenCore = DOTween.To(() => start, value =>
+                        {
+                            var deltaTime = value * _MaxTime - lastTime;
+                            lastTime = value * _MaxTime;
+                            _CurSliderValue = value;
+                            //SceneView.RepaintAll();
+                            this.Repaint();
+                        }, end, time)
+                            .SetEase(Ease.Linear)
+                            .OnComplete(() =>
+                            {
+                                KillDotween();
+                                _IsPlaying = false;
+                            });
+                        DOTweenEditorPreview.PrepareTweenForPreview(_TweenCore, false);
+                        DOTweenEditorPreview.Start();
+
+                    }
+                }
+
+                GUILayout.Space(10);
+
+                var rect2 = GUILayoutUtility.GetRect(new GUIContent(), GUI.skin.button, GUILayout.Width(100), GUILayout.Height(30));
+                if (GuiStyleUtil.DrawButton(rect2, Color.gray, "Reset", Color.white))
+                {
+                    _CurSliderValue = 0;
+                    _IsPlaying = false;
+                    _PrefabObj.transform.localPosition = Vector3.zero;
+                    KillDotween();
+                }
+            }
+            EditorGUILayout.EndHorizontal();
+        }
+        EditorGUILayout.EndVertical();
+
+
+        UpdateGraphTime();
+    }
+
+
+    private PlayableGraph _Graph;
+    private float _MaxTime = 10f;
+    private float _LastUpdateTime = 0;
+    private GameObject _SimulationObj = null;
+    private GameObject _PrefabObj = null;
+
+    private void KillDotween()
+    {
+        if (_TweenCore == null)
+            return;
+        _TweenCore.Pause();
+        _TweenCore.Kill();
+        DOTweenEditorPreview.Stop();
+        _TweenCore = null;
+    }
+    private void ClearPlayable()
+    {
+        if (_Graph.IsValid())
+        {
+            _Graph.Destroy();
+        }
+        if (_SimulationObj != null)
+        {
+            GameObject.DestroyImmediate(_SimulationObj);
+            _SimulationObj = null;
+            _PrefabObj = null;
+        }
+    }
+
+
+    private void UpdateGraphTime()
+    {
+        if (!_Graph.IsValid())
+            return;
+
+        var curTime = _CurSliderValue * _MaxTime;
+        var deltaTime = curTime - _LastUpdateTime;
+        _Graph.Evaluate(deltaTime);
+        _LastUpdateTime = curTime;
+
+
+        if (SceneView.lastActiveSceneView != null)
+        {
+            var offset = SceneView.lastActiveSceneView.rotation * Vector3.forward;
+            SceneView.lastActiveSceneView.pivot = _PrefabObj.transform.position + offset * 2 + Vector3.up * 1;
+        }
+    }
+
+    private void InitSimulationData()
+    {
+        if (!m_DicSkilDrawData.TryGetValue(CurSkillViewInfo.m_CurSelectID, out var data))
+            return;
+        if (data is not ISkillSimulationEditor editor)
+            return;
+        _MaxTime = editor.GetMaxSimulationTime();
+        editor.InitSimulation(ref _Graph);
+    }
+    private void CreatePlayable()
+    {
+        var curAssetID = CurMonsterCfg.nAssetCfgID;
+        var asetCfg = ExcelUtil.ReadEditorCfgData<AssetCfg, AssetCfgEditor>();
+        var assetInfo = asetCfg.Find((cfg) => cfg.nAssetID == curAssetID);
+        if (assetInfo == null)
+        {
+            Debug.LogError($"monster id: [ {_CurMonsterID} ], asset no exist assetcfg id: [ {curAssetID} ]");
+            return;
+        }
+
+        _SimulationObj = new GameObject("Simulation");
+
+        var prefabAss = AssetDatabase.LoadAssetAtPath<GameObject>(assetInfo.strPath);
+
+        _PrefabObj = GameObject.Instantiate(prefabAss, _SimulationObj.transform);
+        var animator = _PrefabObj.GetComponent<Animator>();
+
+        //var clip = AssetDatabase.LoadAssetAtPath<AnimationClip>("Assets/Resources/Anim/Rest_run.FBX");
+        //AnimationUtility.SetAnimationEvents(clip, new AnimationEvent[0]);
+
+        _Graph = PlayableGraph.Create("Simulation");
+        _Graph.SetTimeUpdateMode(DirectorUpdateMode.Manual);
+        var output = AnimationPlayableOutput.Create(_Graph, "", animator);
+        //var clipPlayable = AnimationClipPlayable.Create(_Graph, clip);
+
+        //output.SetSourcePlayable(clipPlayable, 0);
+        _Graph.Play();
+
+        InitSimulationData();
     }
 }

@@ -1,43 +1,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EntityBuffComData : IEntity3DComData<Entity3DComDataUserData>, IUpdate
+public sealed class EntityBuffComData : Entity3DComData
 {
     private Dictionary<EnBuffType, List<EnBuff>> m_BuffTypeDic = new();
     private Dictionary<EnBuff, EntityBuffData> m_BuffDic = new();
     private int m_EntityID = -1;
-    public void OnPoolDestroy()
+    public override void OnPoolDestroy()
     {
-        UpdateMgr.Instance.Registener(this);
+        base.OnPoolDestroy();
         m_BuffTypeDic.Clear();
         m_BuffDic.Clear();
         m_EntityID = -1;
     }
-    public void OnPoolInit(Entity3DComDataUserData userData)
+    public override void OnPoolInit(Entity3DComDataUserData userData)
     {
-        m_EntityID = userData.entity3DData.EntityID;
-        UpdateMgr.Instance.Registener(this);
+        base.OnPoolInit(userData);
+        m_EntityID = userData.entityID;
     }
 
-    public void PoolConstructor()
-    {
-    }
-
-    public void OnPoolEnable()
-    {
-    }
-
-    public void PoolRelease()
-    {
-    }
-
-    public void OnCreateGO(int entityID)
-    {
-    }
-
-    public void OnDestroyGO(int entityID)
-    {
-    }
 
     public bool ContainsBuff(EnBuff buff)
     {
@@ -96,9 +77,5 @@ public class EntityBuffComData : IEntity3DComData<Entity3DComDataUserData>, IUpd
             buffData.OnDisable();
             RemoveEntityBuffData(buff);
         }
-    }
-
-    public void Update()
-    {
     }
 }

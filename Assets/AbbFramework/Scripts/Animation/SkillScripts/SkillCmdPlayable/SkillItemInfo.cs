@@ -6,6 +6,7 @@ public class SkillItemInfo : IClassPool<PoolNaNUserData>
     public int _ClipID;
     public float canNextTime;
     public float atkEndTime;
+    public bool _IsAutoRemove = true;
     protected Dictionary<EnBuff, int[]> arrBuff = new();
 
     protected ISkillScheduleAction [] m_ArrAtkLinkSchedule = null;
@@ -46,6 +47,7 @@ public class SkillItemInfo : IClassPool<PoolNaNUserData>
         _ClipID = gCount < 1 ? default : data[startIndex++];
         canNextTime = gCount < 2 ? default : data[startIndex++] / 100f;
         atkEndTime = gCount < 3 ? default : data[startIndex++] / 100f;
+        _IsAutoRemove = gCount < 4 ? _IsAutoRemove : (data[startIndex++] > 0);
 
         var scheduleCount = startIndex >= endIndex ? default : data[startIndex++];
         m_ArrAtkLinkSchedule = new ISkillScheduleAction [scheduleCount];

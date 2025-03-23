@@ -18,6 +18,8 @@ public class UIMgr : SingletonMono<UIMgr>
     [SerializeField]
     private Canvas m_MainCanvas = null;
     [SerializeField]
+    private RectTransform _CanvasRect = null;
+    [SerializeField]
     private RectTransform m_UIRootRect = null;
     [SerializeField]
     //[SerializableGroup]
@@ -31,7 +33,22 @@ public class UIMgr : SingletonMono<UIMgr>
         ShowWindow<UIStartGameWindowData>();
     }
 
-
+    public RectTransform GetUITipsRootRect()
+    {
+        return m_UITipsRootRect;
+    }
+    public RectTransform GetCanvasRect()
+    {
+        return _CanvasRect;
+    }
+    public Vector2 GetUISize()
+    {
+        return m_MainCanvas.GetComponent<RectTransform>().sizeDelta;
+    }
+    public Camera GetCanvasCamera()
+    {
+        return m_MainCanvas.worldCamera;
+    }
     private T GetWindow<T>()
         where T : UIWindowData
     {
@@ -92,5 +109,20 @@ public class UIMgr : SingletonMono<UIMgr>
     public void RemoveBtnListener(Button btn, UnityAction action)
     {
         btn.onClick.RemoveListener(action);
+    }
+
+    public int CreateWindowItem<T>(RectTransform parent, IClassPoolUserData userData)
+        where T: UIWindowItemData, new()
+    {
+        var entityID = EntityMgr.Instance.CreateEntityData<T>(userData);
+        var entityData = EntityMgr.Instance.GetEntityData<T>(entityID);
+        entityData.SetParentTran(parent);
+
+        EntityMgr.Instance.LoadEntity(entityID);
+        return entityID;
+    }
+    public void DestroyWindowItem(int entityID)
+    {
+        EntityMgr.Instance.RecycleEntityData(entityID);
     }
 }
