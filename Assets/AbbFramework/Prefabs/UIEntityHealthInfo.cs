@@ -54,7 +54,7 @@ public class UIEntityHealthInfoData : UIWindowItemData
 
     public Vector2 GetUILocalPos()
     {
-        var entityData = Entity3DMgr.Instance.GetEntity3DData(TargetEntityID);
+        var entityData = Entity3DMgr.Instance.GetMonsterEntityData(TargetEntityID);
         var worldPos = entityData.GetTopPoint();
         var result = UIUtil.WorldToUIPos(worldPos);
         return result;

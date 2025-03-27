@@ -8,4 +8,8 @@ public class AssetCfg : ICfg
 	[Newtonsoft.Json.JsonProperty()] public readonly System.String enName;
 	// 路径
 	[Newtonsoft.Json.JsonProperty()] public readonly System.String strPath;
+	public System.Int32 GetID()
+	{
+		return nAssetID;
+	}
 }

@@ -30,6 +30,7 @@ public class CmdMgr : Singleton<CmdMgr>
         {
             case 1:
                 var playable = GetSkillPlayable(cmdCfg.arrParams[0], graph);
+                playable.SetEntityCmd(cmd);
                 return playable;
             default:
                 break;

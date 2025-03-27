@@ -128,4 +128,9 @@ public class PlayableMixerAdapter : PlayableAdapter
     {
         return m_To.GetOutputLayer();
     }
+    public override EnEntityCmd GetEntityCmd()
+    {
+        //return base.GetEntityCmd();
+        return m_To.GetEntityCmd();
+    }
 }

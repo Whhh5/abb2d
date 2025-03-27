@@ -3,7 +3,7 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 
-public delegate void PhysicsColliderCallback(ref int[] entityIDs, ref int count, IPhysicsColliderCallbackCustomData cusomData);
+public delegate void PhysicsColliderCallback(ref EntityPhysicsInfo[] entityIDs, ref int count, IPhysicsColliderCallbackCustomData cusomData);
 
 public class PhysicsMgr : Singleton<PhysicsMgr>
 {

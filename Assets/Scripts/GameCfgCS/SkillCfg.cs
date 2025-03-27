@@ -10,4 +10,8 @@ public class SkillCfg : ICfg
 	[Newtonsoft.Json.JsonProperty()] public readonly System.Int32 nType;
 	// 参数
 	[Newtonsoft.Json.JsonProperty()] public readonly System.Int32[] arrParams;
+	public System.Int32 GetID()
+	{
+		return nSkillID;
+	}
 }

@@ -1,76 +1,76 @@
+using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class EntityBuffData : IClassPool<EntityBuffDataUserData>
+
+public interface IEntityBuffData : IClassPoolInit<EntityBuffDataUserData>
 {
-    private EnBuff m_Buff = EnBuff.None;
-    private EnBuffType m_BuffType = EnBuffType.None;
-    private int m_Count = GlobalConfig.IntM1;
-    protected int m_EntityID = GlobalConfig.IntM1;
-    protected Entity3DData m_EntityData = null;
-    protected EntityAnimComData m_AnimCom = null;
-    protected EntityCCComData m_CCCom = null;
-    public void OnPoolDestroy()
+    public void OnEnable(int addKey, IEntityBuffParams buffParams);
+    public bool OnDisable(int addKey);
+    public void ReOnEnable(int addKey, IEntityBuffParams buffParams);
+    public bool IsRemove();
+}
+public abstract class EntityBuffData<T>: EntityBuffData
+    where T: class, IEntityBuffParams
+{
+    public sealed override void OnEnable(int addKey, IEntityBuffParams buffParams)
     {
-        m_BuffType = EnBuffType.None;
-        m_Buff = EnBuff.None;
-        m_Count
-            = m_EntityID
+        base.OnEnable(addKey, buffParams);
+
+        OnEnable(addKey, buffParams as T);
+    }
+    public sealed override void ReOnEnable(int addKey, IEntityBuffParams buffParams)
+    {
+        base.ReOnEnable(addKey, buffParams);
+
+        ReOnEnable(addKey, buffParams as T);
+    }
+    protected virtual void OnEnable(int addKey, T buffParams)
+    {
+        
+    }
+    protected virtual void ReOnEnable(int addKey, T buffParams)
+    {
+        
+    }
+}
+public abstract class EntityBuffData : IEntityBuffData
+{
+    public int Count => _AddKey.Count;
+    protected int _TargetEntityID = GlobalConfig.IntM1;
+    protected int _SourceEntityID = GlobalConfig.IntM1;
+    protected EnBuff _Buff = EnBuff.None;
+
+    private readonly HashSet<int> _AddKey = new();
+    public virtual void OnPoolDestroy()
+    {
+        _Buff = EnBuff.None;
+        _TargetEntityID
             = GlobalConfig.IntM1;
-        m_EntityData = null;
-        m_CCCom = null;
-        m_AnimCom = null;
-    }
-    public void PoolConstructor()
-    {
+        _AddKey.Clear();
     }
 
-    public void OnPoolInit(EntityBuffDataUserData userData)
+    public virtual void OnPoolInit(EntityBuffDataUserData userData)
     {
-        m_Count = 0;
-        m_EntityID = userData.entityID;
-        m_Buff = userData.buff;
-        m_BuffType = BuffMgr.Instance.GetBuffType(userData.buff);
-        m_EntityData = Entity3DMgr.Instance.GetEntity3DData(userData.entityID);
-        m_AnimCom = m_EntityData.GetEntityCom<EntityAnimComData>();
-        m_CCCom = m_EntityData.GetEntityCom<EntityCCComData>();
+        _Buff = userData.buff;
+        _TargetEntityID = userData.targetEntityID;
+        _SourceEntityID = userData.sourceEntityID;
     }
 
-    public void OnPoolEnable()
+    public virtual void OnEnable(int addKey, IEntityBuffParams buffParams)
     {
+        _AddKey.Add(addKey);
     }
-
-    public void PoolRelease()
+    public virtual bool OnDisable(int addKey)
     {
+        var result = _AddKey.Remove(addKey);
+        return result;
     }
-    public int GetCount()
+    public bool IsRemove()
     {
-        return m_Count;
+        return Count == 0;
     }
-    public virtual void AddCount()
+    public virtual void ReOnEnable(int addKey, IEntityBuffParams buffParams)
     {
-        m_Count++;
+        _AddKey.Add(addKey);
     }
-    public virtual void RemoveCount()
-    {
-        m_Count--;
-    }
-    public EnBuff GetBuff()
-    {
-        return m_Buff;
-    }
-    public EnBuffType GetBuffType()
-    {
-        return m_BuffType;
-    }
-    public abstract void OnEnable(IEntityBuffParams buffParams);
-    public abstract void OnDisable();
-    public bool TryRemoveBuff()
-    {
-        return true;
-    }
-    public virtual void ReOnEnable(IEntityBuffParams buffParams)
-    {
-
-    }
-
 }

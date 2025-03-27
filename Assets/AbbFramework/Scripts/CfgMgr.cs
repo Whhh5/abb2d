@@ -8,7 +8,7 @@ using UnityEngine;
 
 public interface ICfg
 {
-    
+    public System.Int32 GetID();
 }
 [EnumName("包围盒类型")]
 public enum EnPhysicsType

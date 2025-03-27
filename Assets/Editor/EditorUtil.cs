@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.RefAndLookup;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using UnityEditor;
 using UnityEditor.PackageManager.UI;
 using UnityEngine;
@@ -196,6 +197,7 @@ public static class EditorUtil
         text = "AssetID:",
         tooltip = "AssetCfg -> id",
     };
+    static string _SearchAsset = "";
     static public void DrawAssetID<T>(int assetID, Action<int> selectID, Func<AssetCfg, bool> isShow)
         where T : UnityEngine.Object
     {
@@ -225,13 +227,34 @@ public static class EditorUtil
             {
                 content.text += "-Error";
             }
-            if (GUILayout.Button(content, GUILayout.Width(190), GUILayout.ExpandWidth(false)))
+
+            var rect = GUILayoutUtility.GetRect(new GUIContent(), GUI.skin.box, GUILayout.Width(190), GUILayout.ExpandWidth(false));
+
+            var isShowSearch = rect.Contains(Event.current.mousePosition);
+            var btnRect = new Rect(rect)
+            {
+                width = isShowSearch ? 90 : 190,
+            };
+            if (isShowSearch)
+            {
+                var searchRect = new Rect(rect)
+                {
+                    x = rect.x + 90,
+                    width = 100,
+                };
+                _SearchAsset = GUI.TextField(searchRect, _SearchAsset);
+            }
+            if (GUI.Button(btnRect, content))
             {
                 var menu = new GenericMenu();
 
                 for (int j = 0; j < assetCfgList.Count; j++)
                 {
                     var itemAssetCfg = assetCfgList[j];
+                    if (!string.IsNullOrWhiteSpace(_SearchAsset))
+                        if (!itemAssetCfg.strPath.Contains(_SearchAsset, StringComparison.CurrentCultureIgnoreCase))
+                            continue;
+
                     if (isShow != null && !isShow(itemAssetCfg))
                         continue;
                     var itemAsset = AssetDatabase.LoadAssetAtPath<T>(itemAssetCfg.strPath);
@@ -243,6 +266,75 @@ public static class EditorUtil
                     }, itemAssetCfg.nAssetID == assetID, () =>
                     {
                         selectID(itemAssetCfg.nAssetID);
+                    });
+                }
+                menu.ShowAsContext();
+            }
+        }
+        EditorGUILayout.EndHorizontal();
+    }
+
+
+    static public void DrawCfgField<TCfg>(string title, int cfgID, Action<int> selectID, float width)
+        where TCfg : ICfg
+    {
+        EditorGUILayout.BeginHorizontal();
+        {
+            var titleWidth = width / 3;
+            GUILayout.Label(title, GUILayout.Width(titleWidth), GUILayout.ExpandWidth(false));
+            var rect = GUILayoutUtility.GetRect(new GUIContent(), GUI.skin.box, GUILayout.Width(width - titleWidth), GUILayout.ExpandWidth(false));
+            DrawCfgField<TCfg>(rect, cfgID, selectID);
+        }
+        EditorGUILayout.EndHorizontal();
+    }
+    static public void DrawCfgField<TCfg>(int cfgID, Action<int> selectID, int width)
+        where TCfg : ICfg
+    {
+        var rect = GUILayoutUtility.GetRect(new GUIContent(), GUI.skin.box, GUILayout.Width(width), GUILayout.ExpandWidth(false));
+        DrawCfgField<TCfg>(rect, cfgID, selectID);
+    }
+    static public void DrawCfgField<TCfg>(Rect rect, int cfgID, Action<int> selectID)
+        where TCfg : ICfg
+    {
+        EditorGUILayout.BeginHorizontal();
+        {
+            var content = new GUIContent()
+            {
+                text = $"{cfgID}",
+            };
+            var cfgList = ExcelUtil.ReadEditorCfgList<TCfg>();
+            var descField = typeof(TCfg).GetField("strDescEditor", (BindingFlags)int.MaxValue);
+            var curItem = cfgList.Find(item => item.GetID() == cfgID);
+            if (curItem != null)
+            {
+                var strObj = descField?.GetValue(curItem);
+                var str = string.IsNullOrWhiteSpace($"{strObj}") ? "": $"{strObj}";
+                content.text += $"-{str}";
+            }
+            else
+            {
+                content.text += "-Error";
+            }
+
+
+            if (GUI.Button(rect, content))
+            {
+                var menu = new GenericMenu();
+
+                for (int j = 0; j < cfgList.Count; j++)
+                {
+                    var item = cfgList[j];
+                    var key = item.GetID();
+
+                    var strObj = descField?.GetValue(item);
+                    var str = string.IsNullOrWhiteSpace($"{strObj}") ? "null" : $"{strObj}";
+
+                    menu.AddItem(new()
+                    {
+                        text = $"{key}-{str}"
+                    }, key == cfgID, () =>
+                    {
+                        selectID(key);
                     });
                 }
                 menu.ShowAsContext();

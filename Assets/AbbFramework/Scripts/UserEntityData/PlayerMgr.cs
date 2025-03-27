@@ -21,8 +21,8 @@ public class PlayerMgr : Singleton<PlayerMgr>
     {
         return (EnKeyCodeControler)controllerID switch
         {
-            EnKeyCodeControler.Player => ClassPoolMgr.Instance.Pull<PlayerKeyCodeController>(),
-            EnKeyCodeControler.Monster0 => ClassPoolMgr.Instance.Pull<Monster0KeyCodeController>(),
+            EnKeyCodeControler.Player => ClassPoolMgr.Instance.Pull<EntityKeyCodeController>(),
+            EnKeyCodeControler.Monster0 => ClassPoolMgr.Instance.Pull<EntityKeyCodeController>(),
             _ => null
         };
     }

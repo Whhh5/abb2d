@@ -4,7 +4,21 @@ using System.Collections.Generic;
 using System;
 
 
-
+public abstract class GameEntityData<T>: GameEntityData
+    where T: GameEntity
+{
+    protected T _GameEntity = null;
+    public override void OnGODestroy()
+    {
+        _GameEntity = null;
+        base.OnGODestroy();
+    }
+    public override void OnGOCreate()
+    {
+        base.OnGOCreate();
+        _GameEntity = m_Entity as T;
+    }
+}
 public abstract class GameEntityData : IClassPool<IClassPoolUserData>
 {
     protected int m_EntityID;
@@ -140,7 +154,21 @@ public abstract class GameEntityData : IClassPool<IClassPoolUserData>
         return forword;
     }
 }
-
+public abstract class GameEntity<T> : GameEntity
+    where T: GameEntityData
+{
+    protected T _GameEntityData = null;
+    public override void OnUnload()
+    {
+        _GameEntityData = null;
+        base.OnUnload();
+    }
+    public override void LoadCompeletion()
+    {
+        base.LoadCompeletion();
+        _GameEntityData = m_EntityData as T;
+    }
+}
 public abstract class GameEntity : MonoBehaviour
 {
     private int m_EntityID;
@@ -210,6 +238,15 @@ public abstract class GameEntity : MonoBehaviour
     }
 
     protected virtual void Awake()
+    {
+
+    }
+
+    protected virtual void OnEnable()
+    {
+
+    }
+    protected virtual void OnDisable()
     {
 
     }

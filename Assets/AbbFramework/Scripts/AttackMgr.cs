@@ -23,6 +23,48 @@ public class EventBattleInfo: IClassPoolNone
 }
 public class AttackMgr : Singleton<AttackMgr>
 {
+
+    public void AddHealth(int entityID, int entityID2, int value)
+    {
+        var curHealthValue = Entity3DMgr.Instance.GetEntityHealthValue(entityID2);
+        var maxHealth = Entity3DMgr.Instance.GetEntityMaxHealthValue(entityID2);
+        var health = Mathf.Min(curHealthValue + value, maxHealth);
+        Entity3DMgr.Instance.SetEntityHealthValue(entityID2, health);
+
+
+        var userData = ClassPoolMgr.Instance.Pull<EventBattleInfo>();
+        userData.entityID1 = entityID;
+        userData.entityID2 = entityID2;
+        userData.fromValue = curHealthValue;
+        userData.toValue = health;
+        ABBEventMgr.Instance.FireExecute(EnABBEvent.EVENT_BATTLE_INFO, 0, 0, userData);
+        ClassPoolMgr.Instance.Push(userData);
+    }
+
+    public void BuffAttackEntity(int entityID, int entityID2, int value)
+    {
+        var curHealthValue = Entity3DMgr.Instance.GetEntityHealthValue(entityID2);
+        var health = curHealthValue - value;
+        Entity3DMgr.Instance.SetEntityHealthValue(entityID2, health);
+        if (health <= 0)
+        {
+            var monsterID = EntityUtil.EntityID2MonsterID(entityID2);
+            var monsterCfg = GameSchedule.Instance.GetMonsterCfg0(monsterID);
+            if (monsterCfg.nDieCmdID > 0)
+            {
+                Entity3DMgr.Instance.AddEntityCmd(entityID2, (EnEntityCmd)monsterCfg.nDieCmdID);
+            }
+            Entity3DMgr.Instance.DieEntity(entityID2);
+        }
+
+        var userData = ClassPoolMgr.Instance.Pull<EventBattleInfo>();
+        userData.entityID1 = entityID;
+        userData.entityID2 = entityID2;
+        userData.fromValue = curHealthValue;
+        userData.toValue = health;
+        ABBEventMgr.Instance.FireExecute(EnABBEvent.EVENT_BATTLE_INFO, 0, 0, userData);
+        ClassPoolMgr.Instance.Push(userData);
+    }
     public void AttackEntity(int entityID, int entityID2, int value)
     {
         var curHealthValue = Entity3DMgr.Instance.GetEntityHealthValue(entityID2);

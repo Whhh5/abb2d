@@ -16,7 +16,7 @@ public class PhysicsResolveBox : IPhysicsResolve
     protected float m_PosOffsetX;
     protected float m_PosOffsetY;
 
-    private int[] _TempEntityIDs = new int[20];
+    private EntityPhysicsInfo[] _TempEntityIDs = new EntityPhysicsInfo[20];
     public async void Execute(int entityID, int layer, PhysicsColliderCallback callback, IPhysicsColliderCallbackCustomData cusomData)
     {
         var entityPos = Entity3DMgr.Instance.GetEntityWorldPos(entityID);

@@ -6,6 +6,7 @@ public class SkillTypeLinkData : ISkillTypeData<AttackLinkSkillDataUserData>
 {
     protected List<SkillItemInfo> m_DataList = new();
     protected Dictionary<EnBuff, int[]> m_BuffList = new();
+    private List<int> _BuffAddKeyList = new();
 
     public void OnPoolDestroy()
     {
@@ -15,6 +16,7 @@ public class SkillTypeLinkData : ISkillTypeData<AttackLinkSkillDataUserData>
         }
         m_DataList.Clear();
         m_BuffList.Clear();
+        _BuffAddKeyList.Clear();
     }
 
     public void PoolConstructor()
@@ -81,15 +83,21 @@ public class SkillTypeLinkData : ISkillTypeData<AttackLinkSkillDataUserData>
     {
         foreach (var item in m_BuffList)
         {
-            var buffDataParams = BuffMgr.Instance.GetBuffData(item.Key, item.Value);
-            Entity3DMgr.Instance.AddEntityBuff(entityID, item.Key, buffDataParams);
+            var buffDataParams = BuffMgr.Instance.ConvertBuffData(item.Key, item.Value);
+            var addKey = BuffMgr.Instance.AddEntityBuff(entityID, entityID, item.Key, buffDataParams);
+            BuffMgr.Instance.DestroyBuffData(buffDataParams);
+            _BuffAddKeyList.Add(addKey);
         }
     }
     public void OnDisable(int entityID)
     {
-        foreach (var item in m_BuffList)
+        foreach (var addKey in _BuffAddKeyList)
         {
-            Entity3DMgr.Instance.RemoveEntityBuff(entityID, item.Key);
+            if (BuffMgr.Instance.GetBuffType(addKey) != EnBuffType.Time)
+            {
+                BuffMgr.Instance.RemoveEntityBuff(addKey);
+            }
         }
+        _BuffAddKeyList.Clear();
     }
 }

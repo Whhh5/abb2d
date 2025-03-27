@@ -16,4 +16,8 @@ public class MonsterColonyCfg : ICfg
 	[Newtonsoft.Json.JsonProperty()] public readonly System.Single[] v3CreateLocalPos;
 	// 100
 	[Newtonsoft.Json.JsonProperty()] public readonly System.Int32 nRangeRadius;
+	public System.Int32 GetID()
+	{
+		return nColonyID;
+	}
 }

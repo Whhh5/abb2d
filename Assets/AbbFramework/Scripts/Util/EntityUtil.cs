@@ -1,5 +1,11 @@
 using UnityEngine;
 
+
+public struct EntityPhysicsInfo
+{
+    public Vector3 closestPoint;
+    public int entityID;
+}
 static public class EntityUtil
 {
     static public bool IsValid(int entityID)
@@ -16,7 +22,7 @@ static public class EntityUtil
     }
 
     static readonly private Collider[] _TempCollider = new Collider[100];
-    static private int[] _TempEntityID = new int[100];
+    static private EntityPhysicsInfo[] _TempEntityID = new EntityPhysicsInfo[100];
     static public bool PhysicsOverlapSphere1(Vector3 worldPos, float radius, int layer, ref int entityID)
     {
         var count = Physics.OverlapSphereNonAlloc(worldPos, radius, _TempCollider, layer);
@@ -35,7 +41,7 @@ static public class EntityUtil
         }
         return false;
     }
-    static public ref int[] PhysicsOverlapSphere(out int count, Vector3 worldPos, float radius, int layer)
+    static public ref EntityPhysicsInfo[] PhysicsOverlapSphere(out int count, Vector3 worldPos, float radius, int layer)
     {
         var colliderCount = Physics.OverlapSphereNonAlloc(worldPos, radius, _TempCollider, layer);
         count = 0;
@@ -46,16 +52,19 @@ static public class EntityUtil
                 continue;
             if (!IsValid(entityCom))
                 continue;
-            _TempEntityID[count++] = entityCom;
+
+            ref var element = ref _TempEntityID[count++];
+            element.entityID = entityCom;
+            element.closestPoint = col.ClosestPoint(worldPos);
         }
         return ref _TempEntityID;
     }
-    static public ref int[] PhysicsOverlapBox(out int count, Vector3 worldPos, Vector3 halfSize, Quaternion qua, int layer)
-    {
-        count = 0;
-        return ref _TempEntityID;
-    }
-    static public int PhysicsOverlapBox(ref int[] entityIDs, Vector3 worldPos, Vector3 halfSize, Quaternion qua, int layer)
+    //static public ref int[] PhysicsOverlapBox(out int count, Vector3 worldPos, Vector3 halfSize, Quaternion qua, int layer)
+    //{
+    //    count = 0;
+    //    return ref _TempEntityID;
+    //}
+    static public int PhysicsOverlapBox(ref EntityPhysicsInfo[] entityIDs, Vector3 worldPos, Vector3 halfSize, Quaternion qua, int layer)
     {
         var count = Physics.OverlapBoxNonAlloc(worldPos, halfSize, _TempCollider, qua, layer);
         var idCount = 0;
@@ -66,7 +75,10 @@ static public class EntityUtil
                 continue;
             if (!IsValid(entityCom))
                 continue;
-            entityIDs[idCount++] = entityCom;
+
+            ref var element = ref entityIDs[idCount++];
+            element.entityID = entityCom;
+            element.closestPoint = col.ClosestPoint(worldPos);
         }
         return idCount;
     }

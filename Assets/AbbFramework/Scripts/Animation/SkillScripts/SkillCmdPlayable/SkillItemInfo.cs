@@ -9,7 +9,9 @@ public class SkillItemInfo : IClassPool<PoolNaNUserData>
     public bool _IsAutoRemove = true;
     protected Dictionary<EnBuff, int[]> arrBuff = new();
 
-    protected ISkillScheduleAction [] m_ArrAtkLinkSchedule = null;
+    private List<int> _BuffAddKeyList = new();
+
+    protected ISkillScheduleAction[] m_ArrAtkLinkSchedule = null;
     public int ScheduleEventCount => m_ArrAtkLinkSchedule.Length;
 
 
@@ -23,6 +25,7 @@ public class SkillItemInfo : IClassPool<PoolNaNUserData>
             ClassPoolMgr.Instance.Push(item);
         }
         arrBuff.Clear();
+        _BuffAddKeyList.Clear();
         m_ArrAtkLinkSchedule = null;
     }
     public void PoolConstructor()
@@ -50,7 +53,7 @@ public class SkillItemInfo : IClassPool<PoolNaNUserData>
         _IsAutoRemove = gCount < 4 ? _IsAutoRemove : (data[startIndex++] > 0);
 
         var scheduleCount = startIndex >= endIndex ? default : data[startIndex++];
-        m_ArrAtkLinkSchedule = new ISkillScheduleAction [scheduleCount];
+        m_ArrAtkLinkSchedule = new ISkillScheduleAction[scheduleCount];
         for (int i = 0; i < scheduleCount; i++)
         {
             var scheduleType = (EnAtkLinkScheculeType)data[startIndex++];
@@ -69,7 +72,7 @@ public class SkillItemInfo : IClassPool<PoolNaNUserData>
         }
     }
 
-    public ISkillScheduleAction  GetCurScheduleItem()
+    public ISkillScheduleAction GetCurScheduleItem()
     {
         return m_ArrAtkLinkSchedule[m_CurScheduleItemIndex];
     }
@@ -94,17 +97,23 @@ public class SkillItemInfo : IClassPool<PoolNaNUserData>
     {
         foreach (var item in arrBuff)
         {
-            var buffDataParams = BuffMgr.Instance.GetBuffData(item.Key, item.Value);
-            Entity3DMgr.Instance.AddEntityBuff(entityID, item.Key, buffDataParams);
+            var buffDataParams = BuffMgr.Instance.ConvertBuffData(item.Key, item.Value);
+            var addKey = BuffMgr.Instance.AddEntityBuff(entityID, entityID, item.Key, buffDataParams);
+            BuffMgr.Instance.DestroyBuffData(buffDataParams);
+
+            _BuffAddKeyList.Add(addKey);
         }
     }
     public void OnDisable(int entityID)
     {
-        foreach (var item in arrBuff)
+        foreach (var addKey in _BuffAddKeyList)
         {
-            //var buffDataParams = BuffMgr.Instance.GetBuffData(item.Key, item.Value);
-            Entity3DMgr.Instance.RemoveEntityBuff(entityID, item.Key);
+            if (BuffMgr.Instance.GetBuffType(addKey) != EnBuffType.Time)
+            {
+                BuffMgr.Instance.RemoveEntityBuff(addKey);
+            }
         }
+        _BuffAddKeyList.Clear();
 
         m_CurScheduleItemIndex = 0;
         if (ScheduleEventCount > 0)

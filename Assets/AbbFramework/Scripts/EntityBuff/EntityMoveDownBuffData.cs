@@ -1,21 +1,35 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 
-public class EntityMoveDownBuffData : EntityBuffData
+public class EntityMoveDownBuffData : EntityBuffData<EntityMoveDownBuffParams>
 {
-    private EntityMoveDownBuffParams m_MoveDownParams = null;
+    private readonly Dictionary<int, float> _Key2Value = new();
 
-    public override void OnDisable()
+    public override bool OnDisable(int addKey)
     {
-        Entity3DMgr.Instance.SetEntityMoveSpeedIncrements(m_EntityID, -m_MoveDownParams.GetValue());
-        ClassPoolMgr.Instance.Push(m_MoveDownParams);
-        m_MoveDownParams = null;
+        if (!base.OnDisable(addKey))
+            return false;
+
+        Entity3DMgr.Instance.SetEntityMoveSpeedIncrements(_TargetEntityID, -_Key2Value[addKey]);
+        _Key2Value.Remove(addKey);
+        return true;
     }
 
-    public override void OnEnable(IEntityBuffParams buffParams)
+    protected override void OnEnable(int addKey, EntityMoveDownBuffParams buffParams)
     {
-        m_MoveDownParams = buffParams as EntityMoveDownBuffParams;
+        base.OnEnable(addKey, buffParams);
+        SetValue(ref addKey, ref buffParams.value);
+    }
+    protected override void ReOnEnable(int addKey, EntityMoveDownBuffParams buffParams)
+    {
+        base.ReOnEnable(addKey, buffParams);
+        SetValue(ref addKey, ref buffParams.value);
+    }
 
-        Entity3DMgr.Instance.SetEntityMoveSpeedIncrements(m_EntityID, m_MoveDownParams.GetValue());
+    private void SetValue(ref int addKey, ref float value)
+    {
+        _Key2Value.Add(addKey, value);
+        Entity3DMgr.Instance.SetEntityMoveSpeedIncrements(_TargetEntityID, value);
     }
 }

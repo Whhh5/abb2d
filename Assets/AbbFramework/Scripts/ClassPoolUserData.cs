@@ -27,11 +27,12 @@ public class Entity3DComDataUserData : IClassPoolUserData
 }
 public class EntityBuffDataUserData : IClassPoolUserData
 {
-    public int entityID;
+    public int targetEntityID;
+    public int sourceEntityID;
     public EnBuff buff;
     public void OnPoolDestroy()
     {
-        entityID = -1;
+        targetEntityID = -1;
         buff = EnBuff.None;
     }
 }
@@ -87,7 +88,7 @@ public class AttackLinkSkillDataUserData : AttackLinkUserData
         arrParams = null;
     }
 }
-public class EntityMoveDownBuffParamsUserData : IClassPoolUserData
+public class EntityMoveDownBuffParams : IEntityBuffParams
 {
     public float value;
 
@@ -96,6 +97,7 @@ public class EntityMoveDownBuffParamsUserData : IClassPoolUserData
         value = -1;
     }
 }
+
 public abstract class AttackLinkUserData : IClassPoolUserData
 {
     public abstract void OnPoolDestroy();
@@ -176,5 +178,14 @@ public sealed class AIRandomMoveModuleUserData : AIModuleUserData
         rangeType = EnAIRangeType.None;
         typeParams = null;
         centerPos = Vector3.zero;
+    }
+}
+
+public class EffectDataUserData : IClassPoolUserData
+{
+    public int effctCfgID;
+    public void OnPoolDestroy()
+    {
+        
     }
 }

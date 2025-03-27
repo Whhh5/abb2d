@@ -15,17 +15,10 @@ public enum EnCmdStep
 }
 public abstract class SkillTypePlayableAdapter : PlayableAdapter
 {
-    private EnEntityCmd m_EntityCmd = EnEntityCmd.None;
     private bool m_IsValid = false;
     protected override void OnDestroy()
     {
         base.OnDestroy();
-        m_EntityCmd = EnEntityCmd.None;
-    }
-    public override void OnPoolInit(PlayableAdapterUserData userData)
-    {
-        base.OnPoolInit(userData);
-        var data = userData as CmdPlayableAdapterUserData;
     }
     public virtual void ExecuteCmd()
     {
@@ -46,14 +39,6 @@ public abstract class SkillTypePlayableAdapter : PlayableAdapter
     public virtual bool NextAnimLevelComdition()
     {
         return true;
-    }
-    public EnEntityCmd GetEntityCmd()
-    {
-        return m_EntityCmd;
-    }
-    public void SetEntityCmd(EnEntityCmd entityCmd)
-    {
-        m_EntityCmd = entityCmd;
     }
     public override bool OnPrepareFrame(Playable playable, FrameData info)
     {

@@ -90,11 +90,13 @@ public abstract class PlayableAdapter : IClassPool<PlayableAdapterUserData>
     private bool m_IsValid = false;
     private ScriptPlayable<BridgePlayableAdapter> m_MainPlayable;
     protected PlayableGraphAdapter m_Graph = null;
+    private EnEntityCmd _EntityCmd = EnEntityCmd.None;
     protected virtual void OnDestroy()
     {
         m_MainPlayable.Destroy();
         m_IsValid = false;
         m_Graph = null;
+        _EntityCmd = EnEntityCmd.None;
     }
     public virtual void OnPoolInit(PlayableAdapterUserData userData)
     {
@@ -194,6 +196,14 @@ public abstract class PlayableAdapter : IClassPool<PlayableAdapterUserData>
     {
         var isEnd = GetPlaySchedule01() == 1;
         return isEnd;
+    }
+    public void SetEntityCmd(EnEntityCmd cmd)
+    {
+        _EntityCmd = cmd;
+    }
+    public virtual EnEntityCmd GetEntityCmd()
+    {
+        return _EntityCmd;
     }
 
     /// <summary>

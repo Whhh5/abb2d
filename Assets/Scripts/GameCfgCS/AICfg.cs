@@ -6,4 +6,8 @@ public class AICfg : ICfg
 	[Newtonsoft.Json.JsonProperty()] public readonly System.Int32 nAIID;
 	// 
 	[Newtonsoft.Json.JsonProperty()] public readonly System.Int32[] arrAIModuleID;
+	public System.Int32 GetID()
+	{
+		return nAIID;
+	}
 }

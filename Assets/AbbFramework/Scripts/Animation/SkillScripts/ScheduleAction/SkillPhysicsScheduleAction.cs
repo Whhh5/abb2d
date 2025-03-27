@@ -16,6 +16,7 @@ public class SkillPhysicsScheduleAction : IPhysicsParams, ISkillScheduleAction<P
     public float atkSchedule;
     public int atkValue;
     public EnPhysicsType physicsType = EnPhysicsType.Sphere;
+    public int effectID; // 击中特效
     public int[] physicsParams;
     public IPhysicsResolve physicsResolve;
 
@@ -31,6 +32,7 @@ public class SkillPhysicsScheduleAction : IPhysicsParams, ISkillScheduleAction<P
         m_IsAtked = false;
         atkSchedule = -1;
         atkValue = -1;
+        effectID = -1;
         physicsType = EnPhysicsType.Sphere;
         physicsParams = null;
         physicsResolve = null;
@@ -69,6 +71,7 @@ public class SkillPhysicsScheduleAction : IPhysicsParams, ISkillScheduleAction<P
         atkSchedule = gCount < 1 ? default : data[startIndex++] / 100f;
         atkValue = gCount < 2 ? default : data[startIndex++];
         physicsType = gCount < 3 ? default : (EnPhysicsType)data[startIndex++];
+        effectID = gCount < 4 ? default : data[startIndex++];
 
         var paramCount = startIndex >= endIndex ? default : data[startIndex++];
         physicsParams = new int[paramCount];
@@ -123,13 +126,15 @@ public class SkillPhysicsScheduleAction : IPhysicsParams, ISkillScheduleAction<P
     {
         m_IsAtked = isEffect;
     }
-    private void PhysicsOverlapCallback(ref int[] entityIDs, ref int count, IPhysicsColliderCallbackCustomData customData)
+    private void PhysicsOverlapCallback(ref EntityPhysicsInfo[] entityIDs, ref int count, IPhysicsColliderCallbackCustomData customData)
     {
         var data = customData as PhysicsOverlapCallbackCustomData;
         for (int i = 0; i < count; i++)
         {
-            var entityID = entityIDs[i];
-            AttackMgr.Instance.AttackEntity(data.entityID, entityID, data.atkValue);
+            ref var entityInfo = ref entityIDs[i];
+            AttackMgr.Instance.AttackEntity(data.entityID, entityInfo.entityID, data.atkValue);
+
+            EffectMgr.Instance.PlayEffectOnce(effectID, entityInfo.closestPoint);
         }
     }
 

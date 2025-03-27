@@ -21,8 +21,17 @@ public class PhysicsResolveBoxEditor : PhysicsResolveBox, ISkillTypeEditor
             var att2 = m_ExecuteType.GetType().GetCustomAttribute<EnumNameAttribute>();
             m_ExecuteType = (EnPhysicsBoxType)EditorGUILayout.EnumPopup(att2?.name, m_ExecuteType, GUILayout.Width(300));
 
+            if (!(GUI.enabled = m_ExecuteType == EnPhysicsBoxType.Successive))
+            {
+                m_ExecuteTime = 0;
+                m_UnitSizeZ = m_BoxSize.z;
+            }
+
             m_ExecuteTime = EditorGUILayout.FloatField("检测时间", m_ExecuteTime, GUILayout.Width(300));
-            m_UnitSizeZ = EditorGUILayout.FloatField("检测一次单位大小", m_UnitSizeZ, GUILayout.Width(300));
+            m_UnitSizeZ = EditorGUILayout.Slider("检测一次单位大小", m_UnitSizeZ, 0f, m_BoxSize.z, GUILayout.Width(300));
+
+            GUI.enabled = true;
+
             m_BoxSize = EditorGUILayout.Vector3Field("大小", m_BoxSize, GUILayout.Width(300));
             m_RotOffset = EditorGUILayout.Vector3Field("旋转偏移", m_RotOffset, GUILayout.Width(300));
             m_PosOffsetZ = EditorGUILayout.FloatField("位置偏移Z", m_PosOffsetZ, GUILayout.Width(300));

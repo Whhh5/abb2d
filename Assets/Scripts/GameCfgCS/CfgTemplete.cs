@@ -8,4 +8,9 @@ public class CfgTemplete : ICfg
 	[Newtonsoft.Json.JsonProperty()] public readonly System.Int32[] arrMonsterID;
 	// 
 	[Newtonsoft.Json.JsonProperty()] public readonly System.Single fCreateIntervalTime;
+
+    public int GetID()
+    {
+        throw new System.NotImplementedException();
+    }
 }

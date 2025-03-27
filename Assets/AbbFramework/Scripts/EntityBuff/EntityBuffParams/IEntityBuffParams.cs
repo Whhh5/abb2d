@@ -1,5 +1,5 @@
 
-public interface IEntityBuffParams : IClassPool
+public interface IEntityBuffParams : IClassPoolDestroy
 {
 
 

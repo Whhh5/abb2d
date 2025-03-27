@@ -22,4 +22,8 @@ public class MonsterCfg : ICfg
 	[Newtonsoft.Json.JsonProperty()] public readonly System.Int32 nDieCmdID;
 	// 
 	[Newtonsoft.Json.JsonProperty()] public readonly System.Int32 nAIID;
+	public System.Int32 GetID()
+	{
+		return nMonsterID;
+	}
 }

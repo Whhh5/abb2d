@@ -24,7 +24,13 @@ public class ExcelInfo
     public int fieldTypeRow;
     public int descRow;
     public HashSet<int> validCol = new();
-    public List<List<int>> keysCol = new();
+    public List<List<CfgKeyInfo>> keysCol = new();
+}
+public class CfgKeyInfo
+{
+    public int col;
+    public string fieldName;
+    public string fieldType;
 }
 public partial class GameSchedule : Singleton<GameSchedule>
 {

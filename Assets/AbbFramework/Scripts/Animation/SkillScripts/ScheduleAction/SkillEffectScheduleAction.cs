@@ -1,11 +1,59 @@
 ﻿using System;
 using UnityEngine;
 
+
+
+
+public enum EnEffectBindingType
+{
+    None,
+    LocalTransform,
+    Bone,
+}
+public enum EnEffectTraceType
+{
+    None,
+    Once,
+    Successive,
+}
+
+public interface ISkillEffectBinding
+{
+    public void Init(int[] data, int arrCount, ref int startIndex);
+    public void Excute();
+}
+
+public class SkillEffectBindingLocalTransformInfo: ISkillEffectBinding
+{
+    public float offsetX;
+    public float offsetY;
+    public float offsetZ;
+    public Vector3 localPosOffset => new Vector3(offsetX, offsetY, offsetZ);
+
+
+    public void Init(int[] data, int arrCount, ref int startIndex)
+    {
+        var endIndex = arrCount + startIndex;
+        var gCount = startIndex >= endIndex ? default : data[startIndex];
+        offsetX = gCount < 1 ? default : data[startIndex] / 100f;
+        offsetY = gCount < 2 ? default : data[startIndex] / 100f;
+        offsetZ = gCount < 3 ? default : data[startIndex] / 100f;
+    }
+    public void Excute()
+    {
+        
+    }
+}
+
 public class SkillEffectScheduleAction : IEffectParams, ISkillScheduleAction<PoolNaNUserData>
 {
     public int effectID;
     public float schedule;
+    public EnEffectTraceType traceType;
+    public EnEffectBindingType bindingType;
     public int[] effectParams;
+
+
 
     private EnAtkLinkScheculeType m_ScheduleType = EnAtkLinkScheculeType.None;
     public bool m_IsEffect = false;

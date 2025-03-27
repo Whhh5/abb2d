@@ -2,13 +2,16 @@ using UnityEngine;
 
 public class EntityNoMoveBuffData : EntityBuffData
 {
-    public override void OnDisable()
+    public override void OnPoolDestroy()
     {
-        m_CCCom.SetMoveStatus(true);
+        var ccCom = Entity3DMgr.Instance.GetEntityCom<EntityCCComData>(_TargetEntityID);
+        ccCom.SetMoveStatus(true);
+        base.OnPoolDestroy();
     }
 
-    public override void OnEnable(IEntityBuffParams buffParams)
+    public override void OnEnable(int addKey, IEntityBuffParams buffParams)
     {
-        m_CCCom.SetMoveStatus(false);
+        var ccCom = Entity3DMgr.Instance.GetEntityCom<EntityCCComData>(_TargetEntityID);
+        ccCom.SetMoveStatus(false);
     }
 }

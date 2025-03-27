@@ -170,7 +170,7 @@ public class ExcelUtil
                 var field = fields[k];
                 if (!skillCatalog.field2ColList.TryGetValue(field.Name, out var col))
                     continue;
-                var value = field.GetValue(rowDatas);
+                var value = field.GetValue(rowDatas) ?? (field.FieldType.IsValueType ? Activator.CreateInstance(field.FieldType) : null);
                 var jsonStr = field.FieldType == typeof(string) ? value : JsonConvert.SerializeObject(value);
                 workSheet.SetValue(curRow, col, jsonStr);
             }

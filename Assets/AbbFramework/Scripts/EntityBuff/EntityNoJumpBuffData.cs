@@ -3,15 +3,19 @@ using UnityEngine;
 
 public class EntityNoJumpBuffData : EntityBuffData
 {
-    public override void OnDisable()
+    public override void OnPoolDestroy()
     {
-        m_CCCom.SetJumpStatus(true);
+        var ccCom = Entity3DMgr.Instance.GetEntityCom<EntityCCComData>(_TargetEntityID);
+        ccCom.SetJumpStatus(true);
+
+        base.OnPoolDestroy();
     }
 
-    public override void OnEnable(IEntityBuffParams buffParams)
+    public override void OnEnable(int addKey, IEntityBuffParams buffParams)
     {
-        var curVelocity = m_CCCom.GetVerticalVelocity();
-        m_CCCom.SetVerticalVelocity(Mathf.Min(curVelocity, 0));
-        m_CCCom.SetJumpStatus(false);
+        var ccCom = Entity3DMgr.Instance.GetEntityCom<EntityCCComData>(_TargetEntityID);
+        var curVelocity = ccCom.GetVerticalVelocity();
+        ccCom.SetVerticalVelocity(Mathf.Min(curVelocity, 0));
+        ccCom.SetJumpStatus(false);
     }
 }

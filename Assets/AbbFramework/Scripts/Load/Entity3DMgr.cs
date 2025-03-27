@@ -98,6 +98,25 @@ public class Entity3DMgr : Singleton<Entity3DMgr>
         var monsterData = GetEntity3DData<MonsterBaseData>(entityID);
         return monsterData;
     }
+
+    public int GetMonsterFriendLayer(int entityID)
+    {
+        var monsterData = GetMonsterEntityData(entityID);
+        var layer = monsterData.GetFriendLayer();
+        return layer;
+    }
+
+    public int GetMonsterEnemyLayer(int entityID)
+    {
+        var monsterData = GetMonsterEntityData(entityID);
+        var layer = monsterData.GetEnemyLayer();
+        return layer;
+    }
+
+
+
+
+
     public T GetMonsterEntityData<T>(int entityID)
         where T : MonsterBaseData
     {
@@ -237,25 +256,6 @@ public class Entity3DMgr : Singleton<Entity3DMgr>
         if (!entity.RemoveEntityCom<T>())
             return false;
         return true;
-    }
-    public void AddEntityBuff(int entityID, EnBuff buff, IEntityBuffParams buffParams = null)
-    {
-        var entity = GetEntity3DData(entityID);
-        var animCom = entity.GetEntityCom<EntityBuffComData>();
-        animCom.AddBuff(buff, buffParams);
-    }
-    public bool ContainsBuff(int entityID, EnBuff buff)
-    {
-        var entity = GetEntity3DData(entityID);
-        var animCom = entity.GetEntityCom<EntityBuffComData>();
-        var contains = animCom.ContainsBuff(buff);
-        return contains;
-    }
-    public void RemoveEntityBuff(int entityID, EnBuff buff)
-    {
-        var entity = GetEntity3DData(entityID);
-        var animCom = entity.GetEntityCom<EntityBuffComData>();
-        animCom.RemoveBuff(buff);
     }
     public void AddEntityCmd(int entityID, EnEntityCmd target)
     {

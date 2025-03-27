@@ -20,5 +20,13 @@ public enum EnBuff
     NoRotation,
     [EditorFieldName("忽略质量")]
     NoGravity,
+    [EditorFieldName("玩家增强buff")]
+    PlayerBuff,
+    [HideEditor]
+    PlayerBuff_1,
+    Poison,
+    PoisonSub,
+    [HideEditor]
+    PlayerSkill2,
     EnumCount,
 }

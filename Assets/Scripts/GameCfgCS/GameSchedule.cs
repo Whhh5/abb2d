@@ -26,6 +26,8 @@ public partial class GameSchedule
 	private System.Collections.Generic.Dictionary<System.Int32, AIModuleCfg> m_DicAIModuleCfg0 = new();
 	private AICfg[] m_AICfg = null;
 	private System.Collections.Generic.Dictionary<System.Int32, AICfg> m_DicAICfg0 = new();
+	private MonsterControllerCfg[] m_MonsterControllerCfg = null;
+	private System.Collections.Generic.Dictionary<System.Int32, MonsterControllerCfg> m_DicMonsterControllerCfg0 = new();
 	public void Initialization()
 	{
 		for (int i = 0; i < m_ClipCfg.Length; i++)
@@ -61,7 +63,7 @@ public partial class GameSchedule
 		for (int i = 0; i < m_EffectCfg.Length; i++)
 		{
 			var cfg = m_EffectCfg[i];
-			m_DicEffectCfg0.Add(cfg.nCmdID, cfg);
+			m_DicEffectCfg0.Add(cfg.nEffectID, cfg);
 		}
 		for (int i = 0; i < m_AssetCfg.Length; i++)
 		{
@@ -93,6 +95,11 @@ public partial class GameSchedule
 			var cfg = m_AICfg[i];
 			m_DicAICfg0.Add(cfg.nAIID, cfg);
 		}
+		for (int i = 0; i < m_MonsterControllerCfg.Length; i++)
+		{
+			var cfg = m_MonsterControllerCfg[i];
+			m_DicMonsterControllerCfg0.Add(cfg.nControllerID, cfg);
+		}
 	}
 	public ClipCfg GetClipCfg0(System.Int32 nClipID)
 	{
@@ -118,9 +125,9 @@ public partial class GameSchedule
 	{
 		return m_DicCmdLevelCfg0[nLevelID];
 	}
-	public EffectCfg GetEffectCfg0(System.Int32 nCmdID)
+	public EffectCfg GetEffectCfg0(System.Int32 nEffectID)
 	{
-		return m_DicEffectCfg0[nCmdID];
+		return m_DicEffectCfg0[nEffectID];
 	}
 	public AssetCfg GetAssetCfg0(System.Int32 nAssetID)
 	{
@@ -145,5 +152,9 @@ public partial class GameSchedule
 	public AICfg GetAICfg0(System.Int32 nAIID)
 	{
 		return m_DicAICfg0[nAIID];
+	}
+	public MonsterControllerCfg GetMonsterControllerCfg0(System.Int32 nControllerID)
+	{
+		return m_DicMonsterControllerCfg0[nControllerID];
 	}
 }

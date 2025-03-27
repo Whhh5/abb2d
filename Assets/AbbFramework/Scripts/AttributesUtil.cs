@@ -7,13 +7,13 @@ public class AttributesUtil : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }
 
@@ -46,7 +46,10 @@ public class EditorFieldNameAttribute : Attribute
         fieldName = name;
     }
 }
+public class HideEditorAttribute : Attribute
+{
 
+}
 
 
 public enum EditorDrawFieldType
@@ -59,7 +62,7 @@ public class EditorDrawFieldAttribute : Attribute
     public string fieldName;
     public EditorDrawFieldAttribute(EditorDrawFieldType fieldType)
     {
-        
+
     }
     public void Draw(object value)
     {
@@ -68,7 +71,7 @@ public class EditorDrawFieldAttribute : Attribute
 }
 
 
- 
+
 [CustomPropertyDrawer(typeof(AnyTypeAttribute))]
 public class AnyTypeDrawer : PropertyDrawer
 {

@@ -59,6 +59,9 @@ public static class SkillFactroyEditor
             EnBuff.NoJumping => new EntityNoJumpBuffDataEditor(),
             EnBuff.NoMovement => new EntityNoMoveBuffDataEditor(),
             EnBuff.NoRotation => new EntityNoRotationBuffDataEditor(),
+            EnBuff.PlayerBuff => new EntityPlayerBuffDataEditor(),
+            EnBuff.Poison => new EntityPoisonBuffDataEditor(),
+            EnBuff.PlayerSkill2 => new EntityPlayerSkill2DataEditor(),
             _ => null,
         };
         return buffData;
