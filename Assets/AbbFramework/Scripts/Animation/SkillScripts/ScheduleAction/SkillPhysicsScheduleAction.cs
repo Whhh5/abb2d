@@ -10,7 +10,7 @@ public class PhysicsOverlapCallbackCustomData : IPhysicsColliderCallbackCustomDa
     public int atkValue;
     public int entityID;
 }
-public class SkillPhysicsScheduleAction : IPhysicsParams, ISkillScheduleAction<PoolNaNUserData>
+public class SkillPhysicsScheduleAction : IPhysicsParams, ISkillScheduleAction
 {
 
     public float atkSchedule;
@@ -37,22 +37,6 @@ public class SkillPhysicsScheduleAction : IPhysicsParams, ISkillScheduleAction<P
         physicsParams = null;
         physicsResolve = null;
         m_ScheduleType = EnAtkLinkScheculeType.None;
-
-    }
-    public void PoolConstructor()
-    {
-    }
-
-    public void OnPoolInit(PoolNaNUserData userData)
-    {
-    }
-
-    public void OnPoolEnable()
-    {
-    }
-
-    public void PoolRelease()
-    {
     }
 
     public void SetScheduleType(EnAtkLinkScheculeType scheduleType)
@@ -71,7 +55,7 @@ public class SkillPhysicsScheduleAction : IPhysicsParams, ISkillScheduleAction<P
         atkSchedule = gCount < 1 ? default : data[startIndex++] / 100f;
         atkValue = gCount < 2 ? default : data[startIndex++];
         physicsType = gCount < 3 ? default : (EnPhysicsType)data[startIndex++];
-        effectID = gCount < 4 ? default : data[startIndex++];
+        effectID = gCount < 4 ? 7 : data[startIndex++];
 
         var paramCount = startIndex >= endIndex ? default : data[startIndex++];
         physicsParams = new int[paramCount];

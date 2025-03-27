@@ -9,7 +9,7 @@ public enum EnSkillBehaviourType
     Height,
 }
 
-public class SkillBehaviourScheduleAction : ISkillScheduleAction<PoolNaNUserData>
+public class SkillBehaviourScheduleAction : ISkillScheduleAction
 {
     public float schedule;
     public EnSkillBehaviourType behaviourType;
@@ -25,21 +25,7 @@ public class SkillBehaviourScheduleAction : ISkillScheduleAction<PoolNaNUserData
         m_ScheduleType = EnAtkLinkScheculeType.None;
         m_IsEffect = false;
     }
-    public void PoolConstructor()
-    {
-    }
 
-    public void OnPoolInit(PoolNaNUserData userData)
-    {
-    }
-
-    public void OnPoolEnable()
-    {
-    }
-
-    public void PoolRelease()
-    {
-    }
     public void Init(int[] data, int arrCount, ref int startIndex)
     {
         var endIndex = startIndex + arrCount;

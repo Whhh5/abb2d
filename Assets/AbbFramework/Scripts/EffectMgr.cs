@@ -48,7 +48,7 @@ public class EffectMgr : Singleton<EffectMgr>
         entityData.SetPosition(worldPos);
 
         var time = entityData.GetMaxTime();
-        AddDelayDesytroyList(effectID, time);
+        AddDelayDesytroyList(entityID, time);
 
 
         return entityID;

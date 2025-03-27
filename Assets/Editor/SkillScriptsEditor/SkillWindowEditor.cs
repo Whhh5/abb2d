@@ -708,8 +708,7 @@ public class SkillWindowEditor : EditorWindow
     private void CreatePlayable()
     {
         var curAssetID = CurMonsterCfg.nAssetCfgID;
-        var asetCfg = ExcelUtil.ReadEditorCfgData<AssetCfg, AssetCfgEditor>();
-        var assetInfo = asetCfg.Find((cfg) => cfg.nAssetID == curAssetID);
+        var assetInfo = ExcelUtil.GetCfg<AssetCfg>(curAssetID);
         if (assetInfo == null)
         {
             Debug.LogError($"monster id: [ {_CurMonsterID} ], asset no exist assetcfg id: [ {curAssetID} ]");

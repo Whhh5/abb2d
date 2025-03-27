@@ -262,7 +262,7 @@ public static class EditorUtil
                         continue;
                     menu.AddItem(new()
                     {
-                        text = $"{itemAssetCfg.nAssetID}-{itemAssetCfg.enName}",
+                        text = $"{itemAssetCfg.nAssetID}-{itemAssetCfg.strDescEditor}",
                     }, itemAssetCfg.nAssetID == assetID, () =>
                     {
                         selectID(itemAssetCfg.nAssetID);
@@ -293,6 +293,7 @@ public static class EditorUtil
         var rect = GUILayoutUtility.GetRect(new GUIContent(), GUI.skin.box, GUILayout.Width(width), GUILayout.ExpandWidth(false));
         DrawCfgField<TCfg>(rect, cfgID, selectID);
     }
+    private static Dictionary<Type, string> _SearchDic = new();
     static public void DrawCfgField<TCfg>(Rect rect, int cfgID, Action<int> selectID)
         where TCfg : ICfg
     {
@@ -308,7 +309,7 @@ public static class EditorUtil
             if (curItem != null)
             {
                 var strObj = descField?.GetValue(curItem);
-                var str = string.IsNullOrWhiteSpace($"{strObj}") ? "": $"{strObj}";
+                var str = string.IsNullOrWhiteSpace($"{strObj}") ? "" : $"{strObj}";
                 content.text += $"-{str}";
             }
             else
@@ -316,8 +317,19 @@ public static class EditorUtil
                 content.text += "-Error";
             }
 
+            if (!_SearchDic.TryGetValue(typeof(TCfg), out var searchStr))
+                _SearchDic.Add(typeof(TCfg), "");
 
-            if (GUI.Button(rect, content))
+            var isShowSearchTxt = rect.Contains(Event.current.mousePosition);
+            var btnWidth = rect.width / (isShowSearchTxt ? 2 : 1);
+            var btnRect = new Rect(rect) { width = btnWidth, };
+
+            if (isShowSearchTxt)
+            {
+                var searchTxtRect = new Rect(rect) { x = rect.x + btnWidth, width = rect.width - btnWidth, };
+                _SearchDic[typeof(TCfg)] = GUI.TextField(searchTxtRect, _SearchDic[typeof(TCfg)]);
+            }
+            if (GUI.Button(btnRect, content))
             {
                 var menu = new GenericMenu();
 
@@ -328,6 +340,11 @@ public static class EditorUtil
 
                     var strObj = descField?.GetValue(item);
                     var str = string.IsNullOrWhiteSpace($"{strObj}") ? "null" : $"{strObj}";
+
+                    if (!string.IsNullOrWhiteSpace(_SearchDic[typeof(TCfg)]))
+                        if (!key.ToString().Contains(_SearchDic[typeof(TCfg)], StringComparison.CurrentCultureIgnoreCase))
+                            if (!str.Contains(_SearchDic[typeof(TCfg)], StringComparison.CurrentCultureIgnoreCase))
+                                continue;
 
                     menu.AddItem(new()
                     {

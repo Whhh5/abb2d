@@ -45,9 +45,8 @@ public abstract class EffectEntityData : GameEntityData<EffectEntity>
     }
     public float GetMaxTime()
     {
-        if (m_IsLoadSuccess)
-            return _GameEntity.GetSingletonMaxLifeTime();
-        return 0;
+        var cfg = GameSchedule.Instance.GetEffectCfg0(_EffectID);
+        return cfg.fDelayDestroyTime;
     }
 
 }
@@ -61,12 +60,7 @@ public abstract class EffectEntity : GameEntity<EffectEntityData>
     protected override void Awake()
     {
         base.Awake();
-        var parComs = GetComponentsInChildren<ParticleSystem>(true);
-        _SinletonMaxTime = 0;
-        foreach (var item in parComs)
-        {
-            _SinletonMaxTime = Mathf.Max(_SinletonMaxTime, GetParticleTime(item));
-        }
+        UpdateMaxTime();
     }
 
     public override void LoadCompeletion()
@@ -82,6 +76,16 @@ public abstract class EffectEntity : GameEntity<EffectEntityData>
             _MainParticleSystem.Play();
         else
             _MainParticleSystem.Stop();
+    }
+
+    public void UpdateMaxTime()
+    {
+        var parComs = GetComponentsInChildren<ParticleSystem>(true);
+        _SinletonMaxTime = 0;
+        foreach (var item in parComs)
+        {
+            _SinletonMaxTime = Mathf.Max(_SinletonMaxTime, GetParticleTime(item));
+        }
     }
 
     public float GetSingletonMaxLifeTime()

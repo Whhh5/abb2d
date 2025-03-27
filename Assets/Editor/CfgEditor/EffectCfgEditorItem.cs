@@ -63,11 +63,27 @@ public class EffectCfgEditorItem : ICfgEditorItem
             if (strDescEditor != effectCfg.strDescEditor)
                 ExcelUtil.SetCfgValue(effectCfg, nameof(effectCfg.strDescEditor), strDescEditor);
 
-            EditorUtil.DrawAssetID<GameObject>(effectCfg.nAssetID, selectID =>
+            var assetCfg = ExcelUtil.GetCfg<AssetCfg>(effectCfg.nAssetID);
+            var maxTime = 0f;
+            if (assetCfg != null)
+            {
+                var ass = AssetDatabase.LoadAssetAtPath<EffectEntity>(assetCfg.strPath);
+                if (ass != null)
+                {
+                    ass.UpdateMaxTime();
+                    maxTime = ass.GetSingletonMaxLifeTime();
+                }
+            }
+            ;
+            EditorGUILayout.FloatField(maxTime, GUILayout.Width(50));
+            if (maxTime != effectCfg.fDelayDestroyTime)
+                ExcelUtil.SetCfgValue(effectCfg, nameof(effectCfg.fDelayDestroyTime), maxTime);
+
+            EditorUtil.DrawCfgField<AssetCfg>(effectCfg.nAssetID, selectID =>
             {
                 if (selectID != effectCfg.nAssetID)
                     ExcelUtil.SetCfgValue(effectCfg, nameof(effectCfg.nAssetID), selectID);
-            }, cfg => true);
+            }, 200);
         }
         EditorGUILayout.EndHorizontal();
     }

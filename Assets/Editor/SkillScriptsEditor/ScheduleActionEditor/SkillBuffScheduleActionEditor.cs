@@ -5,49 +5,48 @@ using UnityEngine;
 
 public class SkillBuffScheduleActionEditor : SkillBuffScheduleAction, ISkillScheduleActionEditor
 {
-    private List<int> m_BuffParamList = new();
+    private EnBuff buff => (EnBuff)buffID;
+    private IBuffDaraEditor _IBuffDaraEditor = null;
     public void InitEditor()
     {
-        m_BuffParamList.AddRange(arrBuffParams ?? new int[0]);
+        _IBuffDaraEditor = SkillFactroyEditor.GetBuffDataEditor(buff);
+        _IBuffDaraEditor?.InitParams(arrBuffParams);
     }
     public void Draw()
     {
         EditorGUILayout.BeginVertical();
         {
-            buffID = EditorGUILayout.IntField("buffID:", buffID, GUILayout.Width(200));
-            addSchedule = EditorGUILayout.Slider("buffID:", addSchedule, 0, 1, GUILayout.Width(200));
+            addSchedule = EditorGUILayout.Slider("schedule:", addSchedule, 0, 1, GUILayout.Width(200));
 
-            EditorGUILayout.BeginHorizontal();
+            EditorUtil.DrawCfgField<BuffCfg>("buff", buffID, id =>
             {
-                EditorGUILayout.LabelField("buff 参数", GUILayout.Width(100));
-                for (int i = 0; i < m_BuffParamList.Count; i++)
-                {
-                    m_BuffParamList[0] = EditorGUILayout.IntField(m_BuffParamList[i], GUILayout.Width(50));
-                    if (GUILayout.Button("❌", GUILayout.Width(30)))
-                    {
-                        m_BuffParamList.RemoveAt(i);
-                    }
-                    EditorGUILayout.Space(20);
-                }
-                if (GUILayout.Button("➕", GUILayout.Width(50)))
-                {
-                    m_BuffParamList.Add(0);
-                }
-            }
-            EditorGUILayout.EndHorizontal();
+                if (buffID == id)
+                    return;
+                _IBuffDaraEditor = SkillFactroyEditor.GetBuffDataEditor((EnBuff)id);
+                _IBuffDaraEditor.InitParams(null);
+
+                buffID = id;
+            }, 300);
+
+            //buffID = EditorGUILayout.IntField("buffID:", buffID, GUILayout.Width(200));
+            var type = SkillFactroyEditor.GetBuffDataEditor(buff);
+            type?.Draw();
+
         }
         EditorGUILayout.EndVertical();
     }
 
     public void GetStringData(ref List<int> data)
     {
-        var index = data.Count;
+        var count = data.Count;
+        data.Add(Mathf.RoundToInt(addSchedule * 100f));
         data.Add(buffID);
-        data.Add(Mathf.RoundToInt(addSchedule * 100));
+        data.Insert(count, data.Count - count);
 
-        data.Insert(index, data.Count - index);
+        //data.Add(arrBuffParams?.Length ?? 0);
 
-        data.Add(m_BuffParamList.Count);
-        data.AddRange(m_BuffParamList);
+        count = data.Count;
+        _IBuffDaraEditor.GetStringData(ref data);
+        data.Insert(count, data.Count - count);
     }
 }

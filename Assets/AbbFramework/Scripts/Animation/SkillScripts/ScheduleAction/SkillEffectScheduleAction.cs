@@ -17,18 +17,17 @@ public enum EnEffectTraceType
     Successive,
 }
 
-public interface ISkillEffectBinding
+public interface ISkillEffectBindingData
 {
     public void Init(int[] data, int arrCount, ref int startIndex);
-    public void Excute();
+    public void Excute(int entityID, int effectID);
 }
 
-public class SkillEffectBindingLocalTransformInfo: ISkillEffectBinding
+public class SkillEffectBindingLocalTransformInfo: ISkillEffectBindingData
 {
     public float offsetX;
     public float offsetY;
     public float offsetZ;
-    public Vector3 localPosOffset => new Vector3(offsetX, offsetY, offsetZ);
 
 
     public void Init(int[] data, int arrCount, ref int startIndex)
@@ -39,24 +38,33 @@ public class SkillEffectBindingLocalTransformInfo: ISkillEffectBinding
         offsetY = gCount < 2 ? default : data[startIndex] / 100f;
         offsetZ = gCount < 3 ? default : data[startIndex] / 100f;
     }
-    public void Excute()
+    public void Excute(int entityID, int effectID)
     {
-        
+        var enittyPos = Entity3DMgr.Instance.GetEntityWorldPos(entityID);
+        var forword = Entity3DMgr.Instance.GetEntityForward(entityID);
+        var up = Entity3DMgr.Instance.GetEntityUp(entityID);
+        var right = Entity3DMgr.Instance.GetEntityRight(entityID);
+        EffectMgr.Instance.PlayEffectOnce(effectID, enittyPos + right * offsetX + up * offsetY + forword * offsetZ);
     }
 }
 
-public class SkillEffectScheduleAction : IEffectParams, ISkillScheduleAction<PoolNaNUserData>
+public class SkillEffectScheduleAction : IEffectParams, ISkillScheduleAction
 {
     public int effectID;
     public float schedule;
     public EnEffectTraceType traceType;
     public EnEffectBindingType bindingType;
+
+    public float offsetX;
+    public float offsetY;
+    public float offsetZ;
     public int[] effectParams;
 
 
 
     private EnAtkLinkScheculeType m_ScheduleType = EnAtkLinkScheculeType.None;
     public bool m_IsEffect = false;
+    public ISkillEffectBindingData _SkillEffectBindingData = null;
 
     public void OnPoolDestroy()
     {
@@ -65,21 +73,6 @@ public class SkillEffectScheduleAction : IEffectParams, ISkillScheduleAction<Poo
         effectParams = null;
         m_ScheduleType = EnAtkLinkScheculeType.None;
         m_IsEffect = false;
-    }
-    public void PoolConstructor()
-    {
-    }
-
-    public void OnPoolInit(PoolNaNUserData userData)
-    {
-    }
-
-    public void OnPoolEnable()
-    {
-    }
-
-    public void PoolRelease()
-    {
     }
     public void SetScheduleType(EnAtkLinkScheculeType scheduleType)
     {
@@ -96,6 +89,11 @@ public class SkillEffectScheduleAction : IEffectParams, ISkillScheduleAction<Poo
         var gCount = startIndex >= endIndex ? default : data[startIndex++];
         effectID = gCount < 1 ? default : data[startIndex++];
         schedule = gCount < 2 ? default : data[startIndex++] / 100f;
+        offsetX = gCount < 3 ? default : data[startIndex++] / 100f;
+        offsetY = gCount < 4 ? default : data[startIndex++] / 100f;
+        offsetZ = gCount < 5 ? default : data[startIndex++] / 100f;
+        traceType = gCount < 6 ? default : (EnEffectTraceType)data[startIndex++];
+        bindingType = gCount < 7 ? default : (EnEffectBindingType)data[startIndex++];
 
         var paramsCount = startIndex >= endIndex ? default : data[startIndex++];
         effectParams = new int[paramsCount];
@@ -122,14 +120,11 @@ public class SkillEffectScheduleAction : IEffectParams, ISkillScheduleAction<Poo
     public void Enter(int entityID)
     {
         var enittyPos = Entity3DMgr.Instance.GetEntityWorldPos(entityID);
-        var entityForward = Entity3DMgr.Instance.GetEntityForward(entityID);
-        var enittyRot = Entity3DMgr.Instance.GetEntityRotation(entityID);
-        var effectEntityID = Entity3DMgr.Instance.CreateEntityData<EffectAttack5Data>();
-        var entityData = Entity3DMgr.Instance.GetEntity3DData<EffectAttack5Data>(effectEntityID);
-        entityData.SetParams(effectParams);
-        entityData.SetPosition(enittyPos + Vector3.up * 1);
-        entityData.SetLocalRotation(enittyRot);
-        Entity3DMgr.Instance.LoadEntity(effectEntityID);
+        var forword = Entity3DMgr.Instance.GetEntityForward(entityID);
+        var up = Entity3DMgr.Instance.GetEntityUp(entityID);
+        var right = Entity3DMgr.Instance.GetEntityRight(entityID);
+        EffectMgr.Instance.PlayEffectOnce(effectID, enittyPos + right * offsetX + up * offsetY + forword * offsetZ);
+
     }
 
     public void Exit()

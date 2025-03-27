@@ -15,6 +15,13 @@ public class ExcelUtil
         _EditorCfgData.Clear();
     }
 
+    public static TCfg GetCfg<TCfg>(int id)
+        where TCfg:ICfg
+    {
+        var list = ReadEditorCfgList<TCfg>();
+        var item = list.Find(item => item.GetID() == id);
+        return item;
+    }
     public static ExcelPackage ReadExcel<T>()
         where T : ICfg
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-public interface ISkillScheduleAction : IClassPool
+public interface ISkillScheduleAction : IClassPoolDestroy
 {
     public void SetScheduleType(EnAtkLinkScheculeType scheduleType);
     public EnAtkLinkScheculeType GetScheduleType();
@@ -11,9 +11,4 @@ public interface ISkillScheduleAction : IClassPool
     public bool GetIsEffect();
     public float GetEnterSchedule();
     public void SetIsEffect(bool isEffect);
-}
-public interface ISkillScheduleAction<T> : ISkillScheduleAction, IClassPool<T>
-    where T : class, IClassPoolUserData
-{
-
 }

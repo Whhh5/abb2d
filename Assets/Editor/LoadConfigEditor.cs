@@ -60,7 +60,7 @@ public class LoadConfigEditor : MonoBehaviour
 
                     itemList.Add(new()
                     {
-                        enName = targetType,
+                        strDescEditor = targetType,
                         nAssetID = index,
                         strPath = unityPath,
                     });
@@ -104,7 +104,7 @@ public class LoadConfigEditor : MonoBehaviour
             if (cfgData.strPath == dataItem.strPath)
             {
                 dataItem.nAssetID = cfgData.nAssetID;
-                if (cfgData.enName == dataItem.enName)
+                if (cfgData.strDescEditor == dataItem.strDescEditor)
                 {
                     continue;
                 }
@@ -120,11 +120,11 @@ public class LoadConfigEditor : MonoBehaviour
             {
                 var dataAss = data[dataItem];
                 item = dataAss;
-                enumStr.AppendLine($"\t{dataAss.enName} = {dataAss.nAssetID},");
+                enumStr.AppendLine($"\t{dataAss.strDescEditor} = {dataAss.nAssetID},");
             }
             else
             {
-                enumStr.AppendLine($"\t{ass.enName} = {ass.nAssetID},");
+                enumStr.AppendLine($"\t{ass.strDescEditor} = {ass.nAssetID},");
             }
             var row = excelInfo.dataStartRow + i;
             foreach (var file2Col in assetCatalog.field2ColList)
@@ -150,7 +150,7 @@ public class LoadConfigEditor : MonoBehaviour
                 var value = fieldInfo.GetValue(dataItem);
                 worksheet.SetValue(row, file2Col.Value, value);
             }
-            enumStr.AppendLine($"\t{dataItem.enName} = {dataItem.nAssetID},");
+            enumStr.AppendLine($"\t{dataItem.strDescEditor} = {dataItem.nAssetID},");
             count++;
         }
 
@@ -166,7 +166,7 @@ public class LoadConfigEditor : MonoBehaviour
         // id
         public System.Int32 nAssetID;
         // 枚举名称
-        public System.String enName;
+        public System.String strDescEditor;
         // 路径
         public System.String strPath;
     }

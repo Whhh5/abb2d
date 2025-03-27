@@ -99,7 +99,6 @@ public class SkillTypeLoopPlayableAdapter : SkillTypePlayableAdapter
             return;
         if (GetPlaySchedule01() < GlobalConfig.Float095)
             return;
-
         CurAtkLinkItemData.OnDisable(m_Graph);
         m_StepIndex++;
         CurAtkLinkItemData.OnEnable(m_Graph);

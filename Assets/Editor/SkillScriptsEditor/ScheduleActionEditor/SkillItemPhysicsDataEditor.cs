@@ -47,7 +47,7 @@ public class SkillPhysicsScheduleActionEditor : SkillPhysicsScheduleAction, ISki
             }
             atkSchedule = EditorGUILayout.Slider("检测进度", atkSchedule, 0, 1, GUILayout.Width(300));
             atkValue = EditorGUILayout.IntField("伤害值", atkValue, GUILayout.Width(300));
-            EditorUtil.DrawCfgField<EffectCfg>(effectID, selectID => effectID = selectID, 300);
+            EditorUtil.DrawCfgField<EffectCfg>("击中特效", effectID, selectID => effectID = selectID, 300);
 
             m_PhysicsResolveSphereEditor?.Draw();
         }
