@@ -16,7 +16,10 @@ public class SkillBuffScheduleAction : ISkillScheduleAction
     private int _AddBuffKey = -1;
     public void OnPoolDestroy()
     {
-        BuffMgr.Instance.RemoveEntityBuff(_AddBuffKey);
+        if (BuffMgr.Instance.GetBuffType(_AddBuffKey) != EnBuffType.Time)
+        {
+            BuffMgr.Instance.RemoveEntityBuff(_AddBuffKey);
+        }
         _AddBuffKey = -1;
         addSchedule = -1;
         buffID = -1;
@@ -53,7 +56,7 @@ public class SkillBuffScheduleAction : ISkillScheduleAction
     }
     public void Exit()
     {
-        
+
     }
 
     public void Reset()

@@ -62,6 +62,7 @@ public static class SkillFactroyEditor
             EnBuff.PlayerBuff => new EntityPlayerBuffDataEditor(),
             EnBuff.Poison => new EntityPoisonBuffDataEditor(),
             EnBuff.PlayerSkill2 => new EntityPlayerSkill2DataEditor(),
+            EnBuff.Expiosion => new EntityExpiosionDataEditor(),
             _ => null,
         };
         return buffData;

@@ -6,9 +6,13 @@ using UnityEngine;
 public class SkillPhysicsScheduleActionEditor : SkillPhysicsScheduleAction, ISkillScheduleActionEditor
 {
     private ISkillTypeEditor m_PhysicsResolveSphereEditor = null;
+    private IBuffDaraEditor _BuffEditorData = null;
     public void InitEditor()
     {
         UpdatePhysicsResolveSphereEditor();
+        _BuffEditorData = SkillFactroyEditor.GetBuffDataEditor(buff);
+        _BuffEditorData?.InitEditor();
+        _BuffEditorData?.InitParams(arrBuffParams);
     }
     private void UpdatePhysicsResolveSphereEditor()
     {
@@ -50,6 +54,18 @@ public class SkillPhysicsScheduleActionEditor : SkillPhysicsScheduleAction, ISki
             EditorUtil.DrawCfgField<EffectCfg>("击中特效", effectID, selectID => effectID = selectID, 300);
 
             m_PhysicsResolveSphereEditor?.Draw();
+
+            EditorUtil.DrawCfgField<BuffCfg>("buff", (int)buff, id =>
+            {
+                if (id == (int)buff)
+                    return;
+                buff = (EnBuff)id;
+                _BuffEditorData = SkillFactroyEditor.GetBuffDataEditor(buff);
+                _BuffEditorData.InitEditor();
+                _BuffEditorData?.InitParams(arrBuffParams);
+
+            }, 300);
+            _BuffEditorData?.Draw();
         }
         EditorGUILayout.EndVertical();
     }
@@ -61,8 +77,13 @@ public class SkillPhysicsScheduleActionEditor : SkillPhysicsScheduleAction, ISki
         data.Add(Mathf.RoundToInt(atkValue));
         data.Add((int)physicsType);
         data.Add(effectID);
+        data.Add((int)buff);
         data.Insert(index, data.Count - index);
 
         m_PhysicsResolveSphereEditor.GetStringData(ref data);
+
+        var count = data.Count;
+        _BuffEditorData.GetStringData(ref data);
+        data.Insert(count, data.Count - count);
     }
 }

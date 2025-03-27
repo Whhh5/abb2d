@@ -25,8 +25,11 @@ public enum EnBuff
     [HideEditor]
     PlayerBuff_1,
     Poison,
+    [HideEditor]
     PoisonSub,
     [HideEditor]
     PlayerSkill2,
+    [EditorFieldName("持续爆炸")]
+    Expiosion,
     EnumCount,
 }

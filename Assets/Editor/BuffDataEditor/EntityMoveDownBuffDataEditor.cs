@@ -13,7 +13,9 @@ public class EntityMoveDownBuffDataEditor : IBuffDaraEditor
     public EnBuff Buff => EnBuff.MovingChanges;
     public void InitParams(int[] arrParam)
     {
-        value = (arrParam?[0] ?? 0) / 100f;
+        if (arrParam == null || arrParam.Length == 0)
+            return;
+        value = arrParam[0] / 100f;
     }
 
     public void Draw()

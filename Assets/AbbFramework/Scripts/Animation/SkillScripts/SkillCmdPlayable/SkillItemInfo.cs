@@ -1,6 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 
+
+
+public interface ISkillItemEventInfo
+{
+    public void Execute(IClassPool userData);
+}
+public class SkillItemEventInfo
+{
+    public float schedule;
+    public bool isClick;
+    public IClassPool userData;
+    public ISkillItemEventInfo onEvent;
+}
 public class SkillItemInfo : IClassPool<PoolNaNUserData>
 {
     public int _ClipID;
@@ -15,6 +28,7 @@ public class SkillItemInfo : IClassPool<PoolNaNUserData>
     public int ScheduleEventCount => m_ArrAtkLinkSchedule.Length;
 
 
+    private Dictionary<int, SkillItemEventInfo> _EventList = new(10);
     private int m_CurScheduleItemIndex = 0;
 
     public void OnPoolDestroy()

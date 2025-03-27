@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -146,5 +147,4 @@ public class SkillEffectScheduleAction : IEffectParams, ISkillScheduleAction
     {
         return schedule;
     }
-
 }
