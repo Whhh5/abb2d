@@ -69,6 +69,7 @@ public class BuffMgr : Singleton<BuffMgr>
             EnBuff.Poison => EnBuffType.Time,
             EnBuff.PoisonSub => EnBuffType.Time,
             EnBuff.Expiosion => EnBuffType.Time,
+            EnBuff.Expiosion2 => EnBuffType.Persistence,
             EnBuff.PlayerSkill2 => EnBuffType.Persistence,
             _ => EnBuffType.Persistence,
         };
@@ -92,6 +93,7 @@ public class BuffMgr : Singleton<BuffMgr>
             EnBuff.PoisonSub => ClassPoolMgr.Instance.Pull<EntityPoisonSubBuffData>(data),
             EnBuff.PlayerSkill2 => ClassPoolMgr.Instance.Pull<EntityPlayerSkill2BuffData>(data),
             EnBuff.Expiosion => ClassPoolMgr.Instance.Pull<EntityExpiosionBuffData>(data),
+            EnBuff.Expiosion2 => ClassPoolMgr.Instance.Pull<EntityExpiosion2BuffData>(data),
             _ => null,
         };
         ClassPoolMgr.Instance.Push(data);

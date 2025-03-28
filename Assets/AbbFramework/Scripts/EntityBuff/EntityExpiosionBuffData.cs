@@ -34,5 +34,7 @@ public class EntityExpiosionBuffData : EntityBuffData, IUpdate
         EffectMgr.Instance.PlayEffectOnce(10, pos + Vector3.up);
 
         AttackMgr.Instance.BuffAttackEntity(_SourceEntityID, _TargetEntityID, _AtkValue);
+
+
     }
 }

@@ -15,6 +15,25 @@ public class ExcelUtil
         _EditorCfgData.Clear();
     }
 
+    public static int GetCfgCount<TCfg>()
+        where TCfg : ICfg
+    {
+        var cfgList = ReadEditorCfgList<TCfg>();
+        return cfgList.Count;
+    }
+    public static TCfg GetCfgByIndex<TCfg>(int index)
+        where TCfg : ICfg
+    {
+        var list = ReadEditorCfgList<TCfg>();
+        var item = list[index];
+        return item;
+    }
+    public static bool Contains<TCfg>(int id)
+        where TCfg : ICfg
+    {
+        var cfg = GetCfg<TCfg>(id);
+        return cfg != null;
+    }
     public static TCfg GetCfg<TCfg>(int id)
         where TCfg:ICfg
     {
@@ -40,11 +59,17 @@ public class ExcelUtil
             return;
         if (fieldType == null)
             return;
-        var jsonStr = fieldType.FieldType == typeof(string) ? strValue : JsonConvert.DeserializeObject(strValue, fieldType.FieldType);
-        var fieldValue = Convert.ChangeType(jsonStr, fieldType.FieldType);
+        // var jsonStr = fieldType.FieldType == typeof(string) ? strValue : JsonConvert.DeserializeObject(strValue, fieldType.FieldType);
+        var fieldValue = Convert.ChangeType(value, fieldType.FieldType);
         fieldType.SetValue(cfg, fieldValue);
     }
-    public static List<T> ReadEditorCfgList<T>()
+    public static void AddCfg<TCfg>(TCfg cfg)
+        where TCfg : ICfg
+    {
+        var cfgList = ReadEditorCfgList<TCfg>();
+        cfgList.Add(cfg);
+    }
+    private static List<T> ReadEditorCfgList<T>()
         where T : ICfg
     {
         if (!_EditorCfgData.TryGetValue(typeof(T), out var cfgList))
@@ -54,13 +79,25 @@ public class ExcelUtil
         }
         return cfgList as List<T>;
     }
-    public static List<T> ReadEditorCfgData<T>()
+
+    public static int GetNextIndex<TCfg>()
+        where TCfg :ICfg
+    {
+        var count = ExcelUtil.GetCfgCount<TCfg>();
+        for (int i = 0; i < count; i++)
+        {
+            if (!ExcelUtil.Contains<TCfg>(i + 1))
+                return i + 1;
+        }
+        return count + 1;
+    }
+    private static List<T> ReadEditorCfgData<T>()
         where T : ICfg
     {
         var result = ReadEditorCfgData<T, T>();
         return result;
     }
-    public static List<T2> ReadEditorCfgData<T, T2>()
+    private static List<T2> ReadEditorCfgData<T, T2>()
         where T : ICfg
         where T2 : ICfg
     {
@@ -146,10 +183,12 @@ public class ExcelUtil
 
         excelPackage.Dispose();
     }
-    public static void SaveExcel<T>(List<T> data)
+    public static void SaveExcel<T>()
         where T : ICfg
     {
-        SaveExcel<T, T>(data);
+        var cfgList = ReadEditorCfgList<T>();
+        cfgList.Sort((item1, item2) => item1.GetID() < item2.GetID() ? -1 : 1);
+        SaveExcel<T, T>(cfgList);
     }
     public static void SaveExcel<T, T2>(List<T2> data)
         where T : ICfg

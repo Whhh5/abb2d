@@ -30,25 +30,14 @@ public class CmdCfgEditorItem : ICfgEditorItem
     }
     private void UpdateNextTempCmdCfg()
     {
-        var cmdCfgList = ExcelUtil.ReadEditorCfgList<CmdCfg>();
         _TempCmdCfg = ExcelUtil.CreateTypeInstance<CmdCfg>();
-        var id = cmdCfgList.Count + 1;
-        for (int i = 0; i < cmdCfgList.Count; i++)
-        {
-            if (cmdCfgList.FindIndex(item => item.nCmdID == i + 1) < 0)
-            {
-                id = i + 1;
-                break;
-            }
-        }
+        var id = ExcelUtil.GetNextIndex<CmdCfg>();
         ExcelUtil.SetCfgValue(_TempCmdCfg, nameof(_TempCmdCfg.nCmdID), id);
     }
 
     public void Save()
     {
-        var cmdCfgList = ExcelUtil.ReadEditorCfgList<CmdCfg>();
-        cmdCfgList.Sort((item, item2) => item.nCmdID < item2.nCmdID ? -1 : 1);
-        ExcelUtil.SaveExcel(cmdCfgList);
+        ExcelUtil.SaveExcel<CmdCfg>();
     }
 
     private void DrawCmdCfg(CmdCfg cmdCfg, Color color)
@@ -72,7 +61,8 @@ public class CmdCfgEditorItem : ICfgEditorItem
             {
                 try
                 {
-                    ExcelUtil.SetCfgValue(cmdCfg, nameof(cmdCfg.arrParams), str);
+                    var arr = JsonConvert.DeserializeObject<int[]>(str);
+                    ExcelUtil.SetCfgValue(cmdCfg, nameof(cmdCfg.arrParams), arr);
                 }
                 catch { }
             }
@@ -82,8 +72,7 @@ public class CmdCfgEditorItem : ICfgEditorItem
     }
     public void Draw()
     {
-        var cmdCfgList = ExcelUtil.ReadEditorCfgList<CmdCfg>();
-
+        var cmdCfgCount = ExcelUtil.GetCfgCount<CmdCfg>();
         EditorGUILayout.BeginVertical();
         {
             var menuRect = EditorGUILayout.BeginVertical();
@@ -93,7 +82,7 @@ public class CmdCfgEditorItem : ICfgEditorItem
                 {
                     if (GUILayout.Button("Create", GUILayout.Width(100), GUILayout.ExpandWidth(false)))
                     {
-                        cmdCfgList.Insert(0, _TempCmdCfg);
+                        ExcelUtil.AddCfg(_TempCmdCfg);
                         UpdateNextTempCmdCfg();
                     }
                 }
@@ -107,9 +96,9 @@ public class CmdCfgEditorItem : ICfgEditorItem
 
             EditorGUILayout.BeginVertical();
             {
-                for (int i = 0; i < cmdCfgList.Count; i++)
+                for (int i = 0; i < cmdCfgCount; i++)
                 {
-                    var cmdCfg = cmdCfgList[i];
+                    var cmdCfg = ExcelUtil.GetCfgByIndex<CmdCfg>(i);
 
                     DrawCmdCfg(cmdCfg, new Color(1, 1, 1, i % 2 == 0 ? 0.1f : 0.3f));
                 }

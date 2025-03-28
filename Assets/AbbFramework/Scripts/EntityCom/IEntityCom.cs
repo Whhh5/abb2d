@@ -29,15 +29,18 @@ public abstract class Entity3DComDataGO<TGOCom> : Entity3DComData
     where TGOCom : class, IEntity3DCom
 {
     protected TGOCom _GoCom { get; private set; }
+    protected bool _IsCCreateGO { get; private set; }
     public override void OnDestroyGO()
     {
         base.OnDestroyGO();
         _GoCom = null;
+        _IsCCreateGO = false;
     }
     public override void OnCreateGO()
     {
         base.OnCreateGO();
         _GoCom = Entity3DMgr.Instance.GetEntityGOComponent<TGOCom>(_EntityID);
+        _IsCCreateGO = true;
     }
 }
 public abstract class Entity3DComData : Entity3DComData<Entity3DComDataUserData>

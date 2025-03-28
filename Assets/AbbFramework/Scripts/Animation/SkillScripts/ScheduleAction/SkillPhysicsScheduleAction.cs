@@ -132,7 +132,7 @@ public class SkillPhysicsScheduleAction : IPhysicsParams, ISkillScheduleAction
                 EffectMgr.Instance.PlayEffectOnce(effectID, entityInfo.closestPoint);
 
             if (buff > EnBuff.None)
-                BuffMgr.Instance.AddEntityBuff(_EntityID, data.entityID, buff, buffParams);
+                BuffMgr.Instance.AddEntityBuff(_EntityID, entityInfo.entityID, buff, buffParams);
         }
     }
 

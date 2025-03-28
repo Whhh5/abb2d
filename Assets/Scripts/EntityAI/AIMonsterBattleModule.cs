@@ -82,8 +82,9 @@ public class AIMonsterBattleModule : AIModule, IUpdate
             }
             else
             {
-                var cmd = Random.Range(0, 1f) > 0.5f ? EnEntityCmd.Monster0Skill1 : EnEntityCmd.Monster0Skill2;
-                Entity3DMgr.Instance.AddEntityCmd(EntityID, cmd);
+                EnEntityCmd[] arrCmd = { EnEntityCmd.Monster0Skill1, EnEntityCmd.Monster0Skill2, EnEntityCmd.Monster0Buff1 };
+                var index = Random.Range(0, arrCmd.Length);
+                Entity3DMgr.Instance.AddEntityCmd(EntityID, arrCmd[index]);
             }
 
         }

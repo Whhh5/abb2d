@@ -21,25 +21,13 @@ public class EffectCfgEditorItem : ICfgEditorItem
 
     public void Save()
     {
-        var effectCfgList = ExcelUtil.ReadEditorCfgList<EffectCfg>();
-        effectCfgList.Sort((item, item2) => item.nEffectID < item2.nEffectID ? -1 : 1);
-        ExcelUtil.SaveExcel(effectCfgList);
+        ExcelUtil.SaveExcel<EffectCfg>();
     }
 
     private void UpdateTempEffectCfg()
     {
         _TempEffectCfg = ExcelUtil.CreateTypeInstance<EffectCfg>();
-
-        var effectCfg = ExcelUtil.ReadEditorCfgList<EffectCfg>();
-        var effectID = effectCfg.Count + 1;
-        for (int i = 0; i < effectCfg.Count; i++)
-        {
-            if (effectCfg.FindIndex(item => item.nEffectID == i + 1) < 0)
-            {
-                effectID = i + 1;
-                break;
-            }
-        }
+        var effectID = ExcelUtil.GetNextIndex<ClipCfg>();
         ExcelUtil.SetCfgValue(_TempEffectCfg, nameof(_TempEffectCfg.nEffectID), effectID);
     }
     public void Draw()
@@ -89,13 +77,12 @@ public class EffectCfgEditorItem : ICfgEditorItem
     }
     private void DrawTitle()
     {
-        var effectCfgList = ExcelUtil.ReadEditorCfgList<EffectCfg>();
         var rect = EditorGUILayout.BeginVertical();
         EditorGUI.DrawRect(rect, new Color(1, 1, 1, 0.1f));
         {
             if (GUILayout.Button("Create", GUILayout.Width(100)))
             {
-                effectCfgList.Add(_TempEffectCfg);
+                ExcelUtil.AddCfg<EffectCfg>(_TempEffectCfg);
                 UpdateTempEffectCfg();
             }
             DrawEffectCfgItem(_TempEffectCfg, new Color(0, 1, 1, 0.1f));
@@ -104,13 +91,14 @@ public class EffectCfgEditorItem : ICfgEditorItem
     }
     private void DrawData()
     {
-        var effectCfgList = ExcelUtil.ReadEditorCfgList<EffectCfg>();
+        var count = ExcelUtil.GetCfgCount<EffectCfg>();
 
         EditorGUILayout.BeginVertical();
         {
-            for (int i = 0; i < effectCfgList.Count; i++)
+            for (int i = 0; i < count; i++)
             {
-                DrawEffectCfgItem(effectCfgList[i], new Color(1, 1, 1, i % 2 == 0 ? 0.1f : 0.2f));
+                var item = ExcelUtil.GetCfgByIndex<EffectCfg>(i);
+                DrawEffectCfgItem(item, new Color(1, 1, 1, i % 2 == 0 ? 0.1f : 0.2f));
                 GUILayout.Space(2);
             }
         }

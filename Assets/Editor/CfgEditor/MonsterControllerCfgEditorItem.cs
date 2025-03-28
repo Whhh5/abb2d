@@ -27,24 +27,13 @@ public class MonsterControllerCfgEditorItem : ICfgEditorItem
 
     public void Save()
     {
-        var controllerCfgList = ExcelUtil.ReadEditorCfgList<MonsterControllerCfg>();
-        controllerCfgList.Sort((item, item2) => item.nControllerID < item2.nControllerID ? -1 : 1);
-        ExcelUtil.SaveExcel(controllerCfgList);
+        ExcelUtil.SaveExcel<MonsterControllerCfg>();
     }
 
     private void UpdateTempMonsterController()
     {
-        var controllerCfgList = ExcelUtil.ReadEditorCfgList<MonsterControllerCfg>();
         _TempCfg = ExcelUtil.CreateTypeInstance<MonsterControllerCfg>();
-        var id = controllerCfgList.Count + 1;
-        for (int i = 0; i < controllerCfgList.Count; i++)
-        {
-            if (controllerCfgList.FindIndex(item => item.nControllerID == i + 1) < 0)
-            {
-                id = i + 1;
-                break;
-            }
-        }
+        var id = ExcelUtil.GetNextIndex<ClipCfg>();
         ExcelUtil.SetCfgValue(_TempCfg, nameof(_TempCfg.nControllerID), id);
     }
 
@@ -101,15 +90,13 @@ public class MonsterControllerCfgEditorItem : ICfgEditorItem
                 {
                     if (cfg.arrParams == null)
                     {
-                        var value = JsonConvert.SerializeObject(new int[2]);
-                        ExcelUtil.SetCfgValue(cfg, nameof(cfg.arrParams), value);
+                        ExcelUtil.SetCfgValue(cfg, nameof(cfg.arrParams), new int[2]);
                     }
                     else
                     {
                         var newParam = new int[cfg.arrParams.Length + 2];
                         Array.Copy(cfg.arrParams, newParam, cfg.arrParams.Length);
-                        var value = JsonConvert.SerializeObject(newParam);
-                        ExcelUtil.SetCfgValue(cfg, nameof(cfg.arrParams), value);
+                        ExcelUtil.SetCfgValue(cfg, nameof(cfg.arrParams), newParam);
                     }
                 }
             }
@@ -146,13 +133,12 @@ public class MonsterControllerCfgEditorItem : ICfgEditorItem
     }
     private void DrawTitle()
     {
-        var controllerCfgList = ExcelUtil.ReadEditorCfgList<MonsterControllerCfg>();
         var rect = EditorGUILayout.BeginVertical();
         EditorGUI.DrawRect(rect, new Color(1, 1, 1, 0.1f));
         {
             if (GUILayout.Button("Create", GUILayout.Width(100)))
             {
-                controllerCfgList.Add(_TempCfg);
+                ExcelUtil.AddCfg<MonsterControllerCfg>(_TempCfg);
                 UpdateTempMonsterController();
             }
             DrawMonsterControllerItem(_TempCfg, new Color(0, 1, 1, 0.1f));
@@ -161,13 +147,13 @@ public class MonsterControllerCfgEditorItem : ICfgEditorItem
     }
     private void DrawCfgList()
     {
-        var controllerCfgList = ExcelUtil.ReadEditorCfgList<MonsterControllerCfg>();
         EditorGUILayout.BeginVertical();
         {
-            for (int i = 0; i < controllerCfgList.Count; i++)
+            var count = ExcelUtil.GetCfgCount<MonsterControllerCfg>();
+            for (int i = 0; i < count; i++)
             {
-                var rect = DrawMonsterControllerItem(controllerCfgList[i], new Color(1, 1, 1, i % 2 == 0 ? 0.1f : 0.2f));
-
+                var item = ExcelUtil.GetCfgByIndex<MonsterControllerCfg>(i);
+                var rect = DrawMonsterControllerItem(item, new Color(1, 1, 1, i % 2 == 0 ? 0.1f : 0.2f));
 
                 if (rect.Contains(Event.current.mousePosition))
                 {
@@ -188,7 +174,6 @@ public class MonsterControllerCfgEditorItem : ICfgEditorItem
     {
         var keyCodeWidth = 50;
         var cmdWidth = 50;
-        var cfgList = ExcelUtil.ReadEditorCfgList<MonsterControllerCfg>();
         for (var k = 0; k < _ItemStatus.Count; k++)
         {
             var item = _ItemStatus[k];
@@ -235,8 +220,7 @@ public class MonsterControllerCfgEditorItem : ICfgEditorItem
                             if (keyCode == curkeyCode)
                                 return;
                             arr[index] = (int)keyCode;
-                            var value = JsonConvert.SerializeObject(arr);
-                            ExcelUtil.SetCfgValue(cfg, nameof(cfg.arrParams), value);
+                            ExcelUtil.SetCfgValue(cfg, nameof(cfg.arrParams), arr);
                         });
                     }
                     menu.ShowAsContext();
@@ -255,8 +239,7 @@ public class MonsterControllerCfgEditorItem : ICfgEditorItem
                     if (selectID == cmdID)
                         return;
                     arr[index + 1] = selectID;
-                    var value = JsonConvert.SerializeObject(arr);
-                    ExcelUtil.SetCfgValue(cfg, nameof(cfg.arrParams), value);
+                    ExcelUtil.SetCfgValue(cfg, nameof(cfg.arrParams), arr);
                 });
                 var closeRect = new Rect(cmdRect)
                 {
@@ -269,8 +252,7 @@ public class MonsterControllerCfgEditorItem : ICfgEditorItem
                     newArray.RemoveRange(index, 2);
                     arr = newArray.ToArray();
 
-                    var value = JsonConvert.SerializeObject(arr);
-                    ExcelUtil.SetCfgValue(cfg, nameof(cfg.arrParams), value);
+                    ExcelUtil.SetCfgValue(cfg, nameof(cfg.arrParams), arr);
                     _ItemStatus.RemoveAt(k);
                 }
 

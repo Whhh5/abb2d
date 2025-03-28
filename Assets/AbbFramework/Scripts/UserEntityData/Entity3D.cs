@@ -25,7 +25,6 @@ public abstract class Entity3DData : GameEntityData
     public override Vector3 LocalRotation => MoveDirection;
 
     private Dictionary<Type, IEntity3DComData> m_EntityComs = new();
-    private Dictionary<Type, IEntityMonitorEntity> m_MonitorDic = new();
 
 
     public override Vector3 GetForward()
@@ -43,6 +42,27 @@ public abstract class Entity3DData : GameEntityData
     {
         base.Create();
     }
+    public override void OnEnable()
+    {
+        base.OnEnable();
+
+        foreach (var item in m_EntityComs)
+        {
+            if (!item.Value.IsActive())
+                item.Value.OnEnable();
+        }
+    }
+    public override void OnDisable()
+    {
+        base.OnDisable();
+
+        foreach (var item in m_EntityComs)
+        {
+            if(item.Value.IsActive())
+                item.Value.OnDisable();
+        }
+    }
+
     public override void OnGOCreate()
     {
         base.OnGOCreate();
@@ -53,17 +73,9 @@ public abstract class Entity3DData : GameEntityData
     public override void OnGODestroy()
     {
         foreach (var item in m_EntityComs)
-        {
-            if (item.Value.IsActive())
-                item.Value.OnDisable();
             item.Value.OnDestroyGO();
-        }
-        m_EntityComs.Clear();
-        foreach (var item in m_MonitorDic)
-            item.Value.StopMonitor();
-        m_MonitorDic.Clear();
-        m_Entity3D = null;
         base.OnGODestroy();
+        m_Entity3D = null;
     }
 
     public override void SetLocalRotation(Vector3 localRotation)
@@ -119,31 +131,6 @@ public abstract class Entity3DData : GameEntityData
         var type = typeof(T);
         if (!m_EntityComs.ContainsKey(type))
             return false;
-        return true;
-    }
-    #endregion
-
-    #region monitor
-    public bool AddMonition<T>()
-        where T : class, IEntityMonitorEntity, new()
-    {
-        var type = typeof(T);
-        if (m_MonitorDic.ContainsKey(type))
-            return false;
-        var monitor = ClassPoolMgr.Instance.Pull<T>();
-        m_MonitorDic.Add(type, monitor);
-        monitor.StartMonitor(this);
-        return true;
-    }
-    public bool RemoveMonitor<T>()
-        where T : IEntityMonitorEntity
-    {
-        var type = typeof(T);
-        if (!m_MonitorDic.TryGetValue(type, out var monitor))
-            return false;
-        m_MonitorDic.Remove(type);
-        monitor.StopMonitor();
-        ClassPoolMgr.Instance.Push(monitor);
         return true;
     }
     #endregion

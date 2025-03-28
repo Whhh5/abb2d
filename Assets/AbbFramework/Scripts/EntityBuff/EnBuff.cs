@@ -31,5 +31,7 @@ public enum EnBuff
     PlayerSkill2,
     [EditorFieldName("持续爆炸")]
     Expiosion,
+    [EditorFieldName("持续爆炸2")]
+    Expiosion2,
     EnumCount,
 }

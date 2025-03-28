@@ -23,7 +23,6 @@ public class MonsterMgr : Singleton<MonsterMgr>
         monsterData.AddEntityCom<EntityAnimComData>();
         monsterData.AddEntityCom<EntityCCComData>();
         monsterData.AddEntityCom<EntityBuffComData>();
-        monsterData.AddMonition<EntityDirectionMonitorData>();
         var animCom = monsterData.GetEntityCom<EntityAnimComData>();
         animCom.AddCmd(EnEntityCmd.Monster0Idle);
         m_EntityID2MonsterData.Add(entityID, monsterData);

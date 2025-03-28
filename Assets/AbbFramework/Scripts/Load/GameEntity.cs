@@ -42,16 +42,30 @@ public abstract class GameEntityData : IClassPool<IClassPoolUserData>
     public Transform ParentTran => m_ParentTran;
     protected GameEntity m_Entity = null;
     public GameEntity EntityGO => m_Entity;
+
+    private bool _IsActive = false;
     public virtual void OnPoolDestroy()
     {
         m_EntityID
             = m_GOID
             = m_LoadKey
             = -1;
-        m_IsLoadSuccess = false;
+        m_IsLoadSuccess
+            = _IsActive
+            = false;
         m_LoadStatus = EnLoadStatus.None;
         m_WorldPos = Vector3.zero;
         m_ParentTran = null;
+    }
+
+    public virtual void OnEnable()
+    {
+        _IsActive = true;
+    }
+
+    public virtual void OnDisable()
+    {
+        _IsActive = false;
     }
     public virtual void OnPoolInit(IClassPoolUserData userData)
     {
@@ -89,7 +103,10 @@ public abstract class GameEntityData : IClassPool<IClassPoolUserData>
         m_Entity = null;
     }
 
-
+    public bool GetActive()
+    {
+        return _IsActive;
+    }
     public virtual void SetEntityID(int entityID)
     {
         m_EntityID = entityID;

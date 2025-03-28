@@ -18,19 +18,8 @@ public class ClipCfgEditorItem : ICfgEditorItem
     private void UpdateNextClipCfg()
     {
         _TempIns = ExcelUtil.CreateTypeInstance<ClipCfg>();
-
-        var clipList = ExcelUtil.ReadEditorCfgList<ClipCfg>();
-
-        var clipID = clipList.Count;
-        for (int i = 0; i < clipList.Count + 1; i++)
-        {
-            if (clipList.FindIndex(item => item.nClipID == i + 1) < 0)
-            {
-                clipID = i + 1;
-                break;
-            }
-        }
-        ExcelUtil.SetCfgValue(_TempIns, nameof(_TempIns.nClipID), clipID);
+        var id = ExcelUtil.GetNextIndex<ClipCfg>();
+        ExcelUtil.SetCfgValue(_TempIns, nameof(_TempIns.nClipID), id);
     }
     public void OnDisable()
     {
@@ -44,17 +33,14 @@ public class ClipCfgEditorItem : ICfgEditorItem
 
     public void Save()
     {
-        var clipList = ExcelUtil.ReadEditorCfgList<ClipCfg>();
-        clipList.Sort((cfg, cfg2) => cfg.nClipID < cfg2.nClipID ? -1 : 1);
-        ExcelUtil.SaveExcel(clipList);
+        ExcelUtil.SaveExcel<ClipCfg>();
     }
     private void DrawClip(ClipCfg clipCfg, Color color)
     {
         var itemRect = EditorGUILayout.BeginHorizontal();
         EditorGUI.DrawRect(itemRect, color);
         {
-            var assetList = ExcelUtil.ReadEditorCfgList<AssetCfg>();
-            var assetCfg = assetList.Find(item => item.nAssetID == clipCfg.nAssetID);
+            var assetCfg = ExcelUtil.GetCfg<AssetCfg>(clipCfg.nAssetID);
 
             EditorGUILayout.LabelField($"{clipCfg.nClipID}", GUILayout.Width(30));
             var ass = assetCfg == null ? null : AssetDatabase.LoadAssetAtPath<AnimationClip>(assetCfg.strPath);
@@ -78,8 +64,6 @@ public class ClipCfgEditorItem : ICfgEditorItem
     }
     public void Draw()
     {
-        var clipList = ExcelUtil.ReadEditorCfgList<ClipCfg>();
-        var assetList = ExcelUtil.ReadEditorCfgList<AssetCfg>();
         EditorGUILayout.BeginVertical();
         {
             var rect = EditorGUILayout.BeginHorizontal(GUILayout.ExpandWidth(true));
@@ -104,12 +88,12 @@ public class ClipCfgEditorItem : ICfgEditorItem
                         EditorUtil.DrawAssetID<AnimationClip>(
                             _SelectAssetID
                             , value => _SelectAssetID = value
-                            , assetCfg => clipList.FindIndex(item => item.nAssetID == assetCfg.nAssetID) < 0);
+                            , assetCfg => ExcelUtil.GetCfg<AssetCfg>(assetCfg.nAssetID) == null);
                         if (_SelectAssetID > 0)
                         {
                             if (GUILayout.Button("Add", GUILayout.Width(100)))
                             {
-                                clipList.Add(_TempIns);
+                                ExcelUtil.AddCfg<ClipCfg>(_TempIns);
                                 UpdateNextClipCfg();
                                 _SelectAssetID = -1;
                             }
@@ -118,7 +102,7 @@ public class ClipCfgEditorItem : ICfgEditorItem
                     EditorGUILayout.EndHorizontal();
                     if (_SelectAssetID > 0)
                     {
-                        var assetCfg = assetList.Find(item => item.nAssetID == _SelectAssetID);
+                        var assetCfg = ExcelUtil.GetCfg<AssetCfg>(_SelectAssetID);
                         ExcelUtil.SetCfgValue(_TempIns, nameof(_TempIns.nAssetID), _SelectAssetID);
                         DrawClip(_TempIns, new Color(0, 1, 1, 0.1f));
                     }
@@ -130,12 +114,12 @@ public class ClipCfgEditorItem : ICfgEditorItem
 
             GUILayout.Space(10);
 
-
+            var clipCfgCount = ExcelUtil.GetCfgCount<ClipCfg>();
             _ClipListPos = EditorGUILayout.BeginScrollView(_ClipListPos, GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true));
-            for (int i = 0; i < clipList.Count; i++)
+            for (int i = 0; i < clipCfgCount; i++)
             {
-                var clipCfg = clipList[i];
-                var assetCfg = assetList.Find(item => item.nAssetID == clipCfg.nAssetID);
+                var clipCfg = ExcelUtil.GetCfgByIndex<ClipCfg>(i);
+                var assetCfg = ExcelUtil.GetCfg<AssetCfg>(clipCfg.nAssetID);
                 if (!string.IsNullOrWhiteSpace(_SearchStr))
                 {
                     if (!clipCfg.nClipID.ToString().Contains(_SearchStr, StringComparison.CurrentCultureIgnoreCase))

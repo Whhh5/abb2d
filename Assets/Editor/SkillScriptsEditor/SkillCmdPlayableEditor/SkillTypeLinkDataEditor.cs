@@ -35,14 +35,11 @@ public class SkillTypeLinkDataEditor : SkillTypeLinkData, ISkillTypeEditor, ISki
         }
 
         _SimulationMaxTime = 0f;
-        var clipCfgList = ExcelUtil.ReadEditorCfgList<ClipCfg>();
-        var assetCfgList = ExcelUtil.ReadEditorCfgList<AssetCfg>();
         foreach (var item in m_ArrAttackDataEditor)
         {
             var clipID = item.GetClipID();
-            var clipCfg = clipCfgList.Find(item => item.nClipID == clipID);
-            var clipAssetID = clipCfg.nAssetID;
-            var clipPath = assetCfgList.Find(item => item.nAssetID == clipAssetID).strPath;
+            var clipCfg = ExcelUtil.GetCfg<ClipCfg>(clipID);
+            var clipPath = ExcelUtil.GetCfg<AssetCfg>(clipCfg.nAssetID).strPath; 
             var clip = AssetDatabase.LoadAssetAtPath<AnimationClip>(clipPath);
             _SimulationMaxTime += clip.length;
         }
@@ -206,8 +203,6 @@ public class SkillTypeLinkDataEditor : SkillTypeLinkData, ISkillTypeEditor, ISki
     public void InitSimulation(ref PlayableGraph graph)
     {
         _StepDataList = new(m_Count);
-        var assetCfgList = ExcelUtil.ReadEditorCfgList<AssetCfg>();
-        var clipCfgList = ExcelUtil.ReadEditorCfgList<ClipCfg>();
         var output = graph.GetOutput(0);
         _MixerPlayable = AnimationMixerPlayable.Create(graph, m_Count);
         output.SetSourcePlayable(_MixerPlayable);
@@ -215,9 +210,8 @@ public class SkillTypeLinkDataEditor : SkillTypeLinkData, ISkillTypeEditor, ISki
         for (int i = 0; i < m_Count; i++)
         {
             var clipID = m_ArrAttackDataEditor[i].GetClipID();
-            var clipCfg = clipCfgList.Find(item => item.nClipID == clipID);
-            var clipAssetID = clipCfg.nAssetID;
-            var clipPath = assetCfgList.Find(item => item.nAssetID == clipAssetID).strPath;
+            var clipCfg = ExcelUtil.GetCfg<ClipCfg>(clipID);
+            var clipPath = ExcelUtil.GetCfg<AssetCfg>(clipCfg.nAssetID).strPath;
             var clip = AssetDatabase.LoadAssetAtPath<AnimationClip>(clipPath);
 
             var clipPlayable = AnimationClipPlayable.Create(graph, clip);
@@ -343,7 +337,7 @@ public class SkillTypeLinkDataEditor : SkillTypeLinkData, ISkillTypeEditor, ISki
         EditorGUILayout.EndVertical();
 
 
-        
+
         if (selectID != null)
         {
             selectID.Draw();

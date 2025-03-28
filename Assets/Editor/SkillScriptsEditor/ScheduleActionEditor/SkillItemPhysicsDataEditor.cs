@@ -55,16 +55,26 @@ public class SkillPhysicsScheduleActionEditor : SkillPhysicsScheduleAction, ISki
 
             m_PhysicsResolveSphereEditor?.Draw();
 
-            EditorUtil.DrawCfgField<BuffCfg>("buff", (int)buff, id =>
+            EditorGUILayout.BeginHorizontal();
             {
-                if (id == (int)buff)
-                    return;
-                buff = (EnBuff)id;
-                _BuffEditorData = SkillFactroyEditor.GetBuffDataEditor(buff);
-                _BuffEditorData.InitEditor();
-                _BuffEditorData?.InitParams(arrBuffParams);
+                EditorUtil.DrawCfgField<BuffCfg>("buff", (int)buff, id =>
+                {
+                    if (id == (int)buff)
+                        return;
+                    buff = (EnBuff)id;
+                    _BuffEditorData = SkillFactroyEditor.GetBuffDataEditor(buff);
+                    _BuffEditorData.InitEditor();
+                    _BuffEditorData?.InitParams(arrBuffParams);
 
-            }, 300);
+                }, 300);
+
+                if (GUILayout.Button("Def", GUILayout.Width(30)))
+                {
+                    buff = EnBuff.None;
+                    _BuffEditorData = null;
+                }
+            }
+            EditorGUILayout.EndHorizontal();
             _BuffEditorData?.Draw();
         }
         EditorGUILayout.EndVertical();
@@ -83,7 +93,7 @@ public class SkillPhysicsScheduleActionEditor : SkillPhysicsScheduleAction, ISki
         m_PhysicsResolveSphereEditor.GetStringData(ref data);
 
         var count = data.Count;
-        _BuffEditorData.GetStringData(ref data);
+        _BuffEditorData?.GetStringData(ref data);
         data.Insert(count, data.Count - count);
     }
 }

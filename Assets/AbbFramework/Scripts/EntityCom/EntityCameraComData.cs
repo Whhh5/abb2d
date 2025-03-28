@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public interface IEntityCameraCom: IEntity3DCom
+public interface IEntityCameraCom : IEntity3DCom
 {
     public Transform GetEntityCameraCom_FollowTran();
     public Transform GetEntityCameraCom_LookAtTran();
@@ -10,6 +10,7 @@ public interface IEntityCameraCom: IEntity3DCom
 public class EntityCameraComData : Entity3DComDataGO<IEntityCameraCom>
 {
     private readonly float _RotYIncrement = 20f;
+    private readonly float _ToEntityMaxDistance = 20;
     public override void OnCreateGO()
     {
         base.OnCreateGO();
@@ -51,10 +52,9 @@ public class EntityCameraComData : Entity3DComDataGO<IEntityCameraCom>
     {
         if (!EntityUtil.IsValid(_EntityID))
             return;
-        var unit = 10f;
         var mouseDelta = ABBUtil.GetMousePositionDelta();
 
-        var value = mouseDelta.y / Screen.height * unit;
+        var value = mouseDelta.y / Screen.height * _ToEntityMaxDistance;
         _GoCom.IncrementRadiusOffset(value);
     }
 

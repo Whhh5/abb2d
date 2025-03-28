@@ -152,14 +152,12 @@ public static class EditorUtil
             {
                 text = $"{clipID}",
             };
-            var clipCfgList = ExcelUtil.ReadEditorCfgList<ClipCfg>();
-            var assetCfgList = ExcelUtil.ReadEditorCfgList<AssetCfg>();
             if (clipID > 0)
             {
-                var clipCfg = clipCfgList.Find(value => value.nClipID == clipID);
+                var clipCfg = ExcelUtil.GetCfg<ClipCfg>(clipID);
                 if (clipCfg != null)
                 {
-                    var assetCfg = assetCfgList.Find(value => value.nAssetID == clipCfg.nAssetID);
+                    var assetCfg = ExcelUtil.GetCfg<AssetCfg>(clipCfg.nAssetID);
                     var asset = AssetDatabase.LoadAssetAtPath<AnimationClip>(assetCfg.strPath);
                     content.text += $"-{asset.name}";
 
@@ -174,10 +172,11 @@ public static class EditorUtil
             {
                 var menu = new GenericMenu();
 
-                for (int j = 0; j < clipCfgList.Count; j++)
+                var clipCount = ExcelUtil.GetCfgCount<ClipCfg>();
+                for (int j = 0; j < clipCount; j++)
                 {
-                    var item = clipCfgList[j];
-                    var itemAssetCfg = assetCfgList.Find(value => value.nAssetID == item.nAssetID);
+                    var item = ExcelUtil.GetCfgByIndex<ClipCfg>(j);
+                    var itemAssetCfg = ExcelUtil.GetCfg<AssetCfg>(item.nAssetID);
                     var itemAsset = AssetDatabase.LoadAssetAtPath<AnimationClip>(itemAssetCfg.strPath);
                     menu.AddItem(new()
                     {
@@ -209,10 +208,9 @@ public static class EditorUtil
             {
                 text = $"{assetID}",
             };
-            var assetCfgList = ExcelUtil.ReadEditorCfgList<AssetCfg>();
             if (assetID > 0)
             {
-                var assetCfg = assetCfgList.Find(value => value.nAssetID == assetID);
+                var assetCfg = ExcelUtil.GetCfg<AssetCfg>(assetID);
                 if (assetCfg != null && AssetDatabase.LoadAssetAtPath<T>(assetCfg.strPath))
                 {
                     var name = Path.GetFileName(assetCfg.strPath);
@@ -247,10 +245,10 @@ public static class EditorUtil
             if (GUI.Button(btnRect, content))
             {
                 var menu = new GenericMenu();
-
-                for (int j = 0; j < assetCfgList.Count; j++)
+                var assetCfgCount = ExcelUtil.GetCfgCount<AssetCfg>();
+                for (int j = 0; j < assetCfgCount; j++)
                 {
-                    var itemAssetCfg = assetCfgList[j];
+                    var itemAssetCfg = ExcelUtil.GetCfgByIndex<AssetCfg>(j);
                     if (!string.IsNullOrWhiteSpace(_SearchAsset))
                         if (!itemAssetCfg.strPath.Contains(_SearchAsset, StringComparison.CurrentCultureIgnoreCase))
                             continue;
@@ -303,9 +301,8 @@ public static class EditorUtil
             {
                 text = $"{cfgID}",
             };
-            var cfgList = ExcelUtil.ReadEditorCfgList<TCfg>();
             var descField = typeof(TCfg).GetField("strDescEditor", (BindingFlags)int.MaxValue);
-            var curItem = cfgList.Find(item => item.GetID() == cfgID);
+            var curItem = ExcelUtil.GetCfg<TCfg>(cfgID);
             if (curItem != null)
             {
                 var strObj = descField?.GetValue(curItem);
@@ -333,9 +330,10 @@ public static class EditorUtil
             {
                 var menu = new GenericMenu();
 
-                for (int j = 0; j < cfgList.Count; j++)
+                var count = ExcelUtil.GetCfgCount<TCfg>();
+                for (int j = 0; j < count; j++)
                 {
-                    var item = cfgList[j];
+                    var item = ExcelUtil.GetCfgByIndex<TCfg>(j);
                     var key = item.GetID();
 
                     var strObj = descField?.GetValue(item);

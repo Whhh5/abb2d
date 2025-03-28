@@ -44,7 +44,7 @@ public class CameraLookAtData : MonoBehaviour, IEntityCameraCom
     public void IncrementRadiusOffset(float radius)
     {
         var min = 1f;
-        var max = 5f;
+        var max = 20;
         _RadiusOffset = Mathf.Clamp(_RadiusOffset + radius, min - _Radius, max - _Radius);
     }
 

@@ -40,12 +40,6 @@ public sealed class EntityCCComData : Entity3DComDataGO<IEntity3DCCCom>, IUpdate
     public override void OnPoolDestroy()
     {
         base.OnPoolDestroy();
-    }
-    public override void OnDestroyGO()
-    {
-        base.OnDestroyGO();
-        m_CC = null;
-        m_Tran = null;
 
         m_MoveDirection = Vector3.zero;
         m_IsCanMove = true;
@@ -56,16 +50,22 @@ public sealed class EntityCCComData : Entity3DComDataGO<IEntity3DCCCom>, IUpdate
         m_JumpSpeed = 1;
         m_JumpSpeedIncrements = 1;
         m_JumpHeight = 7;
-        
+
         m_IsGravity = true;
         m_VerticalVelocity = -2;
         m_Gravity = 20;
         m_IsJumping = false;
         m_JumpCount = 0;
         m_JumpMaxCount = 3;
-        
+
         m_RotationSpeed = 1f;
         m_IsCanRotation = true;
+    }
+    public override void OnDestroyGO()
+    {
+        base.OnDestroyGO();
+        m_CC = null;
+        m_Tran = null;
     }
 
     public override void OnPoolInit(Entity3DComDataUserData userData)
@@ -78,12 +78,22 @@ public sealed class EntityCCComData : Entity3DComDataGO<IEntity3DCCCom>, IUpdate
     {
         base.OnEnable();
         UpdateMgr.Instance.Registener(this);
+
+        UpdateComStatus();
     }
 
     public override void OnDisable()
     {
         base.OnDisable();
         UpdateMgr.Instance.Unregistener(this);
+
+        UpdateComStatus();
+    }
+    private void UpdateComStatus()
+    {
+        if (_IsCCreateGO)
+            m_CC.enabled = IsActive();
+
     }
     public override void OnCreateGO()
     {
@@ -92,16 +102,21 @@ public sealed class EntityCCComData : Entity3DComDataGO<IEntity3DCCCom>, IUpdate
         var entity = entityData.GetEntityComponent<Entity3D>();
         m_CC = _GoCom.GetCC();
         m_Tran = entity.transform;
+        UpdateComStatus();
     }
 
     public void IncrementMove(Vector3 motion)
     {
+        if (!_IsCCreateGO)
+            return;
         if (!Entity3DMgr.Instance.GetEntityIsLoadSuccess(_EntityID))
             return;
         m_CC.Move(motion);
     }
     public void Jump(float height)
     {
+        if (!_IsCCreateGO)
+            return;
         if (!Entity3DMgr.Instance.GetEntityIsLoadSuccess(_EntityID))
             return;
         m_CC.Move(Vector3.up * height);
@@ -110,6 +125,8 @@ public sealed class EntityCCComData : Entity3DComDataGO<IEntity3DCCCom>, IUpdate
     }
     public bool IsGrounded()
     {
+        if (!_IsCCreateGO)
+            return true;
         if (!Entity3DMgr.Instance.GetEntityIsLoadSuccess(_EntityID))
             return true;
         return _GoCom.IsGrounded();
@@ -117,6 +134,8 @@ public sealed class EntityCCComData : Entity3DComDataGO<IEntity3DCCCom>, IUpdate
 
     public void Update()
     {
+        if (!_IsCCreateGO)
+            return;
         if (!Entity3DMgr.Instance.GetEntityIsLoadSuccess(_EntityID))
             return;
         Entity3DMgr.Instance.SetEntityWorldPos(_EntityID, m_Tran.position);

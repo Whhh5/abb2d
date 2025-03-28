@@ -166,6 +166,7 @@ public class Entity3DMgr : Singleton<Entity3DMgr>
             var lifeCom = GetEntityCom<EntityLifeComData>(entityID);
             lifeCom.SetEntityStatus(EnEntityStatus.Die);
         }
+        EntityMgr.Instance.OnDisableEntity(entityID);
     }
     public void LoadEntity(int entityID)
     {
@@ -401,6 +402,8 @@ public class Entity3DMgr : Singleton<Entity3DMgr>
             var animCom = item.Value.GetEntityCom<EntityAnimComData>();
 
             if (ccCom == null)
+                continue;
+            if (!ccCom.IsActive())
                 continue;
 
             var moveDirection = ccCom.GetMoveDirection();

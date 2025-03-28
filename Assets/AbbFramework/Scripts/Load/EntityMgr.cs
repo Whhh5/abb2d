@@ -13,7 +13,7 @@ public class EntityMgr : Singleton<EntityMgr>
         return entityData;
     }
     public T GetEntityData<T>(int entityID)
-        where T: GameEntityData
+        where T : GameEntityData
     {
         var entityData = GetEntityData(entityID);
         if (entityData is not T tData)
@@ -33,12 +33,13 @@ public class EntityMgr : Singleton<EntityMgr>
         entityData.SetEntityID(entityID);
         entityData.SetLoadStatus(EnLoadStatus.Start);
         entityData.Create();
+        entityData.OnEnable();
         m_EntityDataMap.Add(entityID, entityData);
         return entityID;
     }
 
     public int CreateEntityData<T>()
-        where T: GameEntityData, new()
+        where T : GameEntityData, new()
     {
         var entityID = CreateEntityData<T>(null);
         return entityID;
@@ -50,6 +51,8 @@ public class EntityMgr : Singleton<EntityMgr>
         if (entityData.IsLoadSuccess)
             UnloadEntity(entityID);
         m_EntityDataMap.Remove(entityID);
+        if (entityData.GetActive())
+            entityData.OnDisable();
         entityData.Destroy();
         ClassPoolMgr.Instance.Push(entityData);
     }
@@ -98,6 +101,20 @@ public class EntityMgr : Singleton<EntityMgr>
     public int EntityID2RoleID(int m_EntityID)
     {
         return 1;
+    }
+    public void OnDisableEntity(int entityID)
+    {
+        var entityData = GetEntityData(entityID);
+        if (!entityData.GetActive())
+            return;
+        entityData.OnDisable();
+    }
+    public void OnEnableEntity(int entityID)
+    {
+        var entityData = GetEntityData(entityID);
+        if (entityData.GetActive())
+            return;
+        entityData.OnEnable();
     }
 }
 

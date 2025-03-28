@@ -119,3 +119,25 @@ public class EntityExpiosionDataEditor : EntityPoisonBuffData, IBuffDaraEditor
     }
 
 }
+public class EntityExpiosion2DataEditor : EntityPoisonBuffData, IBuffDaraEditor
+{
+    public EnBuff Buff => EnBuff.Expiosion2;
+    public void InitParams(int[] arrParam)
+    {
+    }
+
+    public void Draw()
+    {
+    }
+
+    public void GetStringData(ref List<int> data)
+    {
+        var index = data.Count;
+        data.Insert(index, data.Count - index);
+    }
+
+    public void InitEditor()
+    {
+    }
+
+}

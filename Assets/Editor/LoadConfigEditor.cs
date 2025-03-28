@@ -31,8 +31,15 @@ public class LoadConfigEditor : MonoBehaviour
     [MenuItem("Tools/Load/UpdateConfigJson")]
     public static void CreateLoadConfigJson()
     {
-        var itemList = new List<AssetCfgEditor>();
-        var targetList = new List<string>();
+        var curAssetDic = new Dictionary<string, AssetCfg>();
+        var assetCfgCount = ExcelUtil.GetCfgCount<AssetCfg>();
+        for (int i = 0; i < assetCfgCount; i++)
+        {
+            var cfg = ExcelUtil.GetCfgByIndex<AssetCfg>(i);
+            curAssetDic.Add(cfg.strDescEditor, cfg);
+        }
+
+
         foreach (var item in m_Suffix2NamePrefix)
         {
             foreach (var searchPath in m_SearchPaths)
@@ -44,131 +51,48 @@ public class LoadConfigEditor : MonoBehaviour
                 {
                     var fullPath = fileInfo.FullName;
                     var name = Path.GetFileNameWithoutExtension(fullPath);
-                    var unityPath = ABBUtil.GetUnityPathByFullPath(fullPath);
-                    var targetType = $"{item.Value}{name}";
-                    var index = targetList.Count;
+                    var strPath = ABBUtil.GetUnityPathByFullPath(fullPath);
+                    var strDescEditor = $"{item.Value}{name}";
 
-                    if (index == 408)
+
+                    if (!curAssetDic.TryGetValue(strDescEditor, out var cfg))
                     {
-
+                        cfg = ExcelUtil.CreateTypeInstance<AssetCfg>();
+                        var assetID = ExcelUtil.GetNextIndex<AssetCfg>();
+                        ExcelUtil.SetCfgValue(cfg, nameof(cfg.strDescEditor), strDescEditor);
+                        ExcelUtil.SetCfgValue(cfg, nameof(cfg.nAssetID), assetID);
+                        curAssetDic.Add(strDescEditor, cfg);
+                        ExcelUtil.AddCfg(cfg);
                     }
-                    if (name.Contains("texture_0"))
-                    {
-
-                    }
-                    targetList.Add(targetType);
-
-                    itemList.Add(new()
-                    {
-                        strDescEditor = targetType,
-                        nAssetID = index,
-                        strPath = unityPath,
-                    });
+                    if(cfg.strPath != strPath)
+                        ExcelUtil.SetCfgValue(cfg, nameof(cfg.strPath), strPath);
                 }
             }
         }
 
-        WriteEnLoadTargetFile(itemList);
+        ExcelUtil.SaveExcel<AssetCfg>();
+        WriteEnLoadTargetFile();
     }
 
-    private static void WriteEnLoadTargetFile(List<AssetCfgEditor> data)
+    private static void WriteEnLoadTargetFile()
     {
-        var assetCatalog = GameSchedule.ReadExportExcelInfo<AssetCfg>();
-        var excelInfo = assetCatalog.excelInfo;
-
-        var assetCfg = ExcelUtil.ReadExcel<AssetCfg>();
-        var workbook = assetCfg.Workbook;
-        var worksheet = workbook.Worksheets[1];
-        var assetList = GameSchedule.ReadCfg<AssetCfg>();
-        var path2Index = new Dictionary<string, int>();
-        var changeList = new Dictionary<int, int>();
-        var changeList2 = new Dictionary<int, int>();
-        var maxIndex = 1;
         var enumStr = new StringBuilder();
         enumStr.AppendLine($"public enum EnLoadTarget");
         enumStr.AppendLine($"{{");
         enumStr.AppendLine($"\tNone = 0,");
-        for (int i = 0; i < assetList.Length; i++)
-        {
-            var item = assetList[i];
-            maxIndex = Mathf.Max(item.nAssetID);
-            path2Index.Add(item.strPath, i);
-        }
-        for (int i = 0; i < data.Count; i++)
-        {
-            var dataItem = data[i];
-            if (!path2Index.TryGetValue(dataItem.strPath, out var listIndex))
-                continue;
-            changeList2.Add(i, listIndex);
-            var cfgData = assetList[listIndex];
-            if (cfgData.strPath == dataItem.strPath)
-            {
-                dataItem.nAssetID = cfgData.nAssetID;
-                if (cfgData.strDescEditor == dataItem.strDescEditor)
-                {
-                    continue;
-                }
-            }
-            changeList.Add(listIndex, i);
-        }
 
-        for (int i = 0; i < assetList.Length; i++)
+
+        var count = ExcelUtil.GetCfgCount<AssetCfg>();
+        for (int i = 0; i < count; i++)
         {
-            var ass = assetList[i];
-            object item = ass;
-            if (changeList.TryGetValue(i, out var dataItem))
-            {
-                var dataAss = data[dataItem];
-                item = dataAss;
-                enumStr.AppendLine($"\t{dataAss.strDescEditor} = {dataAss.nAssetID},");
-            }
-            else
-            {
-                enumStr.AppendLine($"\t{ass.strDescEditor} = {ass.nAssetID},");
-            }
-            var row = excelInfo.dataStartRow + i;
-            foreach (var file2Col in assetCatalog.field2ColList)
-            {
-                var fieldInfo = item.GetType().GetField(file2Col.Key, BindingFlags.Public | BindingFlags.Instance);
-                var value = fieldInfo.GetValue(item);
-                worksheet.SetValue(row, file2Col.Value, value);
-            }
-        }
-        var startRowIndex = assetList.Length + excelInfo.dataStartRow;
-        var count = 0;
-        for (int i = 0; i < data.Count; i++)
-        {
-            if (changeList2.ContainsKey(i))
-                continue;
-            var dataItem = data[i];
-            dataItem.nAssetID = maxIndex + i + 1;
-            var row = startRowIndex + count;
-            worksheet.SetValue(row, 1, "*");
-            foreach (var file2Col in assetCatalog.field2ColList)
-            {
-                var fieldInfo = dataItem.GetType().GetField(file2Col.Key, BindingFlags.Public | BindingFlags.Instance);
-                var value = fieldInfo.GetValue(dataItem);
-                worksheet.SetValue(row, file2Col.Value, value);
-            }
-            enumStr.AppendLine($"\t{dataItem.strDescEditor} = {dataItem.nAssetID},");
-            count++;
+            var cfg = ExcelUtil.GetCfgByIndex<AssetCfg>(i);
+
+            enumStr.AppendLine($"\t{cfg.strDescEditor} = {cfg.nAssetID}, // {cfg.strPath}");
         }
 
         enumStr.AppendLine("}");
         File.WriteAllText(m_EnLoadTargetPath, enumStr.ToString());
-        assetCfg.Save();
-        assetCfg.Dispose();
         AssetDatabase.Refresh();
-    }
-
-    public class AssetCfgEditor
-    {
-        // id
-        public System.Int32 nAssetID;
-        // 枚举名称
-        public System.String strDescEditor;
-        // 路径
-        public System.String strPath;
     }
 }
 

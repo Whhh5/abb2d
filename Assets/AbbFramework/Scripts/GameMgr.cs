@@ -18,7 +18,7 @@ public class GameMgr : Singleton<GameMgr>
         var playerEntityID = CreatePlayerEntity(1, Vector3.up * 3);
         Entity3DMgr.Instance.SetEntityControllerType(playerEntityID, EnEntityControllerType.Manual);
 
-        // await CreateMonsterColony();
+         await CreateMonsterColony();
     }
 
 
@@ -30,7 +30,6 @@ public class GameMgr : Singleton<GameMgr>
         playerData.AddEntityCom<EntityAnimComData>();
         playerData.AddEntityCom<EntityCCComData>();
         playerData.AddEntityCom<EntityBuffComData>();
-        playerData.AddMonition<EntityDirectionMonitorData>();
         Entity3DMgr.Instance.LoadEntity(playerID);
 
         var monsterCfg = GameSchedule.Instance.GetMonsterCfg0(monsterID);

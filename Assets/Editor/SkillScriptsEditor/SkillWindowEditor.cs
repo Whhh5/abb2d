@@ -68,15 +68,12 @@ public class SkillWindowEditor : EditorWindow
     private SkillViewInfo CurSkillViewInfo => _CurMonsterID > 0
         ? _MonsterSkillViewInfos[_CurMonsterID]
         : new();
-    private Dictionary<int, SkillCfgEditor> m_ID2SkillEditor = new();
     private Dictionary<int, ISkillTypeEditor> m_DicSkilDrawData = new();
-    private List<MonsterCfgEditor> _MonsterCfg = new();
-    private Dictionary<int, int> _MonsterID2Index = new();
     private int _CurMonsterID = -1;
     private bool _IsSimulation = false;
-    private MonsterCfgEditor CurMonsterCfg => _CurMonsterID > 0
-        ? _MonsterCfg[_MonsterID2Index[_CurMonsterID]]
-        : new();
+    private MonsterCfg CurMonsterCfg => _CurMonsterID > 0
+        ? ExcelUtil.GetCfg<MonsterCfg>(_CurMonsterID)
+        : null;
 
     private void OnEnable()
     {
@@ -89,9 +86,6 @@ public class SkillWindowEditor : EditorWindow
         ClearPlayable();
         CurSkillViewInfo.OnDisable();
         _MonsterSkillViewInfos.Clear();
-        m_ID2SkillEditor.Clear();
-        _MonsterCfg.Clear();
-        _MonsterID2Index.Clear();
         m_DicSkilDrawData.Clear();
         _CurMonsterID = -1;
     }
@@ -103,11 +97,10 @@ public class SkillWindowEditor : EditorWindow
     }
     private void InitMonsterData()
     {
-        _MonsterCfg = ExcelUtil.ReadEditorCfgData<MonsterCfg, MonsterCfgEditor>();
-        for (int i = 0; i < _MonsterCfg.Count; i++)
+        var count = ExcelUtil.GetCfgCount<MonsterCfg>();
+        for (int i = 0; i < count; i++)
         {
-            var cfg = _MonsterCfg[i];
-            _MonsterID2Index.Add(cfg.nMonsterID, i);
+            var cfg = ExcelUtil.GetCfgByIndex<MonsterCfg>(i);
             var data = new SkillViewInfo();
             _MonsterSkillViewInfos.Add(cfg.nMonsterID, data);
 
@@ -123,14 +116,14 @@ public class SkillWindowEditor : EditorWindow
     }
     private void InitSkillCfgData()
     {
-        var skillCfgList = ExcelUtil.ReadEditorCfgData<SkillCfg, SkillCfgEditor>();
-        for (int i = 0; i < skillCfgList.Count; i++)
-            AddSkillItem(skillCfgList[i]);
+        var count = ExcelUtil.GetCfgCount<SkillCfg>();
+        for (int i = 0; i < count; i++)
+            AddSkillItem(ExcelUtil.GetCfgByIndex<SkillCfg>(i));
     }
-    private void AddSkillItem(SkillCfgEditor skillCfg)
+    private void AddSkillItem(SkillCfg skillCfg)
     {
         var key = skillCfg.nSkillID;
-        m_ID2SkillEditor.Add(key, skillCfg);
+        ExcelUtil.AddCfg<SkillCfg>(skillCfg);
 
         var linkData = SkillFactroyEditor.GetSkillTypeEditor((EnSkillBoxType)skillCfg.nType);
         var data = new AttackLinkSkillDataUserData()
@@ -144,40 +137,36 @@ public class SkillWindowEditor : EditorWindow
     }
     private int AddSkillItem(EnSkillBoxType skillType)
     {
-        var skillCfg = new SkillCfgEditor();
-        skillCfg.nType = (int)skillType;
-        for (int i = 1; i < m_ID2SkillEditor.Count + 2; i++)
-        {
-            if (m_ID2SkillEditor.ContainsKey(i))
-                continue;
-            skillCfg.nSkillID = i;
-            break;
-        }
+        var skillCfg = ExcelUtil.CreateTypeInstance<SkillCfg>();
+        ExcelUtil.SetCfgValue(skillCfg, nameof(SkillCfg.nType), (int)skillType);
+        var id = ExcelUtil.GetNextIndex<SkillCfg>();
+        ExcelUtil.SetCfgValue(skillCfg, nameof(SkillCfg.GetID), id);
         AddSkillItem(skillCfg);
         return skillCfg.nSkillID;
     }
     private void SaveSkillCfgData()
     {
-        var skillCfgList = new List<SkillCfgEditor>();
-
-        foreach (var cfg in m_ID2SkillEditor)
+        var count = ExcelUtil.GetCfgCount<SkillCfg>();
+        for (int i = 0; i < count; i++)
         {
-            var key = cfg.Key;
-            var item = cfg.Value;
+            var item = ExcelUtil.GetCfgByIndex<SkillCfg>(i);
+            var key = item.GetID();
             var drawItem = m_DicSkilDrawData[key];
             var listData = new List<int>();
             drawItem.GetStringData(ref listData);
-            item.arrParams = listData.ToArray();
-            skillCfgList.Add(item);
+
+            ExcelUtil.SetCfgValue(item, nameof(item.arrParams), listData.ToArray());
+
         }
-        ExcelUtil.SaveExcel<SkillCfg, SkillCfgEditor>(skillCfgList);
+        ExcelUtil.SaveExcel<SkillCfg>();
     }
 
     private void SaveMonsterCfgData()
     {
-        for (int i = 0; i < _MonsterCfg.Count; i++)
+        var monsterCfgCount = ExcelUtil.GetCfgCount<MonsterCfg>();
+        for (int i = 0; i < monsterCfgCount; i++)
         {
-            var monsterCfg = _MonsterCfg[i];
+            var monsterCfg = ExcelUtil.GetCfgByIndex<MonsterCfg>(i);
             var monsterViewInfo = _MonsterSkillViewInfos[monsterCfg.nMonsterID];
 
             foreach (var item in monsterViewInfo.m_DicItemInfo)
@@ -189,7 +178,7 @@ public class SkillWindowEditor : EditorWindow
                     {
                         var list = monsterCfg.arrSkillGroup.ToList();
                         list.Remove(skillID);
-                        monsterCfg.arrSkillGroup = list.ToArray();
+                        ExcelUtil.SetCfgValue(monsterCfg, nameof(monsterCfg.arrSkillGroup), list.ToArray());
                     }
                 }
                 else
@@ -198,12 +187,12 @@ public class SkillWindowEditor : EditorWindow
                     {
                         var list = monsterCfg.arrSkillGroup.ToList();
                         list.Add(skillID);
-                        monsterCfg.arrSkillGroup = list.ToArray();
+                        ExcelUtil.SetCfgValue(monsterCfg, nameof(monsterCfg.arrSkillGroup), list.ToArray());
                     }
                 }
             }
         }
-        ExcelUtil.SaveExcel<MonsterCfg, MonsterCfgEditor>(_MonsterCfg);
+        ExcelUtil.SaveExcel<MonsterCfg>();
     }
 
     private Vector2 m_ScrollPos1 = Vector2.zero;
@@ -222,7 +211,7 @@ public class SkillWindowEditor : EditorWindow
                 {
                     if (_CurMonsterID > 0)
                     {
-                        var monsterCfg = _MonsterCfg[_MonsterID2Index[_CurMonsterID]];
+                        var monsterCfg = ExcelUtil.GetCfg<MonsterCfg>(_CurMonsterID);
                         EditorGUILayout.LabelField($"{monsterCfg.nMonsterID}:{monsterCfg.strName}", GUILayout.Width(100));
                     }
                     if (GUILayout.Button("Monster"))
@@ -311,12 +300,14 @@ public class SkillWindowEditor : EditorWindow
     private void ShowAddSkillMenu()
     {
         var menu = new GenericMenu();
-        foreach (var item in m_ID2SkillEditor)
+        var skillCount = ExcelUtil.GetCfgCount<SkillCfg>();
+        for (int i = 0; i < skillCount; i++)
         {
-            var skillID = item.Key;
+            var item = ExcelUtil.GetCfgByIndex<SkillCfg>(i);
+            var skillID = item.nSkillID;
             if (CurSkillViewInfo.m_DicItemInfo.ContainsKey(skillID))
                 continue;
-            var skillName = item.Value.strName;
+            var skillName = item.strName;
             var guiContent = new GUIContent()
             {
                 text = $"{skillID}: {skillName}",
@@ -331,9 +322,10 @@ public class SkillWindowEditor : EditorWindow
     private void ShowSelectMonsterMenu()
     {
         var menu = new GenericMenu();
-        for (int i = 0; i < _MonsterCfg.Count; i++)
+        var count = ExcelUtil.GetCfgCount<MonsterCfg>();
+        for (int i = 0; i < count; i++)
         {
-            var monsterCfg = _MonsterCfg[i];
+            var monsterCfg = ExcelUtil.GetCfgByIndex<MonsterCfg>(i);
             var monsterID = monsterCfg.nMonsterID;
             var guiContent = new GUIContent()
             {
@@ -386,12 +378,13 @@ public class SkillWindowEditor : EditorWindow
                 var key = item.Key;
                 var itemInfo = item.Value;
 
-                if (!m_ID2SkillEditor.TryGetValue(key, out var cfg))
+                if (!ExcelUtil.Contains<SkillCfg>(key))
                 {
                     GUILayout.Label($"error id:{key}");
                     itemInfo.isDelect = true;
                     continue;
                 }
+                var cfg = ExcelUtil.GetCfg<SkillCfg>(key);
                 EditorGUILayout.BeginHorizontal();
                 {
                     if (itemInfo.isDelect)
@@ -438,7 +431,7 @@ public class SkillWindowEditor : EditorWindow
                 for (var i = 0; i < CurSkillViewInfo.m_OpenList.Count; i++)
                 {
                     var skillID = CurSkillViewInfo.m_OpenList[i];
-                    var skillCfg = m_ID2SkillEditor[skillID];
+                    var skillCfg = ExcelUtil.GetCfg<SkillCfg>(skillID);
 
                     var content = new GUIContent()
                     {
@@ -490,7 +483,7 @@ public class SkillWindowEditor : EditorWindow
             {
                 if (m_DicSkilDrawData.TryGetValue(CurSkillViewInfo.m_CurSelectID, out var linkData))
                 {
-                    var cfg = m_ID2SkillEditor[CurSkillViewInfo.m_CurSelectID];
+                    var cfg = ExcelUtil.GetCfg<SkillCfg>(CurSkillViewInfo.m_CurSelectID);
                     EditorGUILayout.BeginVertical();
                     {
                         EditorGUILayout.BeginHorizontal();
@@ -501,7 +494,9 @@ public class SkillWindowEditor : EditorWindow
                                 image = EditorLoad.LoadTexture2D(EnEditorRes.btn_red),
                             };
                             EditorGUILayout.LabelField(labelContent, GUILayout.Width(30));
-                            cfg.strName = EditorGUILayout.TextField(cfg.strName, GUILayout.Width(200));
+                            var strName = EditorGUILayout.TextField(cfg.strName, GUILayout.Width(200));
+                            if (strName != cfg.strName)
+                                ExcelUtil.SetCfgValue(cfg, nameof(cfg.strName), strName);
                         }
                         EditorGUILayout.EndHorizontal();
 
