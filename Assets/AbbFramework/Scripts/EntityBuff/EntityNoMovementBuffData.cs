@@ -1,21 +1,16 @@
-using UnityEngine;
-
-
-public class EntityNoJumpBuffData : EntityBuffData
+﻿using UnityEngine;
+public class EntityNoMovementBuffData : EntityBuffData
 {
     public override void OnPoolDestroy()
     {
         var ccCom = Entity3DMgr.Instance.GetEntityCom<EntityCCComData>(_TargetEntityID);
-        ccCom.SetJumpStatus(true);
-
+        ccCom.SetMoveStatus(true);
         base.OnPoolDestroy();
     }
 
     public override void OnEnable(int addKey, IEntityBuffParams buffParams)
     {
         var ccCom = Entity3DMgr.Instance.GetEntityCom<EntityCCComData>(_TargetEntityID);
-        var curVelocity = ccCom.GetVerticalVelocity();
-        ccCom.SetVerticalVelocity(Mathf.Min(curVelocity, 0));
-        ccCom.SetJumpStatus(false);
+        ccCom.SetMoveStatus(false);
     }
 }

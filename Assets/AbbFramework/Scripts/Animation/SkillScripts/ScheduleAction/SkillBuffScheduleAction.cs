@@ -16,14 +16,14 @@ public class SkillBuffScheduleAction : ISkillScheduleAction
     private int _AddBuffKey = -1;
     public void OnPoolDestroy()
     {
-        if (BuffMgr.Instance.GetBuffType(_AddBuffKey) != EnBuffType.Time)
-        {
+        if (_AddBuffKey > 0)
             BuffMgr.Instance.RemoveEntityBuff(_AddBuffKey);
-        }
+        BuffUtil.PushConvertBuffData(_BuffDataParams);
         _AddBuffKey = -1;
         addSchedule = -1;
         buffID = -1;
         arrBuffParams = null;
+        _BuffDataParams = null;
         m_ScheduleType = EnAtkLinkScheculeType.None;
         m_IsEffect = false;
     }
@@ -48,11 +48,14 @@ public class SkillBuffScheduleAction : ISkillScheduleAction
         arrBuffParams = data.Copy(startIndex, arrParamsCount);
         startIndex += arrParamsCount;
 
-        _BuffDataParams = BuffMgr.Instance.ConvertBuffData((EnBuff)buffID, arrBuffParams);
+        _BuffDataParams = BuffUtil.ConvertBuffData((EnBuff)buffID, arrBuffParams);
     }
     public void Enter(int entityID)
     {
-        _AddBuffKey = BuffMgr.Instance.AddEntityBuff(entityID, entityID, (EnBuff)buffID, _BuffDataParams);
+        var addKey = BuffMgr.Instance.AddEntityBuff(entityID, entityID, (EnBuff)buffID, _BuffDataParams);
+        if (BuffMgr.Instance.GetBuffType(addKey) != EnBuffType.Time)
+            _AddBuffKey = addKey;
+
     }
     public void Exit()
     {

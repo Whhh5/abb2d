@@ -123,7 +123,6 @@ public class SkillWindowEditor : EditorWindow
     private void AddSkillItem(SkillCfg skillCfg)
     {
         var key = skillCfg.nSkillID;
-        ExcelUtil.AddCfg<SkillCfg>(skillCfg);
 
         var linkData = SkillFactroyEditor.GetSkillTypeEditor((EnSkillBoxType)skillCfg.nType);
         var data = new AttackLinkSkillDataUserData()
@@ -142,6 +141,7 @@ public class SkillWindowEditor : EditorWindow
         var id = ExcelUtil.GetNextIndex<SkillCfg>();
         ExcelUtil.SetCfgValue(skillCfg, nameof(SkillCfg.GetID), id);
         AddSkillItem(skillCfg);
+        ExcelUtil.AddCfg<SkillCfg>(skillCfg);
         return skillCfg.nSkillID;
     }
     private void SaveSkillCfgData()

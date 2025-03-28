@@ -23,7 +23,7 @@ public class SkillTypeLinkData : ISkillTypeData<AttackLinkSkillDataUserData>
     {
     }
 
-    public  void OnPoolInit(AttackLinkSkillDataUserData userData)
+    public void OnPoolInit(AttackLinkSkillDataUserData userData)
     {
         var data = userData.arrParams;
         var arrIndex = 0;
@@ -83,20 +83,19 @@ public class SkillTypeLinkData : ISkillTypeData<AttackLinkSkillDataUserData>
     {
         foreach (var item in m_BuffList)
         {
-            var buffDataParams = BuffMgr.Instance.ConvertBuffData(item.Key, item.Value);
+            var buffDataParams = BuffUtil.ConvertBuffData(item.Key, item.Value);
             var addKey = BuffMgr.Instance.AddEntityBuff(entityID, entityID, item.Key, buffDataParams);
-            BuffMgr.Instance.DestroyBuffData(buffDataParams);
-            _BuffAddKeyList.Add(addKey);
+            BuffUtil.PushConvertBuffData(buffDataParams);
+
+            if (BuffMgr.Instance.GetBuffType(addKey) != EnBuffType.Time)
+                _BuffAddKeyList.Add(addKey);
         }
     }
     public void OnDisable(int entityID)
     {
         foreach (var addKey in _BuffAddKeyList)
         {
-            if (BuffMgr.Instance.GetBuffType(addKey) != EnBuffType.Time)
-            {
-                BuffMgr.Instance.RemoveEntityBuff(addKey);
-            }
+            BuffMgr.Instance.RemoveEntityBuff(addKey);
         }
         _BuffAddKeyList.Clear();
     }

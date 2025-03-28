@@ -1,8 +1,6 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-
-
-public class EntityMoveDownBuffData : EntityBuffData<EntityMoveDownBuffParams>
+public class EntityMovingChangesBuffData : EntityBuffData<EntityMoveDownBuffUserData>
 {
     private readonly Dictionary<int, float> _Key2Value = new();
 
@@ -16,12 +14,12 @@ public class EntityMoveDownBuffData : EntityBuffData<EntityMoveDownBuffParams>
         return true;
     }
 
-    protected override void OnEnable(int addKey, EntityMoveDownBuffParams buffParams)
+    protected override void OnEnable(int addKey, EntityMoveDownBuffUserData buffParams)
     {
         base.OnEnable(addKey, buffParams);
         SetValue(ref addKey, ref buffParams.value);
     }
-    protected override void ReOnEnable(int addKey, EntityMoveDownBuffParams buffParams)
+    protected override void ReOnEnable(int addKey, EntityMoveDownBuffUserData buffParams)
     {
         base.ReOnEnable(addKey, buffParams);
         SetValue(ref addKey, ref buffParams.value);

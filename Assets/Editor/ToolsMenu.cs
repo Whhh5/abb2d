@@ -47,7 +47,7 @@ public class ToolsMenu
         //AssetDatabase.SaveAssetIfDirty(guid);
     }
     [MenuItem("Tools/Clean Editor Memory", priority = 201)]
-    static void CleanEditorMemory()
+    public static void CleanEditorMemory()
     {
         // 获取总内存使用量
         long totalMemory = Profiler.GetTotalReservedMemoryLong();

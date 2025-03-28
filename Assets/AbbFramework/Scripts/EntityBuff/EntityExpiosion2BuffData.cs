@@ -73,7 +73,10 @@ public class EntityExpiosion2BuffData : EntityBuffData, IUpdate
                     ref var info = ref arrEntity[j];
                     AttackMgr.Instance.AttackEntity(_TargetEntityID, info.entityID, 10);
                     EffectMgr.Instance.PlayEffectOnce(9, info.closestPoint);
-                    BuffMgr.Instance.AddEntityBuff(_TargetEntityID, info.entityID, EnBuff.Expiosion);
+
+                    var userData = BuffUtil.ConvertBuffData(EnBuff.Expiosion, new int[] { 1, 1000 });
+                    BuffMgr.Instance.AddEntityBuff(_TargetEntityID, info.entityID, EnBuff.Expiosion, userData);
+                    BuffUtil.PushConvertBuffData(userData);
                 }
             }
         }

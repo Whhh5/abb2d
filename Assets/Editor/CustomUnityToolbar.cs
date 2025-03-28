@@ -3,22 +3,10 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 using System;
-using UnityEngine.Playables;
 using System.Diagnostics;
 using System.IO;
-using static PlasticPipe.PlasticProtocol.Messages.NegotiationCommand;
-using Unity.Plastic.Newtonsoft.Json;
-using Unity.Entities;
-using Unity.Entities.Conversion;
-//using Unity.Entities.Serialization;
-using Unity.Collections;
-using Unity.Collections.LowLevel.Unsafe;
-using Unity.Entities.UniversalDelegates;
-#if UNITY_2019_1_OR_NEWER
+using System.Text;
 using UnityEngine.UIElements;
-#else
-using UnityEngine.Experimental.UIElements;
-#endif
 
 /// <summary>
 /// 扩展Unity的按钮栏
@@ -82,237 +70,199 @@ public static class CustomUnityToolbar
     private static void GUILeft()
     {
         GUILayout.BeginHorizontal();
-        if (GUILayout.Button("Create Blob Asset"))
-        {
-            //CreateBlobAsset();
-        }
+        //if (GUILayout.Button("Create Blob Asset"))
+        //{
+        //    //CreateBlobAsset();
+        //}
         if (GUILayout.Button("Update Load Target"))
         {
             LoadConfigEditor.CreateLoadConfigJson();
         }
+        if (GUILayout.Button("Update Buff"))
+        {
+            UpdateBuff();
+        }
         if (GUILayout.Button("Export Excel"))
         {
-            string[] arrParams = new string[]
-            {
-                Path.Combine(ABBUtil.GetUnityRootPath(), "Misc", "Excel"),
-                Path.Combine(ABBUtil.GetDataPath(), "Abbresources", "GameCfgJson"),
-                Path.Combine(ABBUtil.GetDataPath(), "Scripts", "GameCfgCS"),
-            };
-            var paramsStr = "";
-            for (int i = 0; i < arrParams.Length; i++)
-            {
-                paramsStr += arrParams[i] + " ";
-            }
-            var pro2 = new ProcessStartInfo()
-            {
-                FileName = $"/Users/qiuxiaohui/Projects/ExcelTools/ExcelTools/bin/Debug/net6.0/ExcelTools",
-                RedirectStandardOutput = true, // 重定向标准输出
-                UseShellExecute = false, // 不使用系统外壳程序启动
-                CreateNoWindow = true, // 不创建新窗口
-                Arguments = paramsStr,
-                ErrorDialog = true,
-                //StandardErrorEncoding = System.Text.Encoding.UTF8,
-                RedirectStandardError = true,
-                StandardOutputEncoding = System.Text.Encoding.UTF8,
-                //RedirectStandardInput = true,
-            };
-            pro2.UseShellExecute = false;
-            using (var process = Process.Start(pro2))
-            {
-                process.OutputDataReceived += (item, e) =>
-                {
-                    if (string.IsNullOrEmpty(e.Data))
-                        return;
-                    UnityEngine.Debug.Log($"{item},{e.Data}"); // 打印结果
-                };
-                process.ErrorDataReceived += (item, e) =>
-                {
-                    if (string.IsNullOrEmpty(e.Data))
-                        return;
-                    UnityEngine.Debug.LogError($"{item},{e.Data}"); // 打印结果
-                };
-
-                process.BeginOutputReadLine();
-
-                process.BeginErrorReadLine();
-
-                process.WaitForExit();
-                UnityEngine.Debug.Log($"Export Excel Finish"); // 打印结果
-            }
-            AssetDatabase.Refresh();
+            ExportExcel();
         }
         GUILayout.EndHorizontal();
     }
 
-    private static bool m_IsCreateEnemy = false;
-    private class ClipCfg2
-    {
-        // id
-        public System.Int32 nClipID;
-        // 剪辑名字
-        public System.String strName;
-        // 长度
-        public System.Single fLength;
-        // 资源ID
-        public System.Int32 nAssetCfgID;
-    }
     /// <summary>
     /// 绘制右侧的元素
     /// </summary>
     private static void GUIRight()
     {
         GUILayout.BeginHorizontal();
-        var str = m_IsCreateEnemy ? "启用" : "禁用";
-        if (GUILayout.Button($"创建怪物({str})"))
+        if (GUILayout.Button($"Clear Cache"))
         {
-            m_IsCreateEnemy = !m_IsCreateEnemy;
-            if (m_IsCreateEnemy)
-            {
-                ABBInputMgr.Instance.AddListanerDown(KeyCode.Mouse0, OnClickMouse0);
-            }
-            else
-            {
-                ABBInputMgr.Instance.RemoveListanerDown(KeyCode.Mouse0, OnClickMouse0);
-            }
+            ToolsMenu.CleanEditorMemory();
         }
-        if (GUILayout.Button("Camera"))
-        {
 
-        }
-        if (GUILayout.Button("Level1"))
-        {
-            var cfg22 = new ClipCfg2()
-            {
-                nClipID = 1,
-                strName = "111",
-                fLength = 2.33f,
-                nAssetCfgID = 1,
-            };
-            var arrCfg = new ClipCfg2[] { cfg22, cfg22 };
-            var json = JsonConvert.SerializeObject(arrCfg);
-            var str2 = "{\"nClipID\":1,\"strName\":\"111\",\"fLength\":2.33,\"nAssetCfgID\":1}";
-            //var str4 = "{\"nClipID\":1,\"strName\":\"111\",\"fLength\":2.33,\"nAssetCfgID\":1}";
-            //var str5 = "[{\"nClipID\":1,\"strName\":\"111\",\"fLength\":2.33,\"nAssetCfgID\":1},{\"nClipID\":1,\"strName\":\"111\",\"fLength\":2.33,\"nAssetCfgID\":1}]";
-            //var str6 = "[{\"nClipID\":1,\"strName\":\"111\",\"fLength\":2.33,\"nAssetCfgID\":1}]";
-
-            var str3 = JsonConvert.DeserializeObject(json, typeof(ClipCfg[]));
-            var cfg = JsonConvert.DeserializeObject<ClipCfg2>(str2);
-        }
         GUILayout.EndHorizontal();
     }
-    private static void OnClickMouse0()
-    {
-        var pos = CameraMgr.Instance.GetCameraWorldPos();
-        var dir = CameraMgr.Instance.GetCameraForward();
-        var camera = CameraMgr.Instance.GetMainCamera();
 
-        var ray = camera.ScreenPointToRay(Input.mousePosition);
-        var hit = Physics.RaycastAll(ray);
-        if (hit.Length > 0)
+    public static void ExportExcel()
+    {
+        string[] arrParams = new string[]
+            {
+                Path.Combine(ABBUtil.GetUnityRootPath(), "Misc", "Excel"),
+                Path.Combine(ABBUtil.GetDataPath(), "Abbresources", "GameCfgJson"),
+                Path.Combine(ABBUtil.GetDataPath(), "Scripts", "GameCfgCS"),
+            };
+        var paramsStr = "";
+        for (int i = 0; i < arrParams.Length; i++)
         {
-            MonsterMgr.Instance.CreateMonster(1, hit[0].point + Vector3.up * 2);
+            paramsStr += arrParams[i] + " ";
         }
+        var pro2 = new ProcessStartInfo()
+        {
+            FileName = $"/Users/qiuxiaohui/Projects/ExcelTools/ExcelTools/bin/Debug/net6.0/ExcelTools",
+            RedirectStandardOutput = true, // 重定向标准输出
+            UseShellExecute = false, // 不使用系统外壳程序启动
+            CreateNoWindow = true, // 不创建新窗口
+            Arguments = paramsStr,
+            ErrorDialog = true,
+            //StandardErrorEncoding = System.Text.Encoding.UTF8,
+            RedirectStandardError = true,
+            StandardOutputEncoding = System.Text.Encoding.UTF8,
+            //RedirectStandardInput = true,
+        };
+        pro2.UseShellExecute = false;
+        using (var process = Process.Start(pro2))
+        {
+            process.OutputDataReceived += (item, e) =>
+            {
+                if (string.IsNullOrEmpty(e.Data))
+                    return;
+                UnityEngine.Debug.Log($"{item},{e.Data}"); // 打印结果
+            };
+            process.ErrorDataReceived += (item, e) =>
+            {
+                if (string.IsNullOrEmpty(e.Data))
+                    return;
+                UnityEngine.Debug.LogError($"{item},{e.Data}"); // 打印结果
+            };
+
+            process.BeginOutputReadLine();
+
+            process.BeginErrorReadLine();
+
+            process.WaitForExit();
+            UnityEngine.Debug.Log($"Export Excel Finish"); // 打印结果
+        }
+        AssetDatabase.Refresh();
     }
 
-    //public static Entity ConvertGameObjectToEntity(GameObject prefab)
-    //{
-    //    //Unity.Entities.Conversion.LiveConversionSettings.
-    //    var entityMgr = World.DefaultGameObjectInjectionWorld.EntityManager;
-    //    var entity = entityMgr.CreateEntity(typeof(AttackComponent));
-    //    entityMgr.GetComponentTypes(entity, Allocator.Temp);
-    //    entityMgr.SetComponentData<AttackComponent>(entity, new AttackComponent()
-    //    {
-    //        faction = EnFaction.Zombie,
-    //        timer = 1,
-    //        timerMax = 2,
-    //    });
+    private static readonly string _BuffClassPath = "Assets/AbbFramework/Scripts/EntityBuff";
+    private static readonly string _BuffEnumName = "EnBuff";
+    private static readonly string _BuffTypeEnumName = "EnBuffType";
 
-    //    return entity;
-    //}
-    //private unsafe static void CreateBlobAsset()
-    //{
-    //    var testObj = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Scenes/Ecs Sample/UnitEntity.prefab");
-
-    //    var blobBuilder = new BlobBuilder(Allocator.Temp);
-    //    ref var blobData = ref blobBuilder.ConstructRoot<MyBlobData>();
-    //    var builderArray = blobBuilder.Allocate(ref blobData.IntArray, 5);
-    //    var entityArray = blobBuilder.Allocate(ref blobData.entityArray, 1);
-    //    entityArray[0] = new AttackComponent()
-    //    {
-    //        faction = EnFaction.Zombie,
-    //        timer = 1,
-    //        timerMax = 2,
-    //    };
-
-    //    for (int i = 0; i < 5; i++)
-    //    {
-    //        builderArray[i] = i;
-    //    }
-    //    blobBuilder.AllocateString(ref blobData.StrValue, "sjbaduagosdoa");
-    //    var blobRef = blobBuilder.CreateBlobAssetReference<MyBlobData>(Allocator.Temp);
-    //    //var legnth = blobBuilder.
-    //    blobBuilder.Dispose();
+    private static void UpdateBuff()
+    {
+        var unityPath = ABBUtil.GetUnityRootPath();
+        var fileRootPath = Path.Combine(unityPath, _BuffClassPath);
+        if (!Directory.Exists(fileRootPath))
+            Directory.CreateDirectory(fileRootPath);
 
 
-    //    var str = blobBuilder.ToString();
-    //    //var strByte = str
+        CreateBuffData(in fileRootPath);
+        CreateBuffUtil(in fileRootPath);
+        CreateBuffTypeEnum(in fileRootPath);
+        CreateBuffEnum(in fileRootPath);
+    }
+    private static void CreateBuffTypeEnum(in string rootPath)
+    {
+        var filePath = Path.Combine(rootPath, $"{_BuffTypeEnumName}.cs");
+        var content = new StringBuilder();
 
-    //    int dataLength = UnsafeUtility.SizeOf<MyBlobData>();
-    //    var intSize = UnsafeUtility.SizeOf<int>();
-    //    //var strSize = UnsafeUtility.SizeOf<BlobString>();
-    //    dataLength += builderArray.Length * intSize;// + strSize;
+        content.AppendLine($"public enum {_BuffTypeEnumName}");
+        content.AppendLine($"{{");
 
-    //    var filePath = Path.Combine(ABBUtil.GetUnityRootPath(), "Misc/AssetBlob.bin");
-    //    unsafe
-    //    {
-    //        var dataPtr = (byte*)blobRef.GetUnsafePtr();
+        content.AppendLine($"\tNone = 0,");
+        var buffCount = ExcelUtil.GetCfgCount<BuffTypeCfg>();
+        for (int i = 0; i < buffCount; i++)
+        {
+            var buffTypeCfg = ExcelUtil.GetCfgByIndex<BuffTypeCfg>(i);
+            content.AppendLine($"\t[{typeof(EditorFieldNameAttribute)}(\"{buffTypeCfg.strDescEditor}\")]");
+            content.AppendLine($"\t{buffTypeCfg.strEnumNameEditor} = {buffTypeCfg.nTypeID},");
+        }
 
-    //        using (var writer = new BinaryWriter(File.Open(filePath, FileMode.OpenOrCreate)))
-    //        {
-    //            writer.Write(dataLength);
+        content.AppendLine($"}}");
+        File.WriteAllText(filePath, content.ToString());
+    }
+    private static void CreateBuffEnum(in string rootPath)
+    {
+        var filePath = Path.Combine(rootPath, $"{_BuffEnumName}.cs");
+        var content = new StringBuilder();
 
-    //            for (int i = 0; i < dataLength; i++)
-    //            {
-    //                writer.Write(dataPtr[i]);
-    //            }
-    //        }
-    //    }
-    //    blobRef.Dispose();
-    //    //BlobAssetSerializeExtensions.Write(new Unity.Entities.Serialization.StreamBinaryWriter())
+        content.AppendLine($"public enum {_BuffEnumName}");
+        content.AppendLine($"{{");
+
+        content.AppendLine($"\tNone = 0,");
+        var buffCount = ExcelUtil.GetCfgCount<BuffCfg>();
+        for (int i = 0; i < buffCount; i++)
+        {
+            var buffCfg = ExcelUtil.GetCfgByIndex<BuffCfg>(i);
+            content.AppendLine($"\t[{typeof(EditorFieldNameAttribute)}(\"{buffCfg.strDescEditor}\")]");
+            content.AppendLine($"\t{buffCfg.strEnumNameEditor} = {buffCfg.nBuffID},");
+        }
+
+        content.AppendLine($"}}");
+        File.WriteAllText(filePath, content.ToString());
+    }
+    private static void CreateBuffUtil(in string rootPath)
+    {
+        var filePath = Path.Combine(rootPath, $"BuffUtil.cs");
+
+        var content = new StringBuilder();
+
+        content.AppendLine("public partial class BuffUtil");
+        content.AppendLine("{");
 
 
-    //    using (var reader = new BinaryReader(File.Open(filePath, FileMode.Open)))
-    //    {
-    //        var length = reader.ReadInt32();
+        content.AppendLine($"\tpublic static {typeof(IEntityBuffData)} CreateBuffData({_BuffEnumName} buff, {typeof(IClassPoolUserData)} data)");
+        content.AppendLine("\t{");
+        content.AppendLine($"\t\treturn buff switch");
+        content.AppendLine($"\t\t{{");
+        var buffCount = ExcelUtil.GetCfgCount<BuffCfg>();
+        for (int i = 0; i < buffCount; i++)
+        {
+            var buffCfg = ExcelUtil.GetCfgByIndex<BuffCfg>(i);
+            content.AppendLine($"\t\t\t{_BuffEnumName}.{buffCfg.strEnumNameEditor} => {typeof(ClassPoolMgr)}.Instance.Pull<{buffCfg.strClassNameEditor}>(data),");
+        }
+        content.AppendLine($"\t\t\t_ => default,");
+        content.AppendLine($"\t\t}};");
+        content.AppendLine("\t}");
 
-    //        byte* dataPtr = (byte*)UnsafeUtility.Malloc(length, 1, Allocator.Temp);
-    //        for (int i = 0; i < length; i++)
-    //        {
-    //            dataPtr[i] = reader.ReadByte();
-    //        }
 
-    //        var blobAsset = BlobAssetReference<MyBlobData>.Create((void*)dataPtr, length);
+        content.AppendLine("}");
 
-    //        for (int i = 0; i < blobAsset.Value.IntArray.Length; i++)
-    //        {
-    //            EcsUtil.DebugLog(blobAsset.Value.IntArray[i]);
-    //        }
-    //        EcsUtil.DebugLog(blobAsset.Value.StrValue.Length);
-    //        EcsUtil.DebugLog(blobAsset.Value.entityArray[0].faction);
-    //    }
-    //}
+
+        File.WriteAllText(filePath, content.ToString());
+    }
+    private static void CreateBuffData(in string rootPath)
+    {
+        var count = ExcelUtil.GetCfgCount<BuffCfg>();
+        for (int i = 0; i < count; i++)
+        {
+            var buffCfg = ExcelUtil.GetCfgByIndex<BuffCfg>(i);
+            if (string.IsNullOrWhiteSpace(buffCfg.strClassNameEditor))
+                throw new Exception($"buff id= {buffCfg.nBuffID}, className == null");
+            var filePath = Path.Combine(rootPath, $"{buffCfg.strClassNameEditor}.cs");
+            if (File.Exists(filePath))
+                continue;
+            //File.Create(filePath);
+            //var file = File.Create(filePath);
+            var fileContent = new StringBuilder();
+            fileContent.AppendLine("using UnityEngine;");
+            fileContent.AppendLine($"public class {buffCfg.strClassNameEditor} : EntityBuffData");
+            fileContent.AppendLine("{");
+            fileContent.AppendLine("\t");
+            fileContent.AppendLine("}");
+            //UnityEngine.Debug.Log($"{filePath},  {fileContent.ToString()}");
+            File.WriteAllText(filePath, fileContent.ToString(), Encoding.UTF8);
+        }
+    }
 }
-//public struct MyBlobData
-//{
-//    public BlobArray<int> IntArray;
-//    public BlobString StrValue;
-//    public BlobArray<AttackComponent> entityArray;
-//}
-//public class BaseType
-//{
-
-//}
-//public class ChildType : BaseType
-//{
-
-//}

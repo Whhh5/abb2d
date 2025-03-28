@@ -30,6 +30,7 @@ public class SkillPhysicsScheduleAction : IPhysicsParams, ISkillScheduleAction
 
     public void OnPoolDestroy()
     {
+        BuffUtil.PushConvertBuffData(buffParams);
         buffParams = null;
         m_IsAtked = false;
         atkSchedule = -1;
@@ -74,7 +75,7 @@ public class SkillPhysicsScheduleAction : IPhysicsParams, ISkillScheduleAction
         if (physicsType > 0)
             physicsResolve = PhysicsUtil.CreatePhysicsResolve(this);
         if (buff > EnBuff.None)
-            buffParams = BuffMgr.Instance.ConvertBuffData(buff, arrBuffParams);
+            buffParams = BuffUtil.ConvertBuffData(buff, arrBuffParams);
     }
 
     public void Reset()

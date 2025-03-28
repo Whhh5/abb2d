@@ -93,9 +93,10 @@ public class SkillTypeLinkDataEditor : SkillTypeLinkData, ISkillTypeEditor, ISki
                 if (GuiStyleUtil.DrawAddButton(addRect))
                 {
                     var menu = new GenericMenu();
-                    for (var i = EnBuff.None + 1; i < EnBuff.EnumCount; i++)
+                    var count = ExcelUtil.GetCfgCount<BuffCfg>();
+                    for (var i = 0; i < count; i++)
                     {
-                        var buff = i;
+                        var buff = (EnBuff)ExcelUtil.GetCfgByIndex<BuffCfg>(i).nBuffID;
                         if (m_ArrBuff.FindIndex((item) => item.Buff == buff ? true : false) >= 0)
                             continue;
                         var key = EditorUtil.GetEnumName(buff);

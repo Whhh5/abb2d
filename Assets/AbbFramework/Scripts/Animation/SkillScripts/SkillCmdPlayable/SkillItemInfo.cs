@@ -111,21 +111,19 @@ public class SkillItemInfo : IClassPool<PoolNaNUserData>
     {
         foreach (var item in arrBuff)
         {
-            var buffDataParams = BuffMgr.Instance.ConvertBuffData(item.Key, item.Value);
+            var buffDataParams = BuffUtil.ConvertBuffData(item.Key, item.Value);
             var addKey = BuffMgr.Instance.AddEntityBuff(entityID, entityID, item.Key, buffDataParams);
-            BuffMgr.Instance.DestroyBuffData(buffDataParams);
+            BuffUtil.PushConvertBuffData(buffDataParams);
 
-            _BuffAddKeyList.Add(addKey);
+            if (BuffMgr.Instance.GetBuffType(addKey) != EnBuffType.Time)
+                _BuffAddKeyList.Add(addKey);
         }
     }
     public void OnDisable(int entityID)
     {
         foreach (var addKey in _BuffAddKeyList)
         {
-            if (BuffMgr.Instance.GetBuffType(addKey) != EnBuffType.Time)
-            {
-                BuffMgr.Instance.RemoveEntityBuff(addKey);
-            }
+            BuffMgr.Instance.RemoveEntityBuff(addKey);
         }
         _BuffAddKeyList.Clear();
 

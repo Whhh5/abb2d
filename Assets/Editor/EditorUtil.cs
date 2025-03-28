@@ -116,7 +116,7 @@ public static class EditorUtil
         EditorGUILayout.EndHorizontal();
     }
 
-    public static void DrawEnum(ref Enum defValue)
+    public static void DrawEnum(Enum defValue)
     {
         var type = defValue.GetType();
         var values = Enum.GetValues(type);

@@ -88,9 +88,46 @@ public class AttackLinkSkillDataUserData : AttackLinkUserData
         arrParams = null;
     }
 }
-public class EntityMoveDownBuffParams : IEntityBuffParams
+
+
+public class CommonArrayUserData : IClassPoolUserData
+{
+    public int[] value;
+    public void OnPoolDestroy()
+    {
+        value = null;
+    }
+}
+public class EntityBuffTimeDefaultInfo : IEntityBuffParams, IBuffTimeInfo
+{
+    private float _Time = -1;
+    public float GetTime()
+    {
+        return _Time;
+    }
+
+    public void OnPoolInit(CommonArrayUserData userData)
+    {
+        var count = userData.value[0];
+        _Time = userData.value[1] / 100f;
+    }
+
+    public void OnPoolDestroy()
+    {
+        _Time = -1;
+    }
+
+}
+public class EntityMoveDownBuffUserData : IEntityBuffParams
 {
     public float value;
+
+
+    public void OnPoolInit(CommonArrayUserData userData)
+    {
+        var count = userData.value[0];
+        value = userData.value[1] / 100f;
+    }
 
     public void OnPoolDestroy()
     {

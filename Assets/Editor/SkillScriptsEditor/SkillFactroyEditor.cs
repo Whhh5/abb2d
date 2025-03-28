@@ -59,11 +59,11 @@ public static class SkillFactroyEditor
             EnBuff.NoJumping => new EntityNoJumpBuffDataEditor(),
             EnBuff.NoMovement => new EntityNoMoveBuffDataEditor(),
             EnBuff.NoRotation => new EntityNoRotationBuffDataEditor(),
-            EnBuff.PlayerBuff => new EntityPlayerBuffDataEditor(),
+            EnBuff.PlayerBuff => new EntityPlayerBuffBuffDataEditor(),
             EnBuff.Poison => new EntityPoisonBuffDataEditor(),
-            EnBuff.PlayerSkill2 => new EntityPlayerSkill2DataEditor(),
-            EnBuff.Expiosion => new EntityExpiosionDataEditor(),
-            EnBuff.Expiosion2 => new EntityExpiosion2DataEditor(),
+            EnBuff.PlayerSkill2 => new EntityPlayerSkill2BuffDataEditor(),
+            EnBuff.Expiosion => new EntityExpiosionBuffDataEditor(),
+            EnBuff.Expiosion2 => new EntityExpiosion2BuffDataEditor(),
             _ => null,
         };
         return buffData;

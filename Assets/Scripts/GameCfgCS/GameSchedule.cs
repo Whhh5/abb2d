@@ -30,6 +30,8 @@ public partial class GameSchedule
 	private System.Collections.Generic.Dictionary<System.Int32, MonsterControllerCfg> m_DicMonsterControllerCfg0 = new();
 	private BuffCfg[] m_BuffCfg = null;
 	private System.Collections.Generic.Dictionary<System.Int32, BuffCfg> m_DicBuffCfg0 = new();
+	private BuffTypeCfg[] m_BuffTypeCfg = null;
+	private System.Collections.Generic.Dictionary<System.Int32, BuffTypeCfg> m_DicBuffTypeCfg0 = new();
 	public void Initialization()
 	{
 		for (int i = 0; i < m_ClipCfg.Length; i++)
@@ -107,6 +109,11 @@ public partial class GameSchedule
 			var cfg = m_BuffCfg[i];
 			m_DicBuffCfg0.Add(cfg.nBuffID, cfg);
 		}
+		for (int i = 0; i < m_BuffTypeCfg.Length; i++)
+		{
+			var cfg = m_BuffTypeCfg[i];
+			m_DicBuffTypeCfg0.Add(cfg.nTypeID, cfg);
+		}
 	}
 	public ClipCfg GetClipCfg0(System.Int32 nClipID)
 	{
@@ -167,5 +174,9 @@ public partial class GameSchedule
 	public BuffCfg GetBuffCfg0(System.Int32 nBuffID)
 	{
 		return m_DicBuffCfg0[nBuffID];
+	}
+	public BuffTypeCfg GetBuffTypeCfg0(System.Int32 nTypeID)
+	{
+		return m_DicBuffTypeCfg0[nTypeID];
 	}
 }

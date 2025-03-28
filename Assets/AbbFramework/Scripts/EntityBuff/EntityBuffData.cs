@@ -4,6 +4,7 @@ using UnityEngine;
 
 public interface IEntityBuffData : IClassPoolInit<EntityBuffDataUserData>
 {
+    public EnBuff GetBuff();
     public void OnEnable(int addKey, IEntityBuffParams buffParams);
     public bool OnDisable(int addKey);
     public void ReOnEnable(int addKey, IEntityBuffParams buffParams);
@@ -54,6 +55,10 @@ public abstract class EntityBuffData : IEntityBuffData
         _Buff = userData.buff;
         _TargetEntityID = userData.targetEntityID;
         _SourceEntityID = userData.sourceEntityID;
+    }
+    public EnBuff GetBuff()
+    {
+        return _Buff;
     }
 
     public virtual void OnEnable(int addKey, IEntityBuffParams buffParams)

@@ -10,6 +10,7 @@ public class SkillBuffScheduleActionEditor : SkillBuffScheduleAction, ISkillSche
     public void InitEditor()
     {
         _IBuffDaraEditor = SkillFactroyEditor.GetBuffDataEditor(buff);
+        _IBuffDaraEditor.InitEditor();
         _IBuffDaraEditor?.InitParams(arrBuffParams);
     }
     public void Draw()
@@ -29,8 +30,8 @@ public class SkillBuffScheduleActionEditor : SkillBuffScheduleAction, ISkillSche
             }, 300);
 
             //buffID = EditorGUILayout.IntField("buffID:", buffID, GUILayout.Width(200));
-            var type = SkillFactroyEditor.GetBuffDataEditor(buff);
-            type?.Draw();
+            //var type = SkillFactroyEditor.GetBuffDataEditor(buff);
+            _IBuffDaraEditor?.Draw();
 
         }
         EditorGUILayout.EndVertical();
