@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8763989734006292608}
   - component: {fileID: 4178380864018003987}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: UIWindow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -55,7 +55,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7619832046962583}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -92,7 +92,7 @@ GameObject:
   - component: {fileID: 876524159893048058}
   - component: {fileID: 5139149154080126883}
   - component: {fileID: 4329976893649635497}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -49,17 +49,29 @@ public class AIMonsterBattleModule : AIModule, IUpdate
             worldPos
             , _Radius
             , entityData.GetEnemyLayer()
-            , ref _TargetEntityID))
+            , out var entityID))
         {
+            _TargetEntityID = entityID;
             return true;
         }
         return false;
     }
 
+
+    private EnEntityCmd _CurCmd = EnEntityCmd.None;
     public void Update()
     {
         if (!EntityUtil.IsValid(_TargetEntityID))
             return;
+
+
+
+        //if (!Entity3DMgr.Instance.GetEntityCmdIsEnd(EntityID, _CurCmd))
+        //{
+        //    Entity3DMgr.Instance.AddEntityCmd(EntityID, _CurCmd);
+        //    return;
+        //}
+
         var curPos = Entity3DMgr.Instance.GetEntityWorldPos(EntityID);
         var targetPos = Entity3DMgr.Instance.GetEntityWorldPos(_TargetEntityID);
         var dir = Vector3.Normalize(targetPos - curPos);
@@ -71,7 +83,6 @@ public class AIMonsterBattleModule : AIModule, IUpdate
         }
         else
         {
-
             var curRot = Entity3DMgr.Instance.GetEntityRotation(EntityID);
             var rot = Quaternion.LookRotation(dir);
             var angle = Quaternion.Angle(Quaternion.Euler(curRot), rot);
@@ -84,9 +95,9 @@ public class AIMonsterBattleModule : AIModule, IUpdate
             {
                 EnEntityCmd[] arrCmd = { EnEntityCmd.Monster0Skill1, EnEntityCmd.Monster0Skill2, EnEntityCmd.Monster0Buff1 };
                 var index = Random.Range(0, arrCmd.Length);
-                Entity3DMgr.Instance.AddEntityCmd(EntityID, arrCmd[index]);
+                _CurCmd = arrCmd[index];
+                Entity3DMgr.Instance.AddEntityCmd(EntityID, _CurCmd);
             }
-
         }
     }
 }

@@ -115,65 +115,193 @@ public partial class GameSchedule
 			m_DicBuffTypeCfg0.Add(cfg.nTypeID, cfg);
 		}
 	}
+	public System.Int32 GetClipCfgCount()
+	{
+		return m_ClipCfg.Length;
+	}
+	public ClipCfg GetClipCfg(System.Int32 index)
+	{
+		return m_ClipCfg[index];
+	}
 	public ClipCfg GetClipCfg0(System.Int32 nClipID)
 	{
 		return m_DicClipCfg0[nClipID];
+	}
+	public System.Int32 GetSkillCfgCount()
+	{
+		return m_SkillCfg.Length;
+	}
+	public SkillCfg GetSkillCfg(System.Int32 index)
+	{
+		return m_SkillCfg[index];
 	}
 	public SkillCfg GetSkillCfg0(System.Int32 nSkillID)
 	{
 		return m_DicSkillCfg0[nSkillID];
 	}
+	public System.Int32 GetAnimLayerCfgCount()
+	{
+		return m_AnimLayerCfg.Length;
+	}
+	public AnimLayerCfg GetAnimLayerCfg(System.Int32 index)
+	{
+		return m_AnimLayerCfg[index];
+	}
 	public AnimLayerCfg GetAnimLayerCfg0(System.Int32 nLayer)
 	{
 		return m_DicAnimLayerCfg0[nLayer];
+	}
+	public System.Int32 GetCmdCfgCount()
+	{
+		return m_CmdCfg.Length;
+	}
+	public CmdCfg GetCmdCfg(System.Int32 index)
+	{
+		return m_CmdCfg[index];
 	}
 	public CmdCfg GetCmdCfg0(System.Int32 nCmdID)
 	{
 		return m_DicCmdCfg0[nCmdID];
 	}
+	public System.Int32 GetCmdTyoeCfgCount()
+	{
+		return m_CmdTyoeCfg.Length;
+	}
+	public CmdTyoeCfg GetCmdTyoeCfg(System.Int32 index)
+	{
+		return m_CmdTyoeCfg[index];
+	}
 	public CmdTyoeCfg GetCmdTyoeCfg0(System.Int32 nCmdID)
 	{
 		return m_DicCmdTyoeCfg0[nCmdID];
+	}
+	public System.Int32 GetCmdLevelCfgCount()
+	{
+		return m_CmdLevelCfg.Length;
+	}
+	public CmdLevelCfg GetCmdLevelCfg(System.Int32 index)
+	{
+		return m_CmdLevelCfg[index];
 	}
 	public CmdLevelCfg GetCmdLevelCfg0(System.Int32 nLevelID)
 	{
 		return m_DicCmdLevelCfg0[nLevelID];
 	}
+	public System.Int32 GetEffectCfgCount()
+	{
+		return m_EffectCfg.Length;
+	}
+	public EffectCfg GetEffectCfg(System.Int32 index)
+	{
+		return m_EffectCfg[index];
+	}
 	public EffectCfg GetEffectCfg0(System.Int32 nEffectID)
 	{
 		return m_DicEffectCfg0[nEffectID];
+	}
+	public System.Int32 GetAssetCfgCount()
+	{
+		return m_AssetCfg.Length;
+	}
+	public AssetCfg GetAssetCfg(System.Int32 index)
+	{
+		return m_AssetCfg[index];
 	}
 	public AssetCfg GetAssetCfg0(System.Int32 nAssetID)
 	{
 		return m_DicAssetCfg0[nAssetID];
 	}
+	public System.Int32 GetCharacterCfgCount()
+	{
+		return m_CharacterCfg.Length;
+	}
+	public CharacterCfg GetCharacterCfg(System.Int32 index)
+	{
+		return m_CharacterCfg[index];
+	}
 	public CharacterCfg GetCharacterCfg0(System.Int32 nCharacterID)
 	{
 		return m_DicCharacterCfg0[nCharacterID];
+	}
+	public System.Int32 GetMonsterCfgCount()
+	{
+		return m_MonsterCfg.Length;
+	}
+	public MonsterCfg GetMonsterCfg(System.Int32 index)
+	{
+		return m_MonsterCfg[index];
 	}
 	public MonsterCfg GetMonsterCfg0(System.Int32 nMonsterID)
 	{
 		return m_DicMonsterCfg0[nMonsterID];
 	}
+	public System.Int32 GetMonsterColonyCfgCount()
+	{
+		return m_MonsterColonyCfg.Length;
+	}
+	public MonsterColonyCfg GetMonsterColonyCfg(System.Int32 index)
+	{
+		return m_MonsterColonyCfg[index];
+	}
 	public MonsterColonyCfg GetMonsterColonyCfg0(System.Int32 nColonyID)
 	{
 		return m_DicMonsterColonyCfg0[nColonyID];
+	}
+	public System.Int32 GetAIModuleCfgCount()
+	{
+		return m_AIModuleCfg.Length;
+	}
+	public AIModuleCfg GetAIModuleCfg(System.Int32 index)
+	{
+		return m_AIModuleCfg[index];
 	}
 	public AIModuleCfg GetAIModuleCfg0(System.Int32 nModuleID)
 	{
 		return m_DicAIModuleCfg0[nModuleID];
 	}
+	public System.Int32 GetAICfgCount()
+	{
+		return m_AICfg.Length;
+	}
+	public AICfg GetAICfg(System.Int32 index)
+	{
+		return m_AICfg[index];
+	}
 	public AICfg GetAICfg0(System.Int32 nAIID)
 	{
 		return m_DicAICfg0[nAIID];
+	}
+	public System.Int32 GetMonsterControllerCfgCount()
+	{
+		return m_MonsterControllerCfg.Length;
+	}
+	public MonsterControllerCfg GetMonsterControllerCfg(System.Int32 index)
+	{
+		return m_MonsterControllerCfg[index];
 	}
 	public MonsterControllerCfg GetMonsterControllerCfg0(System.Int32 nControllerID)
 	{
 		return m_DicMonsterControllerCfg0[nControllerID];
 	}
+	public System.Int32 GetBuffCfgCount()
+	{
+		return m_BuffCfg.Length;
+	}
+	public BuffCfg GetBuffCfg(System.Int32 index)
+	{
+		return m_BuffCfg[index];
+	}
 	public BuffCfg GetBuffCfg0(System.Int32 nBuffID)
 	{
 		return m_DicBuffCfg0[nBuffID];
+	}
+	public System.Int32 GetBuffTypeCfgCount()
+	{
+		return m_BuffTypeCfg.Length;
+	}
+	public BuffTypeCfg GetBuffTypeCfg(System.Int32 index)
+	{
+		return m_BuffTypeCfg[index];
 	}
 	public BuffTypeCfg GetBuffTypeCfg0(System.Int32 nTypeID)
 	{

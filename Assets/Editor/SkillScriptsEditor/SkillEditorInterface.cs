@@ -18,5 +18,4 @@ public interface ISkillSimulationEditor
     public float GetMaxSimulationTime();
     public void InitSimulation(ref PlayableGraph graph);
     public void UpdateSimulation(float time);
-    public void DrawSimulation();
 }

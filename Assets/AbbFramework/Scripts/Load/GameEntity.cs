@@ -56,6 +56,8 @@ public abstract class GameEntityData : IClassPool<IClassPoolUserData>
         m_LoadStatus = EnLoadStatus.None;
         m_WorldPos = Vector3.zero;
         m_ParentTran = null;
+        LocalScale = Vector3.one;
+        LocalRotation = Vector3.zero;
     }
 
     public virtual void OnEnable()

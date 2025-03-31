@@ -9,10 +9,13 @@ using UnityEngine.UIElements;
 
 public static class GuiStyleUtil
 {
+    private static Dictionary<Color, Texture2D> _TextureDic = new();
     // 创建背景纹理
     private static Texture2D MakeTex(int width, int height, Color col)
     {
-        Texture2D texture = new Texture2D(width, height);
+        if (_TextureDic.TryGetValue(col, out var texture))
+            return texture;
+        texture = new Texture2D(width, height);
         Color[] pixels = new Color[width * height];
         for (int i = 0; i < pixels.Length; i++)
         {
@@ -20,6 +23,7 @@ public static class GuiStyleUtil
         }
         texture.SetPixels(pixels);
         texture.Apply();
+        _TextureDic.Add(col, texture);
         return texture;
     }
     public static GUIStyle CreateLayoutBoxBackgroud(Color32 col)

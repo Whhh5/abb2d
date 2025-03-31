@@ -98,7 +98,7 @@ public class SkillItemInfoEditor : SkillItemInfo, ISkillTypeEditor
         {
             EditorGUILayout.BeginHorizontal();
             {
-                EditorUtil.DrawClipID(_ClipID, value => _ClipID = value);
+                EditorUtil.DrawCfgField<ClipCfg>(_ClipID, value => _ClipID = value, 200);
             }
             EditorGUILayout.EndHorizontal();
 
@@ -294,6 +294,13 @@ public class SkillItemInfoEditor : SkillItemInfo, ISkillTypeEditor
                                     var closeRect = new Rect(rect)
                                     {
                                         x = rect.x + rect.width - 30,
+                                        y = rect.y - 30 / 1.5f,
+                                        width = 30,
+                                        height = 30,
+                                    };
+                                    var changeRect = new Rect(closeRect)
+                                    {
+                                        x = rect.x + rect.width - 30 - 40,
                                         y = rect.y - 30 / 1.5f,
                                         width = 30,
                                         height = 30,

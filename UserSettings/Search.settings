@@ -10,8 +10,8 @@ showPackageIndexes = false
 showStatusBar = false
 scopes = {
 	"OpenInspectorPreview.66F56946" = "0"
-	"currentGroup.66F56946" = "menu"
-	"last_search.66F56946" = "timeline"
+	"currentGroup.66F56946" = "settings"
+	"last_search.66F56946" = "always ref"
 }
 providers = {
 	find = {
@@ -78,6 +78,10 @@ providers = {
 objectSelectors = {
 }
 recentSearches = [
+	"always"
+	""
+	"gizmos"
+	"alw"
 ]
 searchItemFavorites = [
 ]

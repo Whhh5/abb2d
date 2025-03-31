@@ -3,18 +3,21 @@ using System.Collections.Generic;
 
 
 
-public interface ISkillItemEventInfo
-{
-    public void Execute(IClassPool userData);
-}
-public class SkillItemEventInfo
+public delegate void SkillItemEventInfoEvent(int entityID, IClassPoolUserData userData);
+public class SkillItemEventInfo : IClassPoolUserData
 {
     public float schedule;
-    public bool isClick;
-    public IClassPool userData;
-    public ISkillItemEventInfo onEvent;
+    public IClassPoolUserData userData;
+    public SkillItemEventInfoEvent onEvent;
+
+    public void OnPoolDestroy()
+    {
+        schedule = -1;
+        userData = null;
+        onEvent = null;
+    }
 }
-public class SkillItemInfo : IClassPool<PoolNaNUserData>
+public class SkillItemInfo : IClassPoolInit<PoolNaNUserData>
 {
     public int _ClipID;
     public float canNextTime;
@@ -25,14 +28,14 @@ public class SkillItemInfo : IClassPool<PoolNaNUserData>
     private List<int> _BuffAddKeyList = new();
 
     protected ISkillScheduleAction[] m_ArrAtkLinkSchedule = null;
-    public int ScheduleEventCount => m_ArrAtkLinkSchedule.Length;
 
-
-    private Dictionary<int, SkillItemEventInfo> _EventList = new(10);
-    private int m_CurScheduleItemIndex = 0;
+    private List<SkillItemEventInfo> _EventList = new(10);
+    private int _EventListIndex = 0;
 
     public void OnPoolDestroy()
     {
+        for (int i = 0; i < _EventList.Count; i++)
+            ClassPoolMgr.Instance.Push(_EventList[i]);
         ResetAllItemData();
         foreach (var item in m_ArrAtkLinkSchedule)
         {
@@ -40,21 +43,15 @@ public class SkillItemInfo : IClassPool<PoolNaNUserData>
         }
         arrBuff.Clear();
         _BuffAddKeyList.Clear();
+        _EventList.Clear();
         m_ArrAtkLinkSchedule = null;
+        _EventListIndex = 0;
     }
     public void PoolConstructor()
     {
     }
 
     public void OnPoolInit(PoolNaNUserData userData)
-    {
-    }
-
-    public void OnPoolEnable()
-    {
-    }
-
-    public void PoolRelease()
     {
     }
     public void Init(int[] data, int arrCount, ref int startIndex)
@@ -73,6 +70,7 @@ public class SkillItemInfo : IClassPool<PoolNaNUserData>
             var scheduleType = (EnAtkLinkScheculeType)data[startIndex++];
             var scheduleItem = AttackMgr.GetAtkLinkScheduleItem(scheduleType, data, ref startIndex);
             m_ArrAtkLinkSchedule[i] = scheduleItem;
+            scheduleItem.GetEventList(ref _EventList);
         }
 
         var buffCount = startIndex >= endIndex ? default : data[startIndex++];
@@ -84,23 +82,28 @@ public class SkillItemInfo : IClassPool<PoolNaNUserData>
             startIndex += paramCount;
             arrBuff.Add(buff, arrParams);
         }
+
+        _EventList.Sort((item, item2) => item.schedule < item2.schedule ? -1 : 1);
     }
 
-    public ISkillScheduleAction GetCurScheduleItem()
+    public bool ScheduleEventIsValid()
     {
-        return m_ArrAtkLinkSchedule[m_CurScheduleItemIndex];
+        return _EventList.Count > 0 && _EventListIndex < _EventList.Count;
+    }
+    public SkillItemEventInfo GetCurScheduleItem()
+    {
+        return _EventList[_EventListIndex];
     }
     public bool NextEventAction()
     {
-        if (m_CurScheduleItemIndex >= m_ArrAtkLinkSchedule.Length - 1)
+        _EventListIndex++;
+        if (_EventListIndex > _EventList.Count - 1)
             return false;
-        GetCurScheduleItem().Reset();
-        m_CurScheduleItemIndex++;
         return true;
     }
     public void ResetAllItemData()
     {
-        m_CurScheduleItemIndex = 0;
+        _EventListIndex = 0;
         foreach (var item in m_ArrAtkLinkSchedule)
         {
             item.Reset();
@@ -125,12 +128,9 @@ public class SkillItemInfo : IClassPool<PoolNaNUserData>
         {
             BuffMgr.Instance.RemoveEntityBuff(addKey);
         }
+        ResetAllItemData();
+        _EventListIndex = 0;
         _BuffAddKeyList.Clear();
-
-        m_CurScheduleItemIndex = 0;
-        if (ScheduleEventCount > 0)
-            GetCurScheduleItem().Reset();
-
     }
 
     public int GetClipID()

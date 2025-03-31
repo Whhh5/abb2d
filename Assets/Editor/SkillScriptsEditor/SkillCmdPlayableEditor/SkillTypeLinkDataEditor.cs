@@ -1,6 +1,9 @@
 ﻿
 using System.Collections.Generic;
+using System.Net;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Animations;
@@ -39,7 +42,7 @@ public class SkillTypeLinkDataEditor : SkillTypeLinkData, ISkillTypeEditor, ISki
         {
             var clipID = item.GetClipID();
             var clipCfg = ExcelUtil.GetCfg<ClipCfg>(clipID);
-            var clipPath = ExcelUtil.GetCfg<AssetCfg>(clipCfg.nAssetID).strPath; 
+            var clipPath = ExcelUtil.GetCfg<AssetCfg>(clipCfg.nAssetID).strPath;
             var clip = AssetDatabase.LoadAssetAtPath<AnimationClip>(clipPath);
             _SimulationMaxTime += clip.length;
         }
@@ -225,6 +228,9 @@ public class SkillTypeLinkDataEditor : SkillTypeLinkData, ISkillTypeEditor, ISki
     }
 
     ISkillScheduleActionEditor selectID = null;
+    Vector2 lineStartPos;
+    Vector2 lineEndPos;
+    Rect _SelectRect;
     public void UpdateSimulation(float time)
     {
 
@@ -232,14 +238,24 @@ public class SkillTypeLinkDataEditor : SkillTypeLinkData, ISkillTypeEditor, ISki
         {
             var rectList = new List<Rect>();
             var itemInterval = 2;
-            var height = 5f;
+            var scheduleHeight = 15f;
+            var scheduleWidth = 8f;
             var trackInterval = 2;
-            var maxHeight = height * ((int)EnAtkLinkScheculeType.EnumCount - 1) + trackInterval * ((int)EnAtkLinkScheculeType.EnumCount - 2);
+            var maxHeight = scheduleHeight * ((int)EnAtkLinkScheculeType.EnumCount - 1) + trackInterval * ((int)EnAtkLinkScheculeType.EnumCount - 2);
             var mainRect = GUILayoutUtility.GetRect(
                 new GUIContent()
                 , GUI.skin.box
                 , GUILayout.ExpandWidth(true)
                 , GUILayout.Height(maxHeight));
+
+            if (selectID != null)
+            {
+                selectID?.Draw();
+                var lastRect = GUILayoutUtility.GetLastRect();
+
+                lineEndPos = lastRect.min;
+            }
+
             EditorGUILayout.BeginHorizontal();
             {
                 var maxWidth = mainVerRect.width - itemInterval * (m_Count - 1);
@@ -272,7 +288,19 @@ public class SkillTypeLinkDataEditor : SkillTypeLinkData, ISkillTypeEditor, ISki
                         width = rect.width * slider,
                     };
                     EditorGUI.DrawRect(sliderRect, Color.green);
-
+                    if (slider != 0 && slider != 1)
+                    {
+                        var sliderTxtRect = new Rect(rect)
+                        {
+                            y = rect.y - 20,
+                            height = 20,
+                        };
+                        var style = new GUIStyle(GUI.skin.button)
+                        {
+                            alignment = TextAnchor.MiddleCenter
+                        };
+                        EditorGUI.LabelField(sliderTxtRect, $"{slider:0.00}", style);
+                    }
                     {
                         var curE = Event.current;
                         var mousePos = curE.mousePosition;
@@ -293,14 +321,14 @@ public class SkillTypeLinkDataEditor : SkillTypeLinkData, ISkillTypeEditor, ISki
             {
                 for (var i = EnAtkLinkScheculeType.None + 1; i < EnAtkLinkScheculeType.EnumCount - 1; i++)
                 {
-                    var posY = (float)(i - 1) * (height + trackInterval);
+                    var posY = (float)(i - 1) * (scheduleHeight + trackInterval);
 
                     var tempRect = new Rect(mainRect)
                     {
                         position = new Vector2(mainRect.x, mainRect.position.y + posY),
-                        height = height,
+                        height = scheduleHeight,
                     };
-                    var col = new Color(0.5f, 0.5f, 0.5f, 0.3f);
+                    var col = new Color(0, 0, 0, 0.1f);
                     EditorGUI.DrawRect(tempRect, col);
                 }
 
@@ -309,13 +337,20 @@ public class SkillTypeLinkDataEditor : SkillTypeLinkData, ISkillTypeEditor, ISki
                     var atkData = m_ArrAttackDataEditor[i];
                     var itemRect = rectList[i];
                     var count = atkData.ScheduleEditorCount;
+
+                    var (start, end) = _StepDataList[i];
+
                     for (int k = 0; k < count; k++)
                     {
                         var scheduleData = atkData.GetISkillScheduleActionEditor(k);
                         var slider = scheduleData.GetEnterSchedule();
                         var type = scheduleData.GetScheduleType();
                         var rectPos = new Vector2(itemRect.position.x + itemRect.width * slider, mainRect.y);
-                        var rect = new Rect(rectPos.x, rectPos.y + ((int)type - 1) * (height + 1f), 2, height);
+                        var rect = new Rect(
+                            rectPos.x
+                            , rectPos.y + ((int)type - 1) * (scheduleHeight + 1f)
+                            , scheduleWidth
+                            , scheduleHeight);
 
                         var color = new Color()
                         {
@@ -325,11 +360,28 @@ public class SkillTypeLinkDataEditor : SkillTypeLinkData, ISkillTypeEditor, ISki
                             a = 1,
                         };
                         EditorGUI.DrawRect(rect, color);
-
-                        if (rect.Contains(Event.current.mousePosition))
+                        var style = GuiStyleUtil.CreateLayoutBoxBackgroud(color);
+                        if (GUI.Button(rect, "", style))
                         {
                             selectID = scheduleData;
+                            _SelectRect = rect;
+                            lineStartPos = new Vector2(rect.xMin, rect.yMax);
                         }
+
+
+                        // scheduleData.Sumilation(rect, start, end);
+
+                    }
+                }
+                for (int i = 0; i < m_Count; i++)
+                {
+                    var atkData = m_ArrAttackDataEditor[i];
+                    var count = atkData.ScheduleEditorCount;
+                    for (int k = 0; k < count; k++)
+                    {
+                        var scheduleData = atkData.GetISkillScheduleActionEditor(k);
+                        var (start, end) = _StepDataList[i];
+                        scheduleData.Sumilation(mainRect, start, end);
                     }
                 }
             }
@@ -337,16 +389,27 @@ public class SkillTypeLinkDataEditor : SkillTypeLinkData, ISkillTypeEditor, ISki
         }
         EditorGUILayout.EndVertical();
 
-
-
         if (selectID != null)
         {
-            selectID.Draw();
+            //Handles.color = Color.cyan;
+            Handles.DrawBezier(lineStartPos, lineEndPos, lineStartPos, lineEndPos, Color.white, null, 5);
+
+            var bigRect = new Rect(_SelectRect)
+            {
+                width = _SelectRect.width + 2,
+                height = _SelectRect.height + 2,
+                x = _SelectRect.x - 1,
+                y = _SelectRect.y - 1,
+            };
+            Handles.DrawSolidRectangleWithOutline(bigRect, Color.red, Color.red);
+            var minRect = new Rect(bigRect)
+            {
+                x = bigRect.x + 1,
+                y = bigRect.y + 1,
+                width = bigRect.width - 2,
+                height = bigRect.height - 2,
+            };
+            Handles.DrawSolidRectangleWithOutline(minRect, Color.white, Color.white);
         }
-    }
-
-    public void DrawSimulation()
-    {
-
     }
 }

@@ -12,9 +12,6 @@ public class SkillTypeRandomData : ISkillTypeData<AttackLinkSkillDataUserData>
         m_ArrClip = null;
     }
 
-    public void OnPoolEnable()
-    {
-    }
 
     public void OnPoolInit(AttackLinkSkillDataUserData userData)
     {
@@ -26,11 +23,4 @@ public class SkillTypeRandomData : ISkillTypeData<AttackLinkSkillDataUserData>
         }
     }
 
-    public void PoolConstructor()
-    {
-    }
-
-    public void PoolRelease()
-    {
-    }
 }

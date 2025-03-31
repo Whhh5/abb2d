@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3654064073018715503}
   - component: {fileID: 1637413257104062245}
   - component: {fileID: 6686713860755460282}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Bg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -86,7 +86,7 @@ GameObject:
   - component: {fileID: 1920763635591124029}
   - component: {fileID: 1568415588825368795}
   - component: {fileID: 1395313472990805222}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: UIEntityHealthInfo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -156,7 +156,7 @@ GameObject:
   - component: {fileID: 1794729217113242232}
   - component: {fileID: 7127086961070949924}
   - component: {fileID: 606140617751287404}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: _RedRect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -231,7 +231,7 @@ GameObject:
   - component: {fileID: 1366703276549519073}
   - component: {fileID: 3970539251192110046}
   - component: {fileID: 8697009980560531963}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: _LineRect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -306,7 +306,7 @@ GameObject:
   - component: {fileID: 5842407645275904587}
   - component: {fileID: 7398648012136090334}
   - component: {fileID: 8303272937190709597}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: _GreenRect
   m_TagString: Untagged
   m_Icon: {fileID: 0}

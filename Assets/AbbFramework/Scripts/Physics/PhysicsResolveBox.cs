@@ -44,7 +44,7 @@ public class PhysicsResolveBox : IPhysicsResolve
             var centre = startPos + (i + 0.5f) * m_UnitSizeZ * boxRotForward;
 
             var idCount = EntityUtil.PhysicsOverlapBox(ref _TempEntityIDs, centre, unitHalfSize, Quaternion.Euler(rot), layer);
-            DebugDrawMgr.Instance.DrawBox(centre, unitHalfSize, targetRot, 0.5f);
+            //DebugDrawMgr.Instance.DrawBox(centre, unitHalfSize, targetRot, 0.5f);
             callback(ref _TempEntityIDs, ref idCount, cusomData);
             await UniTask.WaitForSeconds(interval);
         }

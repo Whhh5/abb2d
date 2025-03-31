@@ -193,7 +193,6 @@ public class BuffMgr : Singleton<BuffMgr>
 
         //var animCom = Entity3DMgr.Instance.GetEntityCom<EntityBuffComData>(addInfo.entityID);
         //animCom.RemoveBuff(addBuffKey);
-        Debug.Log($"removeentitybuff2 addkey: {addBuffKey}");
         _AddKeyData.Remove(addBuffKey);
 
 
@@ -348,6 +347,7 @@ public class BuffMgr : Singleton<BuffMgr>
                     continue;
                 foreach (var addKey in addKeyList)
                     removeList.Add(addKey);
+                _BuffDataID2AddKey.Remove(buffDataID);
             }
             foreach (var addKey in removeList)
                 RemoveEntityBuff2(addKey);

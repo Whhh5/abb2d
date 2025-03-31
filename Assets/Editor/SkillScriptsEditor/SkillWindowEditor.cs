@@ -103,11 +103,13 @@ public class SkillWindowEditor : EditorWindow
             var cfg = ExcelUtil.GetCfgByIndex<MonsterCfg>(i);
             var data = new SkillViewInfo();
             _MonsterSkillViewInfos.Add(cfg.nMonsterID, data);
-
-            for (int k = 0; k < cfg.arrSkillGroup.Length; k++)
+            if (cfg.arrSkillGroup != null)
             {
-                var skillID = cfg.arrSkillGroup[k];
-                data.m_DicItemInfo.Add(skillID, new());
+                for (int k = 0; k < cfg.arrSkillGroup.Length; k++)
+                {
+                    var skillID = cfg.arrSkillGroup[k];
+                    data.m_DicItemInfo.Add(skillID, new());
+                }
             }
 
             data.OnEnable();
@@ -139,7 +141,7 @@ public class SkillWindowEditor : EditorWindow
         var skillCfg = ExcelUtil.CreateTypeInstance<SkillCfg>();
         ExcelUtil.SetCfgValue(skillCfg, nameof(SkillCfg.nType), (int)skillType);
         var id = ExcelUtil.GetNextIndex<SkillCfg>();
-        ExcelUtil.SetCfgValue(skillCfg, nameof(SkillCfg.GetID), id);
+        ExcelUtil.SetCfgValue(skillCfg, nameof(SkillCfg.nSkillID), id);
         AddSkillItem(skillCfg);
         ExcelUtil.AddCfg<SkillCfg>(skillCfg);
         return skillCfg.nSkillID;
@@ -169,6 +171,8 @@ public class SkillWindowEditor : EditorWindow
             var monsterCfg = ExcelUtil.GetCfgByIndex<MonsterCfg>(i);
             var monsterViewInfo = _MonsterSkillViewInfos[monsterCfg.nMonsterID];
 
+            if (monsterCfg.arrSkillGroup == null)
+                ExcelUtil.SetCfgValue(monsterCfg, nameof(monsterCfg.arrSkillGroup), new int[0]);
             foreach (var item in monsterViewInfo.m_DicItemInfo)
             {
                 var skillID = item.Key;
@@ -644,10 +648,10 @@ public class SkillWindowEditor : EditorWindow
 
 
     private PlayableGraph _Graph;
-    private float _MaxTime = 10f;
-    private float _LastUpdateTime = 0;
-    private GameObject _SimulationObj = null;
-    private GameObject _PrefabObj = null;
+    public static float _MaxTime = 10f;
+    public static float _LastUpdateTime = 0;
+    public static GameObject _SimulationObj = null;
+    public static GameObject _PrefabObj = null;
 
     private void KillDotween()
     {

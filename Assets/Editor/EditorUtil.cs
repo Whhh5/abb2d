@@ -2,14 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.RefAndLookup;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using UnityEditor;
-using UnityEditor.PackageManager.UI;
 using UnityEngine;
-using static Codice.CM.WorkspaceServer.WorkspaceTreeDataStore;
 
 public static class EditorUtil
 {
@@ -137,60 +132,6 @@ public static class EditorUtil
         return;
     }
 
-    static GUIContent _ClipContent = new GUIContent()
-    {
-        text = "clip ID",
-        tooltip = "ClipCfg -> id",
-    };
-    static public void DrawClipID(int clipID, Action<int> selectID)
-    {
-        EditorGUILayout.BeginHorizontal();
-        {
-            EditorGUILayout.LabelField(_ClipContent, GUILayout.Width(50));
-
-            var content = new GUIContent()
-            {
-                text = $"{clipID}",
-            };
-            if (clipID > 0)
-            {
-                var clipCfg = ExcelUtil.GetCfg<ClipCfg>(clipID);
-                if (clipCfg != null)
-                {
-                    var assetCfg = ExcelUtil.GetCfg<AssetCfg>(clipCfg.nAssetID);
-                    var asset = AssetDatabase.LoadAssetAtPath<AnimationClip>(assetCfg.strPath);
-                    content.text += $"-{asset.name}";
-
-                    EditorGUILayout.ObjectField(asset, asset.GetType(), false, GUILayout.Width(100));
-                }
-                else
-                {
-                    content.text += "-Error";
-                }
-            }
-            if (GUILayout.Button(content, GUILayout.Width(200)))
-            {
-                var menu = new GenericMenu();
-
-                var clipCount = ExcelUtil.GetCfgCount<ClipCfg>();
-                for (int j = 0; j < clipCount; j++)
-                {
-                    var item = ExcelUtil.GetCfgByIndex<ClipCfg>(j);
-                    var itemAssetCfg = ExcelUtil.GetCfg<AssetCfg>(item.nAssetID);
-                    var itemAsset = AssetDatabase.LoadAssetAtPath<AnimationClip>(itemAssetCfg.strPath);
-                    menu.AddItem(new()
-                    {
-                        text = $"{item.nClipID}-{itemAsset.name}"
-                    }, item.nClipID == clipID, () =>
-                    {
-                        selectID(item.nClipID);
-                    });
-                }
-                menu.ShowAsContext();
-            }
-        }
-        EditorGUILayout.EndHorizontal();
-    }
     static GUIContent _AssetContent = new GUIContent()
     {
         text = "AssetID:",
@@ -356,5 +297,119 @@ public static class EditorUtil
             }
         }
         EditorGUILayout.EndHorizontal();
+    }
+    private static Vector2 _LastMousePos;
+    public static void DrawSliderRange(Rect rect, ref float start, ref float end, float min, float max)
+    {
+        start = Mathf.Clamp(start, min, max);
+        end = Mathf.Max(start, Mathf.Min(end, max));
+
+        EditorGUI.DrawRect(rect, new Color(0.5f, 0.5f, 0.5f, 0.5f));
+        var greenRect = new Rect(rect)
+        {
+            x = rect.xMin + start / (max - min) * rect.width,
+            width = (end - start) / (max - min) * rect.width,
+        };
+        EditorGUI.DrawRect(greenRect, new Color(0, 0.5f, 0, 1f));
+
+        var leftBtnRect = new Rect(rect)
+        {
+            x = greenRect.xMin - 15,
+            width = 30,
+        };
+        var rightBtnRect = new Rect(rect)
+        {
+            x = greenRect.xMax - 15,
+            width = 30,
+        };
+
+        var leftTxtRect = new Rect(rect)
+        {
+            x = rect.x,
+            width = 30,
+        };
+        var rightTxtRect = new Rect(rect)
+        {
+            x = rect.xMax - 30,
+            width = 30,
+        };
+
+
+        var isEnable = rightBtnRect.Contains(Event.current.mousePosition) || leftBtnRect.Contains(Event.current.mousePosition);
+        GUI.enabled = !isEnable;
+        if (GUI.enabled)
+        {
+            var input = Mathf.RoundToInt(start * 100) / 100f;
+            var tempStart = EditorGUI.FloatField(leftTxtRect, input, new GUIStyle(GUI.skin.textField) { alignment = TextAnchor.MiddleLeft });
+            var isStart = tempStart != input;
+            if (isStart)
+                start = tempStart;
+            var input2 = Mathf.RoundToInt(end * 100) / 100f;
+            var tempEnd = EditorGUI.FloatField(rightTxtRect, input2, new GUIStyle(GUI.skin.textField) { alignment = TextAnchor.MiddleRight });
+            var isEnd = tempEnd != input2;
+            if (isEnd)
+                end = tempEnd;
+        }
+        else
+        {
+            EditorGUI.FloatField(leftTxtRect, Mathf.RoundToInt(start * 100) / 100f, new GUIStyle(GUI.skin.textField) { alignment = TextAnchor.MiddleLeft });
+            EditorGUI.FloatField(rightTxtRect, Mathf.RoundToInt(end * 100) / 100f, new GUIStyle(GUI.skin.textField) { alignment = TextAnchor.MiddleRight });
+        }
+        GUI.enabled = true;
+
+        GUI.RepeatButton(leftBtnRect, new GUIContent($"{start / (max - min) * 100:0}"));
+        GUI.RepeatButton(rightBtnRect, new GUIContent($"{end / (max - min) * 100:0}"));
+
+
+        if (rightBtnRect.Contains(Event.current.mousePosition))
+        {
+            switch (Event.current.type)
+            {
+                case EventType.MouseDown:
+                    {
+                        Event.current.Use();
+                    }
+                    break;
+                case EventType.MouseDrag:
+                    {
+                        end += Event.current.delta.x / rect.width * (max - min);
+                        //Debug.Log($"        {Event.current.delta}");
+                        Event.current.Use();
+                    }
+                    break;
+                case EventType.MouseUp:
+                    {
+                        Event.current.Use();
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        if (leftBtnRect.Contains(Event.current.mousePosition))
+        {
+            switch (Event.current.type)
+            {
+                case EventType.MouseDown:
+                    {
+                        Event.current.Use();
+                    }
+                    break;
+                case EventType.MouseDrag:
+                    {
+                        start += Event.current.delta.x / rect.width * max;
+                        //Debug.Log($"        {Event.current.delta}");
+                        Event.current.Use();
+                    }
+                    break;
+                case EventType.MouseUp:
+                    {
+                        Event.current.Use();
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }

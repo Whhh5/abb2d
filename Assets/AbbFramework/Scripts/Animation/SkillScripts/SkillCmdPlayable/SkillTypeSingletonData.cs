@@ -12,10 +12,6 @@ public class SkillTypeSingletonData : ISkillTypeData<AttackLinkSkillDataUserData
         m_ArrClip = null;
     }
 
-    public void OnPoolEnable()
-    {
-    }
-
     public void OnPoolInit(AttackLinkSkillDataUserData userData)
     {
         var data = userData.arrParams;
@@ -29,13 +25,5 @@ public class SkillTypeSingletonData : ISkillTypeData<AttackLinkSkillDataUserData
         //atkData.Init(data, data.Length, ref startIndex);
         //_SkillItemInfoList[0] = atkData;
 
-    }
-
-    public void PoolConstructor()
-    {
-    }
-
-    public void PoolRelease()
-    {
     }
 }

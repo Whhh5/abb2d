@@ -23,7 +23,7 @@ static public class EntityUtil
 
     static readonly private Collider[] _TempCollider = new Collider[100];
     static private EntityPhysicsInfo[] _TempEntityID = new EntityPhysicsInfo[100];
-    static public bool PhysicsOverlapSphere1(Vector3 worldPos, float radius, int layer, ref int entityID)
+    static public bool PhysicsOverlapSphere1(Vector3 worldPos, float radius, int layer, out int entityID)
     {
         var count = Physics.OverlapSphereNonAlloc(worldPos, radius, _TempCollider, layer);
         if (count > 0)
@@ -39,6 +39,7 @@ static public class EntityUtil
                 return true;
             }
         }
+        entityID = -1;
         return false;
     }
     static public ref EntityPhysicsInfo[] PhysicsOverlapSphere(out int count, Vector3 worldPos, float radius, int layer)

@@ -24,20 +24,29 @@ public interface ISkillEffectBindingData
     public void Excute(int entityID, int effectID);
 }
 
-public class SkillEffectBindingLocalTransformInfo: ISkillEffectBindingData
+public class SkillEffectBindingLocalTransformInfo : ISkillEffectBindingData
 {
     public float offsetX;
     public float offsetY;
     public float offsetZ;
+
+    public float offsetRotX;
+    public float offsetRotY;
+    public float offsetRotZ;
 
 
     public void Init(int[] data, int arrCount, ref int startIndex)
     {
         var endIndex = arrCount + startIndex;
         var gCount = startIndex >= endIndex ? default : data[startIndex];
-        offsetX = gCount < 1 ? default : data[startIndex] / 100f;
-        offsetY = gCount < 2 ? default : data[startIndex] / 100f;
-        offsetZ = gCount < 3 ? default : data[startIndex] / 100f;
+        offsetX = gCount-- < 1 ? default : data[startIndex] / 100f;
+        offsetY = gCount-- < 1 ? default : data[startIndex] / 100f;
+        offsetZ = gCount-- < 1 ? default : data[startIndex] / 100f;
+
+        offsetRotX = gCount-- < 1 ? default : data[startIndex] / 100f;
+        offsetRotY = gCount-- < 1 ? default : data[startIndex] / 100f;
+        offsetRotZ = gCount-- < 1 ? default : data[startIndex] / 100f;
+
     }
     public void Excute(int entityID, int effectID)
     {
@@ -45,7 +54,12 @@ public class SkillEffectBindingLocalTransformInfo: ISkillEffectBindingData
         var forword = Entity3DMgr.Instance.GetEntityForward(entityID);
         var up = Entity3DMgr.Instance.GetEntityUp(entityID);
         var right = Entity3DMgr.Instance.GetEntityRight(entityID);
-        EffectMgr.Instance.PlayEffectOnce(effectID, enittyPos + right * offsetX + up * offsetY + forword * offsetZ);
+        var pos = enittyPos + right * offsetX + up * offsetY + forword * offsetZ;
+
+        var entityRot = Entity3DMgr.Instance.GetEntityRotation(entityID);
+        var rot = entityRot + new Vector3(offsetRotX, offsetRotY, offsetRotZ);
+
+        EffectMgr.Instance.PlayEffectOnce(effectID, pos, rot);
     }
 }
 
@@ -59,12 +73,16 @@ public class SkillEffectScheduleAction : IEffectParams, ISkillScheduleAction
     public float offsetX;
     public float offsetY;
     public float offsetZ;
+
+    public float offsetRotX;
+    public float offsetRotY;
+    public float offsetRotZ;
+
     public int[] effectParams;
 
 
 
     private EnAtkLinkScheculeType m_ScheduleType = EnAtkLinkScheculeType.None;
-    public bool m_IsEffect = false;
     public ISkillEffectBindingData _SkillEffectBindingData = null;
 
     public void OnPoolDestroy()
@@ -73,7 +91,6 @@ public class SkillEffectScheduleAction : IEffectParams, ISkillScheduleAction
         schedule = -1;
         effectParams = null;
         m_ScheduleType = EnAtkLinkScheculeType.None;
-        m_IsEffect = false;
     }
     public void SetScheduleType(EnAtkLinkScheculeType scheduleType)
     {
@@ -88,14 +105,16 @@ public class SkillEffectScheduleAction : IEffectParams, ISkillScheduleAction
     {
         var endIndex = startIndex + arrCount;
         var gCount = startIndex >= endIndex ? default : data[startIndex++];
-        effectID = gCount < 1 ? default : data[startIndex++];
-        schedule = gCount < 2 ? default : data[startIndex++] / 100f;
-        offsetX = gCount < 3 ? default : data[startIndex++] / 100f;
-        offsetY = gCount < 4 ? default : data[startIndex++] / 100f;
-        offsetZ = gCount < 5 ? default : data[startIndex++] / 100f;
-        traceType = gCount < 6 ? default : (EnEffectTraceType)data[startIndex++];
-        bindingType = gCount < 7 ? default : (EnEffectBindingType)data[startIndex++];
-
+        effectID = gCount-- < 1 ? default : data[startIndex++];
+        schedule = gCount-- < 1 ? default : data[startIndex++] / 100f;
+        offsetX = gCount-- < 1 ? default : data[startIndex++] / 100f;
+        offsetY = gCount-- < 1 ? default : data[startIndex++] / 100f;
+        offsetZ = gCount-- < 1 ? default : data[startIndex++] / 100f;
+        traceType = gCount-- < 1 ? default : (EnEffectTraceType)data[startIndex++];
+        bindingType = gCount-- < 1 ? default : (EnEffectBindingType)data[startIndex++];
+        offsetRotX = gCount-- < 1 ? default : data[startIndex++] / 100f;
+        offsetRotY = gCount-- < 1 ? default : data[startIndex++] / 100f;
+        offsetRotZ = gCount-- < 1 ? default : data[startIndex++] / 100f;
         var paramsCount = startIndex >= endIndex ? default : data[startIndex++];
         effectParams = new int[paramsCount];
         data.CopyTo(startIndex, effectParams, paramsCount);
@@ -104,8 +123,7 @@ public class SkillEffectScheduleAction : IEffectParams, ISkillScheduleAction
 
     public void Reset()
     {
-        m_IsEffect
-            = false;
+
     }
 
     public int GetEffectID()
@@ -118,33 +136,25 @@ public class SkillEffectScheduleAction : IEffectParams, ISkillScheduleAction
         return effectParams;
     }
 
-    public void Enter(int entityID)
+    public void ScheduleEvent(int entityID, IClassPoolUserData userData)
     {
         var enittyPos = Entity3DMgr.Instance.GetEntityWorldPos(entityID);
         var forword = Entity3DMgr.Instance.GetEntityForward(entityID);
         var up = Entity3DMgr.Instance.GetEntityUp(entityID);
         var right = Entity3DMgr.Instance.GetEntityRight(entityID);
-        EffectMgr.Instance.PlayEffectOnce(effectID, enittyPos + right * offsetX + up * offsetY + forword * offsetZ);
+        var pos = enittyPos + right * offsetX + up * offsetY + forword * offsetZ;
+
+        var entityRot = Entity3DMgr.Instance.GetEntityRotation(entityID);
+        var rot = entityRot + new Vector3(offsetRotX, offsetRotY, offsetRotZ);
+        EffectMgr.Instance.PlayEffectOnce(effectID, pos, rot);
 
     }
-
-    public void Exit()
+    public void GetEventList(ref List<SkillItemEventInfo> eventList)
     {
-
+        var eventData = ClassPoolMgr.Instance.Pull<SkillItemEventInfo>();
+        eventData.schedule = schedule;
+        eventData.onEvent = ScheduleEvent;
+        eventList.Add(eventData);
     }
 
-    public bool GetIsEffect()
-    {
-        return m_IsEffect;
-    }
-
-    public void SetIsEffect(bool isEffect)
-    {
-        m_IsEffect = isEffect;
-    }
-
-    public float GetEnterSchedule()
-    {
-        return schedule;
-    }
 }

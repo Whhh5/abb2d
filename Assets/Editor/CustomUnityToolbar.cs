@@ -159,6 +159,10 @@ public static class CustomUnityToolbar
     private static readonly string _BuffEnumName = "EnBuff";
     private static readonly string _BuffTypeEnumName = "EnBuffType";
 
+    private static string GetBuffClassName(string buffName)
+    {
+        return $"Entity{buffName}BuffData";
+    }
     private static void UpdateBuff()
     {
         var unityPath = ABBUtil.GetUnityRootPath();
@@ -171,6 +175,8 @@ public static class CustomUnityToolbar
         CreateBuffUtil(in fileRootPath);
         CreateBuffTypeEnum(in fileRootPath);
         CreateBuffEnum(in fileRootPath);
+
+        AssetDatabase.Refresh();
     }
     private static void CreateBuffTypeEnum(in string rootPath)
     {
@@ -230,7 +236,8 @@ public static class CustomUnityToolbar
         for (int i = 0; i < buffCount; i++)
         {
             var buffCfg = ExcelUtil.GetCfgByIndex<BuffCfg>(i);
-            content.AppendLine($"\t\t\t{_BuffEnumName}.{buffCfg.strEnumNameEditor} => {typeof(ClassPoolMgr)}.Instance.Pull<{buffCfg.strClassNameEditor}>(data),");
+            var className = GetBuffClassName(buffCfg.strEnumNameEditor);
+            content.AppendLine($"\t\t\t{_BuffEnumName}.{buffCfg.strEnumNameEditor} => {typeof(ClassPoolMgr)}.Instance.Pull<{className}>(data),");
         }
         content.AppendLine($"\t\t\t_ => default,");
         content.AppendLine($"\t\t}};");
@@ -248,20 +255,16 @@ public static class CustomUnityToolbar
         for (int i = 0; i < count; i++)
         {
             var buffCfg = ExcelUtil.GetCfgByIndex<BuffCfg>(i);
-            if (string.IsNullOrWhiteSpace(buffCfg.strClassNameEditor))
-                throw new Exception($"buff id= {buffCfg.nBuffID}, className == null");
-            var filePath = Path.Combine(rootPath, $"{buffCfg.strClassNameEditor}.cs");
+            var className = GetBuffClassName(buffCfg.strEnumNameEditor);
+            var filePath = Path.Combine(rootPath, $"{className}.cs");
             if (File.Exists(filePath))
                 continue;
-            //File.Create(filePath);
-            //var file = File.Create(filePath);
             var fileContent = new StringBuilder();
             fileContent.AppendLine("using UnityEngine;");
-            fileContent.AppendLine($"public class {buffCfg.strClassNameEditor} : EntityBuffData");
+            fileContent.AppendLine($"public class {className} : EntityBuffData");
             fileContent.AppendLine("{");
             fileContent.AppendLine("\t");
             fileContent.AppendLine("}");
-            //UnityEngine.Debug.Log($"{filePath},  {fileContent.ToString()}");
             File.WriteAllText(filePath, fileContent.ToString(), Encoding.UTF8);
         }
     }

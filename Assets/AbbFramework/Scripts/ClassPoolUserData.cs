@@ -98,6 +98,20 @@ public class CommonArrayUserData : IClassPoolUserData
         value = null;
     }
 }
+
+public class EntityBuffExposion2UserData : IEntityBuffParams
+{
+    //public 
+    public void OnPoolDestroy()
+    {
+        
+    }
+
+    public void OnPoolInit(CommonArrayUserData userData)
+    {
+        
+    }
+}
 public class EntityBuffTimeDefaultInfo : IEntityBuffParams, IBuffTimeInfo
 {
     private float _Time = -1;

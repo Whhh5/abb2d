@@ -10,8 +10,6 @@ public class BuffCfg : ICfg
 	[Newtonsoft.Json.JsonProperty()] public readonly System.String strDescEditor;
 	// 
 	[Newtonsoft.Json.JsonProperty()] public readonly System.String strEnumNameEditor;
-	// 
-	[Newtonsoft.Json.JsonProperty()] public readonly System.String strClassNameEditor;
 	public System.Int32 GetID()
 	{
 		return nBuffID;

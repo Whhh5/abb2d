@@ -1,11 +1,8 @@
 ﻿using System;
 
 
-public interface ISkillTypeData : IClassPool
-{
-    
-}
-public interface ISkillTypeData<T> : ISkillTypeData, IClassPool<T>
+
+public interface ISkillTypeData<T> : IClassPoolInit<T>
     where T: class, IClassPoolUserData
 {
 

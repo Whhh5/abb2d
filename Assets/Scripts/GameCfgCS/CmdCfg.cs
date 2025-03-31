@@ -18,6 +18,8 @@ public class CmdCfg : ICfg
 	[Newtonsoft.Json.JsonProperty()] public readonly System.Int32[] arrLayer;
 	// 
 	[Newtonsoft.Json.JsonProperty()] public readonly System.Int32 bIdleLayerPlay;
+	// 
+	[Newtonsoft.Json.JsonProperty()] public readonly System.Int32 bIsIK;
 	public System.Int32 GetID()
 	{
 		return nCmdID;

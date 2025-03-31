@@ -14,6 +14,12 @@ static public partial class BuffUtil
             EnBuff.Poison => ClassPoolMgr.Instance.Pull<EntityBuffTimeDefaultInfo>(userData),
             EnBuff.PoisonSub => ClassPoolMgr.Instance.Pull<EntityBuffTimeDefaultInfo>(userData),
             EnBuff.Expiosion => ClassPoolMgr.Instance.Pull<EntityBuffTimeDefaultInfo>(userData),
+            EnBuff.Water => ClassPoolMgr.Instance.Pull<EntityBuffTimeDefaultInfo>(userData),
+            EnBuff.WaterLoopHit => ClassPoolMgr.Instance.Pull<EntityBuffTimeDefaultInfo>(userData),
+            EnBuff.Electrified => ClassPoolMgr.Instance.Pull<EntityBuffTimeDefaultInfo>(userData),
+            EnBuff.ElectrifiedLoopHit => ClassPoolMgr.Instance.Pull<EntityBuffTimeDefaultInfo>(userData),
+            EnBuff.AttackEffect => ClassPoolMgr.Instance.Pull<EntityBuffTimeDefaultInfo>(userData),
+            EnBuff.AttackEffectLoop => ClassPoolMgr.Instance.Pull<EntityBuffTimeDefaultInfo>(userData),
             _ => null,
         };
         return result;

@@ -27,7 +27,7 @@ public class EffectCfgEditorItem : ICfgEditorItem
     private void UpdateTempEffectCfg()
     {
         _TempEffectCfg = ExcelUtil.CreateTypeInstance<EffectCfg>();
-        var effectID = ExcelUtil.GetNextIndex<ClipCfg>();
+        var effectID = ExcelUtil.GetNextIndex<EffectCfg>();
         ExcelUtil.SetCfgValue(_TempEffectCfg, nameof(_TempEffectCfg.nEffectID), effectID);
     }
     public void Draw()

@@ -5,27 +5,27 @@ using UnityEngine;
 
 public class SkillBuffScheduleAction : ISkillScheduleAction
 {
-    public float addSchedule;
+    public float startSchedule;
+    public float endSchedule;
     public int buffID;
     public int[] arrBuffParams;
     public IEntityBuffParams _BuffDataParams;
 
     private EnAtkLinkScheculeType m_ScheduleType = EnAtkLinkScheculeType.None;
 
-    private bool m_IsEffect = false;
     private int _AddBuffKey = -1;
     public void OnPoolDestroy()
     {
-        if (_AddBuffKey > 0)
-            BuffMgr.Instance.RemoveEntityBuff(_AddBuffKey);
+        RemoveEntityBuff();
         BuffUtil.PushConvertBuffData(_BuffDataParams);
-        _AddBuffKey = -1;
-        addSchedule = -1;
+        startSchedule
+            = endSchedule
+            = _AddBuffKey
+            = -1;
         buffID = -1;
         arrBuffParams = null;
         _BuffDataParams = null;
         m_ScheduleType = EnAtkLinkScheculeType.None;
-        m_IsEffect = false;
     }
 
     public void SetScheduleType(EnAtkLinkScheculeType scheduleType)
@@ -41,8 +41,9 @@ public class SkillBuffScheduleAction : ISkillScheduleAction
     {
         var endIndex = arrCount + startIndex;
         var gCount = startIndex >= endIndex ? default : data[startIndex++];
-        addSchedule = gCount-- < 0 ? default : data[startIndex++] / 100f;
+        startSchedule = gCount-- < 0 ? default : data[startIndex++] / 100f;
         buffID = gCount-- < 0 ? default : data[startIndex++];
+        endSchedule = gCount-- < 0 ? default : data[startIndex++] / 100f;
 
         var arrParamsCount = startIndex >= endIndex ? default : data[startIndex++];
         arrBuffParams = data.Copy(startIndex, arrParamsCount);
@@ -50,34 +51,43 @@ public class SkillBuffScheduleAction : ISkillScheduleAction
 
         _BuffDataParams = BuffUtil.ConvertBuffData((EnBuff)buffID, arrBuffParams);
     }
-    public void Enter(int entityID)
+
+    public void ScheduleEvent(int entityID, IClassPoolUserData userData)
     {
         var addKey = BuffMgr.Instance.AddEntityBuff(entityID, entityID, (EnBuff)buffID, _BuffDataParams);
         if (BuffMgr.Instance.GetBuffType(addKey) != EnBuffType.Time)
             _AddBuffKey = addKey;
 
     }
-    public void Exit()
+    public void ScheduleEvent2(int entityID, IClassPoolUserData userData)
     {
-
+        RemoveEntityBuff();
     }
-
     public void Reset()
     {
-        m_IsEffect = false;
+        RemoveEntityBuff();
     }
-    public bool GetIsEffect()
+    private void RemoveEntityBuff()
     {
-        return m_IsEffect;
-    }
-    public void SetIsEffect(bool isEffect)
-    {
-        m_IsEffect = isEffect;
+        if (_AddBuffKey <= 0)
+            return;
+        BuffMgr.Instance.RemoveEntityBuff(_AddBuffKey);
+        _AddBuffKey = -1;
     }
 
-    public float GetEnterSchedule()
+    public void GetEventList(ref List<SkillItemEventInfo> eventList)
     {
-        return addSchedule;
-    }
+        var eventData = ClassPoolMgr.Instance.Pull<SkillItemEventInfo>();
+        eventData.schedule = startSchedule;
+        eventData.onEvent = ScheduleEvent;
+        eventList.Add(eventData);
 
+        if (endSchedule > 0)
+        {
+            var eventData2 = ClassPoolMgr.Instance.Pull<SkillItemEventInfo>();
+            eventData2.schedule = endSchedule;
+            eventData2.onEvent = ScheduleEvent2;
+            eventList.Add(eventData2);
+        }
+    }
 }

@@ -75,17 +75,5 @@ public class SkillTypeSelectData : ISkillTypeData<AttackLinkSkillDataUserData>
         return null;
     }
 
-
-    public void OnPoolEnable()
-    {
-    }
-
-    public void PoolConstructor()
-    {
-    }
-
-    public void PoolRelease()
-    {
-    }
 }
 

@@ -96,4 +96,14 @@ public class SkillPhysicsScheduleActionEditor : SkillPhysicsScheduleAction, ISki
         _BuffEditorData?.GetStringData(ref data);
         data.Insert(count, data.Count - count);
     }
+
+    public float GetEnterSchedule()
+    {
+        return atkSchedule;
+    }
+
+    public void Sumilation(Rect rect, float itemStartTime, float itemEndTime)
+    {
+        
+    }
 }

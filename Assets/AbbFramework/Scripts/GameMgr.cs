@@ -12,10 +12,10 @@ public class GameMgr : Singleton<GameMgr>
         return m_GameSatus == gameStatus;
     }
 
-    public async void EnterLevel(int level)
+    public async void EnterLevel(int level, int characterID)
     {
         //var worldPos = new Vector3(-82.4530029f, 1.64600003f, 0);
-        var playerEntityID = CreatePlayerEntity(1, Vector3.up * 3);
+        var playerEntityID = CreatePlayerEntity(characterID, Vector3.up * 3);
         Entity3DMgr.Instance.SetEntityControllerType(playerEntityID, EnEntityControllerType.Manual);
 
          await CreateMonsterColony();

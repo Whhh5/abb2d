@@ -35,7 +35,7 @@ public class ExcelUtil
         return cfg != null;
     }
     public static TCfg GetCfg<TCfg>(int id)
-        where TCfg:ICfg
+        where TCfg : ICfg
     {
         var list = ReadEditorCfgList<TCfg>();
         var item = list.Find(item => item.GetID() == id);
@@ -81,7 +81,7 @@ public class ExcelUtil
     }
 
     public static int GetNextIndex<TCfg>()
-        where TCfg :ICfg
+        where TCfg : ICfg
     {
         var count = ExcelUtil.GetCfgCount<TCfg>();
         for (int i = 0; i < count; i++)
@@ -121,7 +121,7 @@ public class ExcelUtil
                 var field = fields[j];
                 if (!skillCatalog.field2ColList.TryGetValue(field.Name, out var col))
                     goto next;
-                var excelStr = workSheet.GetValue<string>(i, col);
+                var excelStr = workSheet.GetValue<string>(i, col) ?? "";
                 if (!(field.FieldType.IsValueType && string.IsNullOrWhiteSpace(excelStr)))
                 {
                     var jsonStr = field.FieldType == typeof(string) ? excelStr : JsonConvert.DeserializeObject(excelStr, field.FieldType);

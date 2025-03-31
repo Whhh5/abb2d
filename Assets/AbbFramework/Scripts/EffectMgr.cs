@@ -41,16 +41,24 @@ public class EffectMgr : Singleton<EffectMgr>
             return false;
         return true;
     }
+
+    public int PlayEffectOnce(int effectID, Vector3 worldPos, Vector3 rot)
+    {
+        var entityID = PlayEffect(effectID);
+        var entityData = EntityMgr.Instance.GetEntityData<EffectEntityData>(entityID);
+        entityData.SetPosition(worldPos);
+        entityData.SetLocalRotation(rot);
+        var time = entityData.GetMaxTime();
+        AddDelayDesytroyList(entityID, time);
+        return entityID;
+    }
     public int PlayEffectOnce(int effectID, Vector3 worldPos)
     {
         var entityID = PlayEffect(effectID);
         var entityData = EntityMgr.Instance.GetEntityData<EffectEntityData>(entityID);
         entityData.SetPosition(worldPos);
-
         var time = entityData.GetMaxTime();
         AddDelayDesytroyList(entityID, time);
-
-
         return entityID;
     }
     public int PlayEffect(int effectID, Vector3 worldPos)

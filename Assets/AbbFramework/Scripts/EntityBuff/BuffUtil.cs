@@ -16,6 +16,12 @@ public partial class BuffUtil
 			EnBuff.PlayerSkill2 => ClassPoolMgr.Instance.Pull<EntityPlayerSkill2BuffData>(data),
 			EnBuff.Expiosion => ClassPoolMgr.Instance.Pull<EntityExpiosionBuffData>(data),
 			EnBuff.Expiosion2 => ClassPoolMgr.Instance.Pull<EntityExpiosion2BuffData>(data),
+			EnBuff.AttackEffect => ClassPoolMgr.Instance.Pull<EntityAttackEffectBuffData>(data),
+			EnBuff.Water => ClassPoolMgr.Instance.Pull<EntityWaterBuffData>(data),
+			EnBuff.Electrified => ClassPoolMgr.Instance.Pull<EntityElectrifiedBuffData>(data),
+			EnBuff.WaterLoopHit => ClassPoolMgr.Instance.Pull<EntityWaterLoopHitBuffData>(data),
+			EnBuff.ElectrifiedLoopHit => ClassPoolMgr.Instance.Pull<EntityElectrifiedLoopHitBuffData>(data),
+			EnBuff.AttackEffectLoop => ClassPoolMgr.Instance.Pull<EntityAttackEffectLoopBuffData>(data),
 			_ => default,
 		};
 	}

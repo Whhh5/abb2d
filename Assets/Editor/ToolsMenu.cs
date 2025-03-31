@@ -20,31 +20,50 @@ public class ToolsMenu
         var widnow = EditorWindow.GetWindow<CfgEditorWindow>();
         widnow.Show();
     }
-    [UnityEditor.MenuItem("Tools/CreateWeakObjectSO")]
-    public static void ExecuteCreateWeakObjectSO()
+    [UnityEditor.MenuItem("Tools/Mat", priority = 301)]
+    public static void ExecuteMatToUrp()
     {
-        //var dir = Path.Combine("Assets", "Abbresources", "SO");
-        //var soName = $"WeakObjectSO.asset";
-        //var folderPath = "Assets/Abbresources/EcsPrefab";
-
-        //var newSO = ScriptableObject.CreateInstance<CreateWeakObjectSO>();
-
-        //var folderGuids = AssetDatabase.FindAssets("", new[] { folderPath });
-        //for (int i = 0; i < folderGuids.Length; i++)
-        //{
-        //    var assPath = AssetDatabase.GUIDToAssetPath(folderGuids[i]);
-        //    var ass = AssetDatabase.LoadAssetAtPath<Object>(assPath);
-        //    var assName = ass.name;
-        //    var weakObjectID = UntypedWeakReferenceId.CreateFromObjectInstance(ass);
-
-        //    newSO.AddEcsObject(assName, ref weakObjectID);
-        //}
-
-        //var path = Path.Combine(dir, soName);
-        //AssetDatabase.CreateAsset(newSO, path);
-
-        //var guid = AssetDatabase.GUIDFromAssetPath(path);
-        //AssetDatabase.SaveAssetIfDirty(guid);
+        var shader = Shader.Find("Universal Render Pipeline/Lit");
+        if (shader == null)
+            return;
+        for (int i = 0; i < Selection.objects.Length; i++)
+        {
+            var obj = Selection.objects[i];
+            var coms = obj as Material;
+            if (coms == null)
+                continue;
+            if (coms.shader.name != $"Standard")
+                continue;
+            var mainTxt = coms.mainTexture;
+            coms.shader = shader;
+            coms.mainTexture = mainTxt;
+        }
+    }
+    [UnityEditor.MenuItem("Tools/Mat Floder", priority = 302)] 
+    public static void ExecuteFloderMatToUrp()
+    {
+        var shader = Shader.Find("Universal Render Pipeline/Lit");
+        if (shader == null)
+            return;
+        var selectedObjects = Selection.GetFiltered(typeof(Object), SelectionMode.Assets);
+        foreach (Object selectedObject in selectedObjects)
+        {
+            // 获取选中对象的路径
+            string path = AssetDatabase.GetAssetPath(selectedObject);
+            if (!AssetDatabase.IsValidFolder(path))
+                return;
+            var mats = AssetDatabase.FindAssets("t:material", new string[] { path });
+            for (int i = 0; i < mats.Length; i++)
+            {
+                var guid = AssetDatabase.GUIDToAssetPath(mats[i]);
+                var coms = AssetDatabase.LoadAssetAtPath<Material>(guid);
+                if (coms.shader.name != $"Standard")
+                    continue;
+                var mainTxt = coms.mainTexture;
+                coms.shader = shader;
+                coms.mainTexture = mainTxt;
+            }
+        }
     }
     [MenuItem("Tools/Clean Editor Memory", priority = 201)]
     public static void CleanEditorMemory()

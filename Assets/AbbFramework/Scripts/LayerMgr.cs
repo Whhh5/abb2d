@@ -3,6 +3,7 @@ using UnityEngine;
 
 public enum EnGameLayer
 {
+    None = 0,
     Entity,
     Player = 6,
     Monster = 7,

@@ -65,6 +65,7 @@ public class Entity3DMgr : Singleton<Entity3DMgr>
     }
     public override EnManagerFuncType FuncType => base.FuncType | EnManagerFuncType.Update;
     private Dictionary<int, Entity3DData> m_ID2Entity3DData = new();
+    private Dictionary<EnGameLayer, HashSet<int>> _Layer2EntityID = new();
 
     private Dictionary<EnEntityControllerType, IEntityController> _ControllerDic = new()
     {
@@ -114,7 +115,12 @@ public class Entity3DMgr : Singleton<Entity3DMgr>
     }
 
 
-
+    public bool TryGetEntitysByLayer(EnGameLayer layer, out HashSet<int> entityIDList)
+    {
+        if (!_Layer2EntityID.TryGetValue(layer, out entityIDList))
+            return false;
+        return true;
+    }
 
 
     public T GetMonsterEntityData<T>(int entityID)
@@ -136,6 +142,20 @@ public class Entity3DMgr : Singleton<Entity3DMgr>
         lifeCom.SetCurHealthValue(1000);
         m_ID2Entity3DData.Add(entityID, entityData);
         ClassPoolMgr.Instance.Push(userData);
+
+
+        var monsterCfg = GameSchedule.Instance.GetMonsterCfg0(monsterID);
+        for (int i = 0; i < monsterCfg.arrLayer.Length; i++)
+        {
+            var layer = (EnGameLayer)monsterCfg.arrLayer[i];
+            if(!_Layer2EntityID.TryGetValue(layer,out var entityList))
+            {
+                entityList = new();
+                _Layer2EntityID.Add(layer, entityList);
+            }
+            entityList.Add(entityID);
+        }
+
         return entityID;
     }
     public int CreateEntityData<T>()
@@ -154,6 +174,26 @@ public class Entity3DMgr : Singleton<Entity3DMgr>
     }
     public void RecycleEntityData(int entityID)
     {
+        if (!m_ID2Entity3DData.TryGetValue(entityID, out var entityData))
+            return;
+
+        if (entityData is MonsterBaseData monsterData)
+        {
+            var monsterID = monsterData.GetMonsterID();
+            var monsterCfg = GameSchedule.Instance.GetMonsterCfg0(monsterID);
+            for (int i = 0; i < monsterCfg.arrLayer.Length; i++)
+            {
+                var layer = (EnGameLayer)monsterCfg.arrLayer[i];
+                if (!_Layer2EntityID.TryGetValue(layer, out var entityList))
+                    continue;
+                if (!entityList.Remove(entityID))
+                    continue;
+                if (entityList.Count > 0)
+                    continue;
+                _Layer2EntityID.Remove(layer);
+            }
+        }
+
         m_ID2Entity3DData.Remove(entityID);
         EntityMgr.Instance.RecycleEntityData(entityID);
     }
@@ -264,6 +304,13 @@ public class Entity3DMgr : Singleton<Entity3DMgr>
         var animCom = entity.GetEntityCom<EntityAnimComData>();
         animCom.AddCmd(target);
     }
+    public bool IsAddEntityCmd(int entityID, EnEntityCmd target)
+    {
+        var entity = GetEntity3DData(entityID);
+        var animCom = entity.GetEntityCom<EntityAnimComData>();
+        var result = animCom.IsAddCmd(target);
+        return result;
+    }
 
     public void RemoveEntityCmd(int entityID, EnEntityCmd target)
     {
@@ -283,6 +330,20 @@ public class Entity3DMgr : Singleton<Entity3DMgr>
         var animCom = entity.GetEntityCom<EntityAnimComData>();
         var cmd = animCom.GetCurCmd();
         return cmd;
+    }
+    public bool ContainsEntityCmd(int entityID, EnEntityCmd cmd)
+    {
+        var entity = GetEntity3DData(entityID);
+        var animCom = entity.GetEntityCom<EntityAnimComData>();
+        var contains = animCom.ContainsCmd(cmd);
+        return contains;
+    }
+    public bool GetEntityCmdIsEnd(int entityID, EnEntityCmd cmd)
+    {
+        var entity = GetEntity3DData(entityID);
+        var animCom = entity.GetEntityCom<EntityAnimComData>();
+        var isEnd = animCom.CmdIsEnd(cmd);
+        return isEnd;
     }
     public float GetEntityVerticalVelocity(int entityID)
     {

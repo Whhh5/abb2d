@@ -61,6 +61,8 @@ public abstract class EffectEntity : GameEntity<EffectEntityData>
     {
         base.Awake();
         UpdateMaxTime();
+
+        //_MainParticleSystem.Simulate(0, true, false);
     }
 
     public override void LoadCompeletion()
@@ -73,9 +75,9 @@ public abstract class EffectEntity : GameEntity<EffectEntityData>
     public void SetIsPlaying()
     {
         if (_GameEntityData.IsPlaying)
-            _MainParticleSystem.Play();
+            Play();
         else
-            _MainParticleSystem.Stop();
+            Stop();
     }
 
     public void UpdateMaxTime()
@@ -87,7 +89,18 @@ public abstract class EffectEntity : GameEntity<EffectEntityData>
             _SinletonMaxTime = Mathf.Max(_SinletonMaxTime, GetParticleTime(item));
         }
     }
-
+    public void Play()
+    {
+        _MainParticleSystem.Play();
+    }
+    public void Stop()
+    {
+        _MainParticleSystem.Stop();
+    }
+    public void SetSimulationTime(float time)
+    {
+        _MainParticleSystem.Simulate(time, true, true);
+    }
     public float GetSingletonMaxLifeTime()
     {
         return _SinletonMaxTime;

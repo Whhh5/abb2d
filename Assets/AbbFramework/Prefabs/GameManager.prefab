@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6432249979216190106}
   m_Layer: 5
-  m_Name: m_UIRootRect
+  m_Name: _UIRootRect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -513,7 +513,7 @@ GameObject:
   - component: {fileID: 7547021051262890825}
   - component: {fileID: 8597495716636221071}
   m_Layer: 5
-  m_Name: m_MainCanvas
+  m_Name: _MainCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -631,7 +631,7 @@ Transform:
   m_GameObject: {fileID: 6648520262513644685}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -74.35, y: 4.6, z: -10}
+  m_LocalPosition: {x: 0.0007858691, y: 0.017503448, z: -19.864586}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

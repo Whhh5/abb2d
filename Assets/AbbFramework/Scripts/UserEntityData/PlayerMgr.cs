@@ -23,12 +23,14 @@ public class PlayerMgr : Singleton<PlayerMgr>
         {
             EnKeyCodeControler.Player => ClassPoolMgr.Instance.Pull<EntityKeyCodeController>(),
             EnKeyCodeControler.Monster0 => ClassPoolMgr.Instance.Pull<EntityKeyCodeController>(),
-            _ => null
+            _ => ClassPoolMgr.Instance.Pull<EntityKeyCodeController>(),
         };
     }
 
     public void SetControllerPlayerID(int entityID)
     {
+        if (!EntityUtil.IsValid(entityID))
+            return;
         if (_PlayerEntityID == entityID)
             return;
         if (_PlayerEntityID > 0)

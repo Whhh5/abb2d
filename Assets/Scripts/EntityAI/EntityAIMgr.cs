@@ -11,6 +11,7 @@ public class EntityAIMgr : Singleton<EntityAIMgr>
         RangeMove = 1,
         Idle = 2,
         MonsterBattle,
+        Pastor,
     }
     public class EntityAIInfo : IClassPoolDestroy
     {
@@ -120,6 +121,7 @@ public class EntityAIMgr : Singleton<EntityAIMgr>
             EnAIModuleType.RangeMove => ClassPoolMgr.Instance.Pull<AIRandomMoveModule>(userData),
             EnAIModuleType.Idle => ClassPoolMgr.Instance.Pull<AIIdleModule>(userData),
             EnAIModuleType.MonsterBattle => ClassPoolMgr.Instance.Pull<AIMonsterBattleModule>(userData),
+            EnAIModuleType.Pastor => ClassPoolMgr.Instance.Pull<AIPastorModule>(userData),
             _ => null
         };
     }

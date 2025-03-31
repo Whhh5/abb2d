@@ -36,4 +36,13 @@ public class SkillBehaviourScheduleActionEditor : SkillBehaviourScheduleAction, 
         _SkillBehaviourEditor.GetStringData(ref data);
         data.Insert(index, data.Count - index);
     }
+    public float GetEnterSchedule()
+    {
+        return schedule;
+    }
+
+    public void Sumilation(Rect rect, float itemStartTime, float itemEndTime)
+    {
+        
+    }
 }

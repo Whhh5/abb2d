@@ -33,7 +33,7 @@ public class MonsterControllerCfgEditorItem : ICfgEditorItem
     private void UpdateTempMonsterController()
     {
         _TempCfg = ExcelUtil.CreateTypeInstance<MonsterControllerCfg>();
-        var id = ExcelUtil.GetNextIndex<ClipCfg>();
+        var id = ExcelUtil.GetNextIndex<MonsterControllerCfg>();
         ExcelUtil.SetCfgValue(_TempCfg, nameof(_TempCfg.nControllerID), id);
     }
 

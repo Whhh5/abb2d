@@ -30,7 +30,7 @@ public class SkillTypeSingletonDataEditor : SkillTypeSingletonData, ISkillTypeEd
             {
                 var index = i;
                 var clipID = m_ClipList[index];
-                EditorUtil.DrawClipID(clipID, value => m_ClipList[index] = value);
+                EditorUtil.DrawCfgField<ClipCfg>(clipID, value => m_ClipList[index] = value, 200);
             }
         }
         EditorGUILayout.EndVertical();

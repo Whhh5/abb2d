@@ -25,6 +25,10 @@ public enum EnEntityCmd
 
     PlayerBuff,
     PlayerWalk,
+    PlayerDown,//战士大地技能,
+    PastorWaterBuff,
+    PastorEcliBuff,
+    PastorAttackBuff,
 }
 public enum EnEntityCmdLevel
 {
@@ -129,6 +133,23 @@ public sealed class EntityAnimComData : Entity3DComDataGO<IEntityAnimCom>, IUpda
     public EnEntityCmd GetCurCmd()
     {
         return _CurCmdList[^1];
+    }
+    public bool ContainsCmd(EnEntityCmd cmd)
+    {
+        var contains = m_CmdAdapterDic.ContainsKey(cmd);
+        return contains;
+    }
+    public bool CmdIsEnd(EnEntityCmd cmd)
+    {
+        if (!m_CmdAdapterDic.TryGetValue(cmd, out var cmdAdapterList))
+            return true;
+        foreach (var adapter in cmdAdapterList)
+        {
+            //adapter.NextAnimLevelComdition
+            if (!adapter.IsPlayEnd())
+                return false;
+        }
+        return true;
     }
     public void RemoveCmd(EnEntityCmd cmd)
     {

@@ -60,7 +60,18 @@ public struct AnimJob : IAnimationJob
         stream.angularVelocity = Vector3.Lerp(stream1.angularVelocity, stream2.angularVelocity, weight);
     }
 }
-public abstract class PlayableAdapter : IClassPool<PlayableAdapterUserData>
+
+public interface IPlayableAdapter
+{
+    public PlayableGraphAdapter GetGraph();
+    public void DisconnectRootAdapter(int inputPort = GlobalConfig.Int0);
+    public void ConnectRootAdapter(Playable playable);
+    public void ConnectRootAdapter(int inputPort, Playable playable, int sourceOutput = GlobalConfig.Int0, float weight = GlobalConfig.Float1);
+    public int AddConnectRootAdapter(Playable playable, int sourceOutput = GlobalConfig.Int0, float weight = GlobalConfig.Float1);
+    public float GetPlaySchedule01();
+    public float GetPlaySchedule();
+}
+public abstract class PlayableAdapter : IPlayableAdapter, IClassPool<PlayableAdapterUserData>
 {
     public static T Create<T>(PlayableGraphAdapter graph)
         where T : PlayableAdapter, new()
@@ -127,19 +138,23 @@ public abstract class PlayableAdapter : IClassPool<PlayableAdapterUserData>
     {
         return this;
     }
-    protected void DisconnectRootAdapter(int inputPort = GlobalConfig.Int0)
+    public PlayableGraphAdapter GetGraph()
+    {
+        return m_Graph;
+    }
+    public void DisconnectRootAdapter(int inputPort = GlobalConfig.Int0)
     {
         m_MainPlayable.DisconnectInput(inputPort);
     }
-    protected void ConnectRootAdapter(Playable playable)
+    public void ConnectRootAdapter(Playable playable)
     {
         ConnectRootAdapter(GlobalConfig.Int0, playable);
     }
-    protected void ConnectRootAdapter(int inputPort, Playable playable, int sourceOutput = GlobalConfig.Int0, float weight = GlobalConfig.Float1)
+    public void ConnectRootAdapter(int inputPort, Playable playable, int sourceOutput = GlobalConfig.Int0, float weight = GlobalConfig.Float1)
     {
         m_MainPlayable.ConnectInput(inputPort, playable, sourceOutput, weight);
     }
-    protected int AddConnectRootAdapter(Playable playable, int sourceOutput = GlobalConfig.Int0, float weight = GlobalConfig.Float1)
+    public int AddConnectRootAdapter(Playable playable, int sourceOutput = GlobalConfig.Int0, float weight = GlobalConfig.Float1)
     {
         var port = m_MainPlayable.AddInput(playable, sourceOutput, weight);
         return port;

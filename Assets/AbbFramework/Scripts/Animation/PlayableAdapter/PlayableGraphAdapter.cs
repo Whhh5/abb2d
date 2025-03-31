@@ -269,6 +269,14 @@ public class PlayableGraphAdapter : IClassPool<PlayableGraphAdapterUserData>, IU
 
     private void UpdateLeftFootIK(ref FootIKInfo info)
     {
+        var curCmd = Entity3DMgr.Instance.GetEntityCurCmd(m_EntityID);
+        var cmdCfg = GameSchedule.Instance.GetCmdCfg0((int)curCmd);
+        if (cmdCfg.bIsIK <= 0)
+        {
+            info.weight = 0;
+            return;
+        }
+
         var legDir = info.direction.normalized;
         var leftPos = info.lastWorldPos;
         var startPos = leftPos + -legDir * 1;

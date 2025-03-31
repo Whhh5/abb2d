@@ -25,4 +25,16 @@ public enum EnBuff
 	Expiosion = 11,
 	[EditorFieldNameAttribute("大型爆炸")]
 	Expiosion2 = 12,
+	[EditorFieldNameAttribute("角色特效buff")]
+	AttackEffect = 13,
+	[EditorFieldNameAttribute("水")]
+	Water = 14,
+	[EditorFieldNameAttribute("感电")]
+	Electrified = 15,
+	[EditorFieldNameAttribute("水循环")]
+	WaterLoopHit = 16,
+	[EditorFieldNameAttribute("感电循环")]
+	ElectrifiedLoopHit = 17,
+	[EditorFieldNameAttribute("角色特效buffloop")]
+	AttackEffectLoop = 18,
 }

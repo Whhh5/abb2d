@@ -11,6 +11,8 @@ public class MonsterCfg : ICfg
 	// 
 	[Newtonsoft.Json.JsonProperty()] public readonly System.Int32 nAssetCfgID;
 	// 
+	[Newtonsoft.Json.JsonProperty()] public readonly System.Int32[] arrLayer;
+	// 
 	[Newtonsoft.Json.JsonProperty()] public readonly System.Int32[] arrEnemyLayer;
 	// 
 	[Newtonsoft.Json.JsonProperty()] public readonly System.Int32[] arrFriendLayer;

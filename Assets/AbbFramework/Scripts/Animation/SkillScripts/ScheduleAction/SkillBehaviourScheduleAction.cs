@@ -1,6 +1,5 @@
 ﻿using System;
-
-
+using System.Collections.Generic;
 
 public enum EnSkillBehaviourType
 {
@@ -16,14 +15,12 @@ public class SkillBehaviourScheduleAction : ISkillScheduleAction
     //public int[] arrParams;
     protected ISkillBehaviour _SkillBehaviour;
 
-    private bool m_IsEffect = false;
     private EnAtkLinkScheculeType m_ScheduleType = EnAtkLinkScheculeType.None;
     public void OnPoolDestroy()
     {
         SkillFactory.DestroySkillBehaviour(ref _SkillBehaviour);
         //arrParams = null;
         m_ScheduleType = EnAtkLinkScheculeType.None;
-        m_IsEffect = false;
     }
 
     public void Init(int[] data, int arrCount, ref int startIndex)
@@ -44,7 +41,16 @@ public class SkillBehaviourScheduleAction : ISkillScheduleAction
         ClassPoolMgr.Instance.Push(userData);
         startIndex += paramCount;
     }
-    public void Enter(int entityID)
+
+    public void GetEventList(ref List<SkillItemEventInfo> eventList)
+    {
+        var eventData = ClassPoolMgr.Instance.Pull<SkillItemEventInfo>();
+        eventData.schedule = schedule;
+        eventData.onEvent = ScheduleEvent;
+        eventList.Add(eventData);
+    }
+
+    public void ScheduleEvent(int entityID, IClassPoolUserData userData)
     {
         //var height = arrParams[0] / 100f;
         ////var time = arrPArams[1] / 100f;
@@ -53,34 +59,15 @@ public class SkillBehaviourScheduleAction : ISkillScheduleAction
         _SkillBehaviour.Execute(entityID);
     }
 
-    public void Exit()
-    {
-    }
-
-    public float GetEnterSchedule()
-    {
-        return schedule;
-    }
-
-    public bool GetIsEffect()
-    {
-        return m_IsEffect;
-    }
-
 
     public void Reset()
     {
-        m_IsEffect = false;
         m_ScheduleType = EnAtkLinkScheculeType.None;
     }
 
     public EnAtkLinkScheculeType GetScheduleType()
     {
         return m_ScheduleType;
-    }
-    public void SetIsEffect(bool isEffect)
-    {
-        m_IsEffect = isEffect;
     }
 
     public void SetScheduleType(EnAtkLinkScheculeType scheduleType)

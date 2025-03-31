@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using static SkillTypeLinkPlayableAdapter;
 
@@ -24,19 +25,15 @@ public class SkillPhysicsScheduleAction : IPhysicsParams, ISkillScheduleAction
     private IEntityBuffParams buffParams = null;
     public IPhysicsResolve physicsResolve;
     private EnAtkLinkScheculeType m_ScheduleType = EnAtkLinkScheculeType.None;
-    public bool m_IsAtked = false;
-    private int _EntityID = -1;
 
 
     public void OnPoolDestroy()
     {
         BuffUtil.PushConvertBuffData(buffParams);
         buffParams = null;
-        m_IsAtked = false;
         atkSchedule = -1;
         atkValue = -1;
         effectID = -1;
-        _EntityID = -1;
         buff = EnBuff.None;
         physicsType = EnPhysicsType.Sphere;
         physicsParams = null;
@@ -80,8 +77,7 @@ public class SkillPhysicsScheduleAction : IPhysicsParams, ISkillScheduleAction
 
     public void Reset()
     {
-        m_IsAtked
-            = false;
+
     }
 
     EnPhysicsType IPhysicsParams.GetPhysicsType()
@@ -94,9 +90,16 @@ public class SkillPhysicsScheduleAction : IPhysicsParams, ISkillScheduleAction
         return physicsParams;
     }
 
-    public void Enter(int entityID)
+    public void GetEventList(ref List<SkillItemEventInfo> eventList)
     {
-        _EntityID = entityID;
+        var item1 = ClassPoolMgr.Instance.Pull<SkillItemEventInfo>();
+        item1.schedule = atkSchedule;
+        item1.onEvent = ScheduleEvent;
+        eventList.Add(item1);
+    }
+
+    public void ScheduleEvent(int entityID, IClassPoolUserData userData)
+    {
         var data = new PhysicsOverlapCallbackCustomData()
         {
             atkValue = atkValue,
@@ -107,20 +110,7 @@ public class SkillPhysicsScheduleAction : IPhysicsParams, ISkillScheduleAction
         PhysicsMgr.Instance.PhysicsOverlap(physicsResolve, entityID, layer, PhysicsOverlapCallback, data);
     }
 
-    public void Exit()
-    {
 
-    }
-
-    public bool GetIsEffect()
-    {
-        return m_IsAtked;
-    }
-
-    public void SetIsEffect(bool isEffect)
-    {
-        m_IsAtked = isEffect;
-    }
     private void PhysicsOverlapCallback(ref EntityPhysicsInfo[] entityIDs, ref int count, IPhysicsColliderCallbackCustomData customData)
     {
         var data = customData as PhysicsOverlapCallbackCustomData;
@@ -133,12 +123,7 @@ public class SkillPhysicsScheduleAction : IPhysicsParams, ISkillScheduleAction
                 EffectMgr.Instance.PlayEffectOnce(effectID, entityInfo.closestPoint);
 
             if (buff > EnBuff.None)
-                BuffMgr.Instance.AddEntityBuff(_EntityID, entityInfo.entityID, buff, buffParams);
+                BuffMgr.Instance.AddEntityBuff(data.entityID, entityInfo.entityID, buff, buffParams);
         }
-    }
-
-    public float GetEnterSchedule()
-    {
-        return atkSchedule;
     }
 }
