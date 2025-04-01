@@ -29,6 +29,9 @@ public enum EnEntityCmd
     PastorWaterBuff,
     PastorEcliBuff,
     PastorAttackBuff,
+
+    BlueWarriorAttack = 23,
+    BlueWarriorSkill1 = 24,
 }
 public enum EnEntityCmdLevel
 {

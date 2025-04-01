@@ -130,6 +130,6 @@ public class AIRandomMoveModule : AIModule, IUpdate
         _LastPos = curPos;
         var dir = _NextPoint - curPos;
         Entity3DMgr.Instance.IncrementSetEntityMoveDirection(entityID, dir.normalized);
-        Entity3DMgr.Instance.SetEntityMoveDirection(entityID, dir.normalized);
+        Entity3DMgr.Instance.SetEntityLookAtDirection(entityID, dir.normalized);
     }
 }

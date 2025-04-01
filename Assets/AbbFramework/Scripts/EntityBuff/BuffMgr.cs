@@ -101,6 +101,11 @@ public class BuffMgr : Singleton<BuffMgr>
         {
             _Buff2DataIDDic.Remove(buff);
         }
+        public void GetAllEntityBuffDataID(ref List<int> ids)
+        {
+            foreach (var item in _Buff2DataIDDic)
+                ids.Add(item.Value);
+        }
     }
     #endregion
 
@@ -174,7 +179,22 @@ public class BuffMgr : Singleton<BuffMgr>
 
         return addKey;
     }
-
+    private List<int> _TempList = new(10);
+    public void RemoveEntityBuffByEntityID(int entityID)
+    {
+        if (!_Entity2BuffInfo.TryGetValue(entityID, out var buffInfo))
+            return;
+        _TempList.Clear();
+        buffInfo.GetAllEntityBuffDataID(ref _TempList);
+        for (int i = 0; i < _TempList.Count; i++)
+        {
+            var dataID = _TempList[i];
+            var list = _BuffDataID2AddKey[dataID];
+            foreach (var addKey in list)
+                RemoveEntityBuff2(addKey);
+            _BuffDataID2AddKey.Remove(dataID);
+        }
+    }
     public void RemoveEntityBuff(int addBuffKey)
     {
         if (!_AddKeyData.TryGetValue(addBuffKey, out var addInfo))

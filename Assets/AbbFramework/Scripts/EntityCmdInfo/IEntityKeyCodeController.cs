@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using static UnityEditor.Progress;
 
 public interface IEntityKeyCodeController : IClassPoolNone
 {
@@ -19,7 +20,12 @@ public sealed class EntityKeyCodeController : IEntityKeyCodeController
     public void OnDisable()
     {
         foreach (var item in _KeyCodeCallback)
-            ABBInputMgr.Instance.RemoveListaner(item.Key, item.Value);
+        {
+            if(item.Key == KeyCode.O)
+                ABBInputMgr.Instance.RemoveListaner(item.Key, item.Value);
+            else
+                ABBInputMgr.Instance.RemoveListanerDown(item.Key, item.Value);
+        }
         ABBInputMgr.Instance.RemoveListanerDown(KeyCode.K, OnClick_KeyCodeDownK);
         ABBInputMgr.Instance.RemoveListaner(KeyCode.A, OnClick_KeyCodeA);
         ABBInputMgr.Instance.RemoveListaner(KeyCode.D, OnClick_KeyCodeD);
@@ -53,7 +59,11 @@ public sealed class EntityKeyCodeController : IEntityKeyCodeController
                     return;
                 Entity3DMgr.Instance.AddEntityCmd(_EntityID, (EnEntityCmd)cmdID);
             });
-            ABBInputMgr.Instance.AddListaner(keyCode, _KeyCodeCallback[keyCode]);
+
+            if (keyCode == KeyCode.O)
+                ABBInputMgr.Instance.AddListaner(keyCode, _KeyCodeCallback[keyCode]);
+            else
+                ABBInputMgr.Instance.AddListanerDown(keyCode, _KeyCodeCallback[keyCode]);
         }
     }
 
@@ -65,7 +75,7 @@ public sealed class EntityKeyCodeController : IEntityKeyCodeController
         var targetDir = -pos.normalized;
 
         Entity3DMgr.Instance.IncrementSetEntityMoveDirection(_EntityID, targetDir);
-        Entity3DMgr.Instance.SetEntityMoveDirection(_EntityID, targetDir);
+        Entity3DMgr.Instance.SetEntityLookAtDirection(_EntityID, targetDir);
     }
     private void OnClick_KeyCodeD()
     {
@@ -73,7 +83,7 @@ public sealed class EntityKeyCodeController : IEntityKeyCodeController
             return;
         var pos = CameraMgr.Instance.GetCameraRight();
         Entity3DMgr.Instance.IncrementSetEntityMoveDirection(_EntityID, pos.normalized);
-        Entity3DMgr.Instance.SetEntityMoveDirection(_EntityID, pos.normalized);
+        Entity3DMgr.Instance.SetEntityLookAtDirection(_EntityID, pos.normalized);
     }
     private void OnClick_KeyCodeW()
     {
@@ -83,7 +93,7 @@ public sealed class EntityKeyCodeController : IEntityKeyCodeController
         var pos = playerWorldPos - CameraMgr.Instance.GetCameraWorldPos();
         pos.y = 0;
         Entity3DMgr.Instance.IncrementSetEntityMoveDirection(_EntityID, pos.normalized);
-        Entity3DMgr.Instance.SetEntityMoveDirection(_EntityID, pos.normalized);
+        Entity3DMgr.Instance.SetEntityLookAtDirection(_EntityID, pos.normalized);
     }
     private void OnClick_KeyCodeS()
     {
@@ -93,7 +103,7 @@ public sealed class EntityKeyCodeController : IEntityKeyCodeController
         var pos = CameraMgr.Instance.GetCameraWorldPos() - playerWorldPos;
         pos.y = 0;
         Entity3DMgr.Instance.IncrementSetEntityMoveDirection(_EntityID, pos.normalized);
-        Entity3DMgr.Instance.SetEntityMoveDirection(_EntityID, pos.normalized);
+        Entity3DMgr.Instance.SetEntityLookAtDirection(_EntityID, pos.normalized);
     }
     private void OnClick_KeyCodeDownK()
     {

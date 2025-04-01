@@ -12,6 +12,7 @@ public class EntityAIMgr : Singleton<EntityAIMgr>
         Idle = 2,
         MonsterBattle,
         Pastor,
+        BlueWarrior,
     }
     public class EntityAIInfo : IClassPoolDestroy
     {
@@ -122,6 +123,7 @@ public class EntityAIMgr : Singleton<EntityAIMgr>
             EnAIModuleType.Idle => ClassPoolMgr.Instance.Pull<AIIdleModule>(userData),
             EnAIModuleType.MonsterBattle => ClassPoolMgr.Instance.Pull<AIMonsterBattleModule>(userData),
             EnAIModuleType.Pastor => ClassPoolMgr.Instance.Pull<AIPastorModule>(userData),
+            EnAIModuleType.BlueWarrior => ClassPoolMgr.Instance.Pull<AIBlueWarriorBattleModule>(userData),
             _ => null
         };
     }

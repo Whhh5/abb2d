@@ -158,9 +158,19 @@ public class SkillTypeLoopData : ISkillTypeData<AttackLinkSkillDataUserData>
         CurAtkLinkItemData.OnDisable(_Graph);
         m_StepIndex++;
         CurAtkLinkItemData.OnEnable(_Graph);
+        //var lastAdapter = m_PlayableAdapter;
+        //lastAdapter.Complete();
+        //m_PlayableAdapter = _Graph.CreateClipPlayableAdapter(CurAtkLinkItemData._ClipID);
+
+        //_MainAdapter.DisconnectRootAdapter();
+        //PlayableAdapter.Destroy(lastAdapter);
+        //_MainAdapter.ConnectRootAdapter(m_PlayableAdapter);
+
+        var from = m_PlayableAdapter;
+        var to = _Graph.CreateClipPlayableAdapter(CurAtkLinkItemData._ClipID);
+        from.Complete();
         _MainAdapter.DisconnectRootAdapter();
-        PlayableAdapter.Destroy(m_PlayableAdapter);
-        m_PlayableAdapter = _Graph.CreateClipPlayableAdapter(CurAtkLinkItemData._ClipID);
+        m_PlayableAdapter = _Graph.CreateMixerPlayableAdapter(from, to, GlobalConfig.Float02, MixerComplete);
         _MainAdapter.ConnectRootAdapter(m_PlayableAdapter);
     }
     public void CmdEnd()

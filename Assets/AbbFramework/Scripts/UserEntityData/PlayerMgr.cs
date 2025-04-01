@@ -26,7 +26,10 @@ public class PlayerMgr : Singleton<PlayerMgr>
             _ => ClassPoolMgr.Instance.Pull<EntityKeyCodeController>(),
         };
     }
-
+    public int GetCurPlayerEntityID()
+    {
+        return _PlayerEntityID;
+    }
     public void SetControllerPlayerID(int entityID)
     {
         if (!EntityUtil.IsValid(entityID))

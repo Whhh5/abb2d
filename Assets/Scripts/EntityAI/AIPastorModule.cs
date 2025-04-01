@@ -3,17 +3,17 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 using static Unity.Burst.Intrinsics.X86.Avx;
 
+public class AICommonStepInfo
+{
+    public float delayTime;
+    public float lastExcuteTime;
+    public float radius;
+}
 public class AIPastorModule : AIModule, IUpdate
 {
-    private class AIStepInfo
-    {
-        public float delayTime;
-        public float lastExcuteTime;
-        public float radius;
-    }
+
     private EnGameLayer _TargetLayer = EnGameLayer.None;
-    private Dictionary<EnEntityCmd, AIStepInfo> _CmdList = null;
-    private List<EnEntityCmd> _ExecuteList = null;
+    private Dictionary<EnEntityCmd, AICommonStepInfo> _CmdList = null;
     private EnEntityCmd _CurCmd = EnEntityCmd.None;
 
     private float _LastTeleportTime = -1;
@@ -23,7 +23,6 @@ public class AIPastorModule : AIModule, IUpdate
     {
         UpdateMgr.Instance.Unregistener(this);
         _CmdList = null;
-        _ExecuteList = null;
         _TargetLayer = EnGameLayer.None;
         _CurCmd = EnEntityCmd.None;
         _LastTeleportTime = -1;
@@ -37,13 +36,6 @@ public class AIPastorModule : AIModule, IUpdate
             { EnEntityCmd.PastorWaterBuff,new(){ delayTime = 5,radius = 4} },
             { EnEntityCmd.PastorEcliBuff,new(){ delayTime = 10,radius = 2} },
             { EnEntityCmd.PastorAttackBuff,new(){ delayTime = 7,radius = 3} },
-        };
-        _ExecuteList = new()
-        {
-            EnEntityCmd.PlayerBuff,
-            EnEntityCmd.PastorWaterBuff,
-            EnEntityCmd.PastorEcliBuff,
-            EnEntityCmd.PastorAttackBuff
         };
     }
     public override void Execute()
@@ -137,7 +129,7 @@ public class AIPastorModule : AIModule, IUpdate
                 {
                     var dir = Vector3.Normalize(targetPos - worldPos);
                     Entity3DMgr.Instance.IncrementSetEntityMoveDirection(EntityID, dir);
-                    Entity3DMgr.Instance.SetEntityMoveDirection(EntityID, dir);
+                    Entity3DMgr.Instance.SetEntityLookAtDirection(EntityID, dir);
                     if (_DelayTeleportTime + _LastTeleportTime < curTime)
                     {
                         Entity3DMgr.Instance.AddEntityCmd(EntityID, EnEntityCmd.Teleport);
@@ -197,7 +189,7 @@ public class AIPastorModule : AIModule, IUpdate
                 {
                     var dir = Vector3.Normalize(targetPos - worldPos);
                     Entity3DMgr.Instance.IncrementSetEntityMoveDirection(EntityID, dir);
-                    Entity3DMgr.Instance.SetEntityMoveDirection(EntityID, dir);
+                    Entity3DMgr.Instance.SetEntityLookAtDirection(EntityID, dir);
                     if (_DelayTeleportTime + _LastTeleportTime < curTime)
                     {
                         Entity3DMgr.Instance.AddEntityCmd(EntityID, EnEntityCmd.Teleport);
@@ -231,7 +223,7 @@ public class AIPastorModule : AIModule, IUpdate
         var dir = Vector3.Normalize(pos - targetPos);
 
         Entity3DMgr.Instance.IncrementSetEntityMoveDirection(EntityID, dir);
-        Entity3DMgr.Instance.SetEntityMoveDirection(EntityID, dir);
+        Entity3DMgr.Instance.SetEntityLookAtDirection(EntityID, dir);
 
         //var curTime = ABBUtil.GetGameTimeSeconds();
         //if (_DelayTeleportTime + _LastTeleportTime < curTime)

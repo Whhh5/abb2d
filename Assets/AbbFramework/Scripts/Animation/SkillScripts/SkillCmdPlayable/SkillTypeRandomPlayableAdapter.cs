@@ -10,7 +10,7 @@ public class SkillTypeRandomPlayableAdapter : SkillTypePlayableAdapter
         return EnAnimLayer.Base;
     }
     private int[] m_IdleAnimList = null;
-    private PlayableClipAdapter m_CurClipAdapter = null;
+    private PlayableAdapter m_CurClipAdapter = null;
     protected override void OnDestroy()
     {
         PlayableAdapter.Destroy(m_CurClipAdapter);
@@ -55,14 +55,29 @@ public class SkillTypeRandomPlayableAdapter : SkillTypePlayableAdapter
     {
         if (!base.OnPrepareFrame(playable, info))
             return false;
-        if(GetPlaySchedule01() == 1)
+        if(GetPlaySchedule01() > 0.95f)
         {
             DisconnectRootAdapter();
-            PlayableAdapter.Destroy(m_CurClipAdapter);
+            //PlayableAdapter.Destroy(m_CurClipAdapter);
             var index = Random.Range(GlobalConfig.Int0, m_IdleAnimList.Length);
-            m_CurClipAdapter = m_Graph.CreateClipPlayableAdapter(m_IdleAnimList[index]);
+            var toAdapter = m_Graph.CreateClipPlayableAdapter(m_IdleAnimList[index]);
+            //m_CurClipAdapter = toAdapter;
+
+            m_CurClipAdapter.Complete();
+            m_CurClipAdapter = m_Graph.CreateMixerPlayableAdapter(m_CurClipAdapter, toAdapter, 0.2f, MixerComplete);
             ConnectRootAdapter(m_CurClipAdapter);
         }
         return true;
+    }
+
+
+    private void MixerComplete(PlayableMixerAdapter mixer, PlayableAdapter from, PlayableAdapter to)
+    {
+        DisconnectRootAdapter();
+        mixer.DisconnectAll();
+        PlayableAdapter.Destroy(from);
+        PlayableAdapter.Destroy(mixer);
+        m_CurClipAdapter = to;
+        ConnectRootAdapter(m_CurClipAdapter);
     }
 }

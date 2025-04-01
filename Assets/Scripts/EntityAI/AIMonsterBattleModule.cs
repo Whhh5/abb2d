@@ -59,6 +59,7 @@ public class AIMonsterBattleModule : AIModule, IUpdate
 
 
     private EnEntityCmd _CurCmd = EnEntityCmd.None;
+    private float _LastBuffTime = 0;
     public void Update()
     {
         if (!EntityUtil.IsValid(_TargetEntityID))
@@ -79,7 +80,7 @@ public class AIMonsterBattleModule : AIModule, IUpdate
         {
             Entity3DMgr.Instance.IncrementSetEntityMoveDirection(EntityID, dir);
 
-            Entity3DMgr.Instance.SetEntityMoveDirection(EntityID, dir);
+            Entity3DMgr.Instance.SetEntityLookAtDirection(EntityID, dir);
         }
         else
         {
@@ -89,13 +90,20 @@ public class AIMonsterBattleModule : AIModule, IUpdate
             if (angle > 30)
             {
                 //var curCmd = Entity3DMgr.Instance.GetEntityCurCmd(EntityID);
-                Entity3DMgr.Instance.SetEntityMoveDirection(EntityID, dir);
+                Entity3DMgr.Instance.SetEntityLookAtDirection(EntityID, dir);
             }
             else
             {
-                EnEntityCmd[] arrCmd = { EnEntityCmd.Monster0Skill1, EnEntityCmd.Monster0Skill2, EnEntityCmd.Monster0Buff1 };
+                var time = ABBUtil.GetGameTimeSeconds();
+                var arrCmd = _LastBuffTime + 5 < time
+                    ? new EnEntityCmd[] { EnEntityCmd.Monster0Skill1, EnEntityCmd.Monster0Skill2, EnEntityCmd.Monster0Buff1 }
+                    : new EnEntityCmd[] { EnEntityCmd.Monster0Skill1, EnEntityCmd.Monster0Skill2 };
                 var index = Random.Range(0, arrCmd.Length);
                 _CurCmd = arrCmd[index];
+                if (_CurCmd == EnEntityCmd.Monster0Buff1)
+                {
+                    _LastBuffTime = time;
+                }
                 Entity3DMgr.Instance.AddEntityCmd(EntityID, _CurCmd);
             }
         }

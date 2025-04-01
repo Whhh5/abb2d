@@ -111,6 +111,7 @@ public enum EnLoadTarget
 	Anim_Attack_run_R = 108, // Assets/Resources/Anim/Attack_run_R.FBX
 	Anim_Battle_block = 109, // Assets/Resources/Anim/Battle_block.FBX
 	Anim_Battle_fail = 110, // Assets/Resources/Anim/Battle_fail.FBX
+	Pre_EffectSwordLight1_3Hit = 111, // Assets/Abbresources/Effect/EffectSwordLight1_3Hit.prefab
 	Anim_Battle_parryleft = 112, // Assets/Resources/Anim/Battle_parryleft.FBX
 	Anim_Battle_parryright = 113, // Assets/Resources/Anim/Battle_parryright.FBX
 	Anim_Battle_run_Mir = 115, // Assets/Resources/Anim/Battle_run_Mir.FBX

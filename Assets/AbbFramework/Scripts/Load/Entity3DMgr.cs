@@ -201,7 +201,13 @@ public class Entity3DMgr : Singleton<Entity3DMgr>
     private HashSet<int> _CorpseEntityID = new();
     public void DieEntity(int entityID)
     {
+        BuffMgr.Instance.RemoveEntityBuffByEntityID(entityID);
+
+
         _CorpseEntityID.Add(entityID);
+
+
+
         if (ContainsEntityCom<EntityLifeComData>(entityID))
         {
             var lifeCom = GetEntityCom<EntityLifeComData>(entityID);
@@ -446,7 +452,7 @@ public class Entity3DMgr : Singleton<Entity3DMgr>
         var ccCom = entityData.GetEntityCom<EntityCCComData>();
         ccCom.SetRotationSpeed(value);
     }
-    public void SetEntityMoveDirection(int entityID, Vector3 dir)
+    public void SetEntityLookAtDirection(int entityID, Vector3 dir)
     {
         var entityData = GetEntity3DData(entityID);
         var ccCom = entityData.GetEntityCom<EntityCCComData>();
@@ -466,7 +472,7 @@ public class Entity3DMgr : Singleton<Entity3DMgr>
         var dot = Vector3.Cross(curDir, targetDir);
         var addValue = (dot.y > 0 ? 1 : -1) * Mathf.PI * ABBUtil.GetTimeDelta() * Mathf.Rad2Deg * 5;
 
-        var angleMax = Quaternion.Angle(Quaternion.Euler(curDir), Quaternion.Euler(dir)) * Mathf.Rad2Deg;
+        var angleMax = Vector3.Angle(curDir, dir);
 
         var lerpValue = Mathf.Clamp(Mathf.Abs(angleMax / 45f), 0.5f, 1f);
 

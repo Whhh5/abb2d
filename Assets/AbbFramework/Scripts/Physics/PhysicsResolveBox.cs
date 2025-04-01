@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
+using static UnityEngine.EventSystems.EventTrigger;
 
 
 public class PhysicsResolveBox : IPhysicsResolve
@@ -31,24 +32,30 @@ public class PhysicsResolveBox : IPhysicsResolve
 
         //var targetPos = pos + m_PosOffsetZ * forward;
         var targetRot = rot + m_RotOffset;
-        var boxRotForward = Quaternion.Euler(targetRot) * Vector3.forward;
-        var count = m_BoxSize.z / m_UnitSizeZ;
-        var interval = Mathf.Max(0, m_ExecuteTime / count);
-        //var unitHalfSizeZ = m_BoxSize.z / count;
         var unitHalfSize = m_BoxSize * 0.5f;
-        unitHalfSize.z = m_UnitSizeZ * 0.5f;
-        var startPos = pos - m_BoxSize.z * 0.5f * forward;
+
+        var idCount = EntityUtil.PhysicsOverlapBox(ref _TempEntityIDs, pos, unitHalfSize, Quaternion.Euler(targetRot), layer);
+        // DebugDrawMgr.Instance.DrawBox(pos, unitHalfSize, targetRot, 0.5f);
+        callback(ref _TempEntityIDs, ref idCount, cusomData);
+
+        //var boxRotForward = Quaternion.Euler(targetRot) * Vector3.forward;
+        //var count = m_BoxSize.z / m_UnitSizeZ;
+        //var interval = Mathf.Max(0, m_ExecuteTime / count);
+        ////var unitHalfSizeZ = m_BoxSize.z / count;
+        //var unitHalfSize = m_BoxSize * 0.5f;
+        //unitHalfSize.z = m_UnitSizeZ * 0.5f;
+        //var startPos = pos - m_BoxSize.z * 0.5f * forward;
 
 
-        for (int i = 0; i < count; i++)
-        {
-            var centre = startPos + (i + 0.5f) * m_UnitSizeZ * boxRotForward;
+        //for (int i = 0; i < count; i++)
+        //{
+        //    var centre = startPos + (i + 0.5f) * m_UnitSizeZ * boxRotForward;
 
-            var idCount = EntityUtil.PhysicsOverlapBox(ref _TempEntityIDs, centre, unitHalfSize, Quaternion.Euler(rot), layer);
-            //DebugDrawMgr.Instance.DrawBox(centre, unitHalfSize, targetRot, 0.5f);
-            callback(ref _TempEntityIDs, ref idCount, cusomData);
-            await UniTask.WaitForSeconds(interval);
-        }
+        //    var idCount = EntityUtil.PhysicsOverlapBox(ref _TempEntityIDs, centre, unitHalfSize, Quaternion.Euler(rot), layer);
+        //    DebugDrawMgr.Instance.DrawBox(centre, unitHalfSize, targetRot, 0.5f);
+        //    callback(ref _TempEntityIDs, ref idCount, cusomData);
+        //    await UniTask.WaitForSeconds(interval);
+        //}
     }
 
     public void SetParams(ref int[] arrParams, int paramIndex)
