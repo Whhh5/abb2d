@@ -20,6 +20,8 @@ static public partial class BuffUtil
             EnBuff.ElectrifiedLoopHit => ClassPoolMgr.Instance.Pull<EntityBuffTimeDefaultInfo>(userData),
             EnBuff.AttackEffect => ClassPoolMgr.Instance.Pull<EntityBuffTimeDefaultInfo>(userData),
             EnBuff.AttackEffectLoop => ClassPoolMgr.Instance.Pull<EntityBuffTimeDefaultInfo>(userData),
+            EnBuff.BattleElectrification => ClassPoolMgr.Instance.Pull<EntityBuffTimeDefaultInfo>(userData),
+            EnBuff.BattleElectrificationTrace => ClassPoolMgr.Instance.Pull<EntityBuffTimeDefaultInfo>(userData),
             _ => null,
         };
         return result;

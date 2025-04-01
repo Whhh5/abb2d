@@ -364,10 +364,12 @@ public class SkillTypeLinkDataEditor : SkillTypeLinkData, ISkillTypeEditor, ISki
                         if (GUI.Button(rect, "", style))
                         {
                             selectID = scheduleData;
-                            _SelectRect = rect;
                             lineStartPos = new Vector2(rect.xMin, rect.yMax);
                         }
-
+                        if (selectID == scheduleData)
+                        {
+                            _SelectRect = rect;
+                        }
 
                         // scheduleData.Sumilation(rect, start, end);
 

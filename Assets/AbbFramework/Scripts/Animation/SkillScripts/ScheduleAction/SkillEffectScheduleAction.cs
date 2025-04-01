@@ -84,11 +84,14 @@ public class SkillEffectScheduleAction : IEffectParams, ISkillScheduleAction
 
     private EnAtkLinkScheculeType m_ScheduleType = EnAtkLinkScheculeType.None;
     public ISkillEffectBindingData _SkillEffectBindingData = null;
-
+    private int _EffectEntityID = 1;
     public void OnPoolDestroy()
     {
-        effectID = -1;
-        schedule = -1;
+        EffectMgr.Instance.KillEffect(_EffectEntityID);
+        schedule
+            = effectID
+            = _EffectEntityID
+            = -1;
         effectParams = null;
         m_ScheduleType = EnAtkLinkScheculeType.None;
     }
@@ -146,7 +149,7 @@ public class SkillEffectScheduleAction : IEffectParams, ISkillScheduleAction
 
         var entityRot = Entity3DMgr.Instance.GetEntityRotation(entityID);
         var rot = entityRot + new Vector3(offsetRotX, offsetRotY, offsetRotZ);
-        EffectMgr.Instance.PlayEffectOnce(effectID, pos, rot);
+        _EffectEntityID = EffectMgr.Instance.PlayEffect(effectID, pos, rot);
 
     }
     public void GetEventList(ref List<SkillItemEventInfo> eventList)

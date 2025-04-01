@@ -61,11 +61,50 @@ public class ABBEventData : IClassPool<ABBEventDataUserData>
     {
         if (sourceID > 0)
         {
-            if (!m_EventList.TryGetValue(sourceID, out var sourceList))
+            if (m_EventList.TryGetValue(0, out var sourceList))
+            {
+                if (typeID > 0)
+                {
+                    if (sourceList.TryGetValue(0, out var eventList))
+                    {
+                        foreach (var item in eventList)
+                        {
+                            item.EventExecute(m_EventType, sourceID, typeID, userData);
+                        }
+                    }
+                    if (sourceList.TryGetValue(typeID, out eventList))
+                    {
+                        foreach (var item in eventList)
+                        {
+                            item.EventExecute(m_EventType, sourceID, typeID, userData);
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var typeList in sourceList)
+                    {
+                        foreach (var item in typeList.Value)
+                        {
+                            item.EventExecute(m_EventType, sourceID, typeID, userData);
+                        }
+                    }
+                }
+            }
+            if (!m_EventList.TryGetValue(sourceID, out sourceList))
                 return;
+
+
             if (typeID > 0)
             {
-                if (!sourceList.TryGetValue(typeID, out var eventList))
+                if (sourceList.TryGetValue(0, out var eventList))
+                {
+                    foreach (var item in eventList)
+                    {
+                        item.EventExecute(m_EventType, sourceID, typeID, userData);
+                    }
+                }
+                if (!sourceList.TryGetValue(typeID, out eventList))
                     return;
                 foreach (var item in eventList)
                 {
@@ -89,7 +128,14 @@ public class ABBEventData : IClassPool<ABBEventDataUserData>
             {
                 if (typeID > 0)
                 {
-                    if (!sourceList.Value.TryGetValue(typeID, out var eventList))
+                    if (sourceList.Value.TryGetValue(0, out var eventList))
+                    {
+                        foreach (var item in eventList)
+                        {
+                            item.EventExecute(m_EventType, sourceID, typeID, userData);
+                        }
+                    }
+                    if (!sourceList.Value.TryGetValue(typeID, out eventList))
                         return;
                     foreach (var item in eventList)
                     {

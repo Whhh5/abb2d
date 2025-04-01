@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-public class SkillPhysicsScheduleActionEditor : SkillPhysicsScheduleAction, ISkillScheduleActionEditor
+public partial class SkillPhysicsScheduleActionEditor : SkillPhysicsScheduleAction, ISkillScheduleActionEditor
 {
     private ISkillTypeEditor m_PhysicsResolveSphereEditor = null;
     private IBuffDaraEditor _BuffEditorData = null;
@@ -63,7 +63,7 @@ public class SkillPhysicsScheduleActionEditor : SkillPhysicsScheduleAction, ISki
                         return;
                     buff = (EnBuff)id;
                     _BuffEditorData = SkillFactroyEditor.GetBuffDataEditor(buff);
-                    _BuffEditorData.InitEditor();
+                    _BuffEditorData?.InitEditor();
                     _BuffEditorData?.InitParams(arrBuffParams);
 
                 }, 300);
@@ -102,8 +102,28 @@ public class SkillPhysicsScheduleActionEditor : SkillPhysicsScheduleAction, ISki
         return atkSchedule;
     }
 
+}
+public partial class SkillPhysicsScheduleActionEditor
+{
     public void Sumilation(Rect rect, float itemStartTime, float itemEndTime)
     {
-        
+        if (m_PhysicsResolveSphereEditor == null)
+            return;
+        if (m_PhysicsResolveSphereEditor is not ICustomSimulationEditor simulationEditor)
+            return;
+        var curTime = SkillWindowEditor._LastUpdateTime;
+        var maxTime = SkillWindowEditor._MaxTime;
+        var targetObj = SkillWindowEditor._PrefabObj;
+        var localShowTime = (itemEndTime - itemStartTime) * atkSchedule;
+        var showTime = localShowTime + itemStartTime;
+        var hideTime = showTime + 1f;
+
+        if (curTime < showTime || curTime >= hideTime)
+        {
+            simulationEditor.DestroySimulation();
+            return;
+        }
+        simulationEditor.UpdateSimulation(rect, itemStartTime, itemEndTime);
     }
+
 }

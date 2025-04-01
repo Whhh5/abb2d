@@ -11,6 +11,9 @@ public sealed class EntityLifeComData : Entity3DComData
     private int _CurHealthValue = -1;
     private int _MaxHealthValue = -1;
 
+    private int _DefenseValue = -1;
+    private int _MaxDefenseValue = 100;
+
     private EnEntityStatus _EntityStatus = EnEntityStatus.None;
 
     public void SetEntityStatus(EnEntityStatus status)
@@ -46,6 +49,23 @@ public sealed class EntityLifeComData : Entity3DComData
     {
         return _MaxHealthValue;
     }
+    public void SetDefenseValue(int value)
+    {
+        _DefenseValue = value;
+    }
+    public int GetDefenseValue()
+    {
+        return _DefenseValue;
+    }
+    public void SetMaxDefenseValue(int value)
+    {
+        _MaxDefenseValue = value;
+    }
+    public int GetMaxDefenseValue()
+    {
+        return _MaxDefenseValue;
+    }
+
     public float GetHealthPointSchedule()
     {
         var schedule = (float)_CurHealthValue / _MaxHealthValue;

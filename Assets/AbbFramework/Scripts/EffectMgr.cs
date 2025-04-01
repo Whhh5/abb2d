@@ -61,6 +61,14 @@ public class EffectMgr : Singleton<EffectMgr>
         AddDelayDesytroyList(entityID, time);
         return entityID;
     }
+    public int PlayEffect(int effectID, Vector3 worldPos, Vector3 rot)
+    {
+        var entityID = PlayEffect(effectID);
+        var entityData = EntityMgr.Instance.GetEntityData(entityID);
+        entityData.SetPosition(worldPos);
+        entityData.SetLocalRotation(rot);
+        return entityID;
+    }
     public int PlayEffect(int effectID, Vector3 worldPos)
     {
         var entityID = PlayEffect(effectID);

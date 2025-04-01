@@ -14,7 +14,13 @@ public enum EnAtkLinkScheculeType
     Behaviour,
     EnumCount,
 }
-public class EventBattleInfo: IClassPoolNone
+public enum EnAttackEventSourceType
+{
+    None,
+    Buff,
+    Other,
+}
+public class EventBattleInfo : IClassPoolNone
 {
     public int entityID1;
     public int entityID2;
@@ -37,7 +43,7 @@ public class AttackMgr : Singleton<AttackMgr>
         userData.entityID2 = entityID2;
         userData.fromValue = curHealthValue;
         userData.toValue = health;
-        ABBEventMgr.Instance.FireExecute(EnABBEvent.EVENT_BATTLE_INFO, 0, 0, userData);
+        ABBEventMgr.Instance.FireExecute(EnABBEvent.EVENT_BATTLE_INFO, (int)EnAttackEventSourceType.Buff, entityID, userData);
         ClassPoolMgr.Instance.Push(userData);
     }
 
@@ -62,14 +68,18 @@ public class AttackMgr : Singleton<AttackMgr>
         userData.entityID2 = entityID2;
         userData.fromValue = curHealthValue;
         userData.toValue = health;
-        ABBEventMgr.Instance.FireExecute(EnABBEvent.EVENT_BATTLE_INFO, 0, 0, userData);
+        ABBEventMgr.Instance.FireExecute(EnABBEvent.EVENT_BATTLE_INFO, (int)EnAttackEventSourceType.Buff, entityID, userData);
         ClassPoolMgr.Instance.Push(userData);
     }
     public void AttackEntity(int entityID, int entityID2, int value)
     {
+        var lifeCom = Entity3DMgr.Instance.GetEntityCom<EntityLifeComData>(entityID2);
+        var changeValue = Mathf.Max(1, Mathf.RoundToInt(value * (1 - Mathf.Clamp01((float)lifeCom.GetDefenseValue() / lifeCom.GetMaxDefenseValue()))));
+
+
         var curHealthValue = Entity3DMgr.Instance.GetEntityHealthValue(entityID2);
-        var health = curHealthValue - value;
-        Entity3DMgr.Instance.SetEntityHealthValue(entityID2, curHealthValue - value);
+        var health = curHealthValue - changeValue;
+        Entity3DMgr.Instance.SetEntityHealthValue(entityID2, curHealthValue - changeValue);
         if (health > 0)
         {
             Entity3DMgr.Instance.AddEntityCmd(entityID2, EnEntityCmd.Injured);
@@ -89,8 +99,8 @@ public class AttackMgr : Singleton<AttackMgr>
         userData.entityID1 = entityID;
         userData.entityID2 = entityID2;
         userData.fromValue = curHealthValue;
-        userData.toValue = curHealthValue - value;
-        ABBEventMgr.Instance.FireExecute(EnABBEvent.EVENT_BATTLE_INFO, 0, 0, userData);
+        userData.toValue = curHealthValue - changeValue;
+        ABBEventMgr.Instance.FireExecute(EnABBEvent.EVENT_BATTLE_INFO, (int)EnAttackEventSourceType.Other, entityID, userData);
         ClassPoolMgr.Instance.Push(userData);
     }
 

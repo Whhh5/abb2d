@@ -37,4 +37,8 @@ public enum EnBuff
 	ElectrifiedLoopHit = 17,
 	[EditorFieldNameAttribute("角色特效buffloop")]
 	AttackEffectLoop = 18,
+	[EditorFieldNameAttribute("蓝战士感电buff")]
+	BattleElectrification = 19,
+	[EditorFieldNameAttribute("蓝战士感电追踪buff")]
+	BattleElectrificationTrace = 20,
 }

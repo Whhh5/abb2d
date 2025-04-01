@@ -79,14 +79,15 @@ public abstract class EffectEntity : GameEntity<EffectEntityData>
         else
             Stop();
     }
-
     public void UpdateMaxTime()
     {
         var parComs = GetComponentsInChildren<ParticleSystem>(true);
         _SinletonMaxTime = 0;
         foreach (var item in parComs)
         {
-            _SinletonMaxTime = Mathf.Max(_SinletonMaxTime, GetParticleTime(item));
+            var parTime = GetParticleTime(item);
+            var time = Mathf.Max(item.main.duration, parTime);
+            _SinletonMaxTime = Mathf.Max(_SinletonMaxTime, time);
         }
     }
     public void Play()

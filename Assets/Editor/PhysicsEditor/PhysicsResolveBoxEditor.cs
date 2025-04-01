@@ -4,7 +4,7 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
-public class PhysicsResolveBoxEditor : PhysicsResolveBox, ISkillTypeEditor
+public partial class PhysicsResolveBoxEditor : PhysicsResolveBox, ISkillTypeEditor, ICustomSimulationEditor
 {
 
     public void InitEditor()
@@ -59,5 +59,60 @@ public class PhysicsResolveBoxEditor : PhysicsResolveBox, ISkillTypeEditor
         data.Add(Mathf.RoundToInt(m_RotOffset.z * 100));
 
         data.Insert(index, data.Count - index);
+    }
+}
+
+public partial class PhysicsResolveBoxEditor
+{
+    private GameObject _GO = null;
+    private Vector3 _CreateForward = Vector3.zero;
+    private Vector3 _CreateUp = Vector3.zero;
+    private Vector3 _CreateRight = Vector3.zero;
+    private Vector3 _CreatePos = Vector3.zero;
+    private Vector3 _CreateRot = Vector3.zero;
+    public void UpdateSimulation(Rect rect, float itemStartTime, float itemEndTime)
+    {
+        InitSimulation();
+
+
+        var interval = (m_CenterType == EnPhysicsBoxCenterType.Center) ? 0 : (m_BoxSize.z / 2);
+
+        var localPos = _GO.transform.position - _CreatePos - _CreateForward * interval;
+
+        m_PosOffsetX = Vector3.Dot(localPos, _CreateRight);
+        m_PosOffsetY = Vector3.Dot(localPos, _CreateUp);
+        m_PosOffsetZ = Vector3.Dot(localPos, _CreateForward);
+        m_BoxSize = _GO.transform.localScale;
+        m_RotOffset = _GO.transform.rotation.eulerAngles - _CreateRot;
+    }
+
+    public void InitSimulation()
+    {
+        if (_GO != null)
+            return;
+        var targetGO = SkillWindowEditor._PrefabObj;
+        var assetCfg = ExcelUtil.GetCfg<AssetCfg>((int)EnLoadTarget.Pre_DrawBox);
+        var ass = AssetDatabase.LoadAssetAtPath<GameObject>(assetCfg.strPath);
+        _GO = GameObject.Instantiate(ass);
+        _CreatePos = targetGO.transform.position;
+        var interval = (m_CenterType == EnPhysicsBoxCenterType.Center) ? 0 : (m_BoxSize.z / 2);
+        _CreateRight = targetGO.transform.right;
+        _CreateUp = targetGO.transform.up;
+        _CreateForward = targetGO.transform.forward;
+        var posX = _CreateRight * m_PosOffsetX;
+        var posY = _CreateUp * m_PosOffsetY;
+        var posZ = _CreateForward * (m_PosOffsetZ + interval);
+        _GO.transform.position = _CreatePos + posX + posY + posZ;
+        _GO.transform.localScale = m_BoxSize;
+        _CreateRot = targetGO.transform.localRotation.eulerAngles;
+        _GO.transform.rotation = Quaternion.Euler(_CreateRot + m_RotOffset);
+    }
+    public void DestroySimulation()
+    {
+        if (_GO == null)
+            return;
+
+        GameObject.DestroyImmediate(_GO);
+        _GO = null;
     }
 }

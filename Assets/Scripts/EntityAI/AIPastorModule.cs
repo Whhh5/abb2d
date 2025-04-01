@@ -129,7 +129,8 @@ public class AIPastorModule : AIModule, IUpdate
                     continue;
                 ExecuteEntityTest(entityID);
             }
-            ExecuteEntityTest(EntityID);
+            if (targetEntityID <= 0)
+                ExecuteEntityTest(EntityID);
             if (targetEntityID > 0)
             {
                 if (minDis > cmdInfo.radius * cmdInfo.radius)

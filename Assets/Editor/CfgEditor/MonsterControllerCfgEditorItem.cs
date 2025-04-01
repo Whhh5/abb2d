@@ -47,6 +47,8 @@ public class MonsterControllerCfgEditorItem : ICfgEditorItem
     private List<ItemInfo> _ItemStatus = new();
 
     private string _SearchKeyCode = "";
+    float keyCodeWidth = 100;
+    float cmdWidth = 100;
     private Rect DrawMonsterControllerItem(MonsterControllerCfg cfg, Color color)
     {
         var rect = EditorGUILayout.BeginHorizontal();
@@ -54,8 +56,6 @@ public class MonsterControllerCfgEditorItem : ICfgEditorItem
         {
             GUILayout.Label($"{cfg.nControllerID}", GUILayout.Width(30));
 
-            var keyCodeWidth = 50;
-            var cmdWidth = 50;
             var allWidth = 20;
             var addWidth = 20;
 
@@ -172,8 +172,6 @@ public class MonsterControllerCfgEditorItem : ICfgEditorItem
 
     private void DrawArrList()
     {
-        var keyCodeWidth = 50;
-        var cmdWidth = 50;
         for (var k = 0; k < _ItemStatus.Count; k++)
         {
             var item = _ItemStatus[k];

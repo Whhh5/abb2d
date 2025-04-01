@@ -313,3 +313,40 @@ public class EntityElectrifiedBuffDataEditor : EntityElectrifiedBuffData, IBuffD
     }
 
 }
+public class EntityBattleElectrificationBuffDataEditor : EntityBattleElectrificationBuffData, IBuffDaraEditor
+{
+    public EnBuff Buff => EnBuff.BattleElectrification;
+    private float _Time = 0;
+    public void InitParams(int[] arrParam)
+    {
+        arrParam ??= new int[0];
+        var count = arrParam.Length > 0 ? arrParam[0] : 0;
+        _Time = count > 0 ? arrParam[1] / 100f : 1f;
+    }
+
+    public void Draw()
+    {
+        EditorGUILayout.BeginVertical();
+        {
+            EditorGUILayout.BeginHorizontal();
+            {
+                GUILayout.Label("持续时间", GUILayout.Width(50));
+                _Time = EditorGUILayout.FloatField(_Time, GUILayout.Width(50));
+            }
+            EditorGUILayout.EndHorizontal();
+        }
+        EditorGUILayout.EndVertical();
+    }
+
+    public void GetStringData(ref List<int> data)
+    {
+        var index = data.Count;
+        data.Add(Mathf.RoundToInt(_Time * 100));
+        data.Insert(index, data.Count - index);
+    }
+
+    public void InitEditor()
+    {
+    }
+
+}

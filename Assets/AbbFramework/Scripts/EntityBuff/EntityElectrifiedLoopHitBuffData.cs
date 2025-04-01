@@ -62,7 +62,7 @@ public class EntityElectrifiedLoopHitBuffData : EntityBuffData, IUpdate
                 {
                     ref var hit = ref hits[j];
                     EffectMgr.Instance.PlayEffectOnce(15, hit.closestPoint);
-                    AttackMgr.Instance.AttackEntity(_SourceEntityID, hit.entityID, _AtkValue);
+                    AttackMgr.Instance.BuffAttackEntity(_SourceEntityID, hit.entityID, _AtkValue);
                 }
             }
         }

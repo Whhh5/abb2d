@@ -5,6 +5,7 @@ using UnityEngine;
 public class EffectCfgEditorItem : ICfgEditorItem
 {
     private EffectCfg _TempEffectCfg = null;
+    private Vector2 _ScrollPos = Vector2.zero;
     public string GetMenuName()
     {
         return "EffectCfg";
@@ -95,12 +96,14 @@ public class EffectCfgEditorItem : ICfgEditorItem
 
         EditorGUILayout.BeginVertical();
         {
+            _ScrollPos = EditorGUILayout.BeginScrollView(_ScrollPos);
             for (int i = 0; i < count; i++)
             {
                 var item = ExcelUtil.GetCfgByIndex<EffectCfg>(i);
                 DrawEffectCfgItem(item, new Color(1, 1, 1, i % 2 == 0 ? 0.1f : 0.2f));
                 GUILayout.Space(2);
             }
+            EditorGUILayout.EndScrollView();
         }
         EditorGUILayout.EndVertical();
     }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using static Unity.Burst.Intrinsics.X86.Avx;
 
 public enum EnEntityControllerType
 {
@@ -148,7 +149,7 @@ public class Entity3DMgr : Singleton<Entity3DMgr>
         for (int i = 0; i < monsterCfg.arrLayer.Length; i++)
         {
             var layer = (EnGameLayer)monsterCfg.arrLayer[i];
-            if(!_Layer2EntityID.TryGetValue(layer,out var entityList))
+            if (!_Layer2EntityID.TryGetValue(layer, out var entityList))
             {
                 entityList = new();
                 _Layer2EntityID.Add(layer, entityList);
@@ -222,7 +223,14 @@ public class Entity3DMgr : Singleton<Entity3DMgr>
     }
 
 
-
+    public Vector3 GetEntityWeaponPos1(int entityID)
+    {
+        var entity = GetEntity3DData(entityID);
+        var point = entity.GetEntityComponent<EntityPoint>();
+        if (point == null)
+            return GetEntityWorldPos(entityID);
+        return point.weaponTran1.position;
+    }
     public void SetEntityWorldPos(int entityID, Vector3 worldPos)
     {
         var entity = GetEntity3DData(entityID);
@@ -345,6 +353,33 @@ public class Entity3DMgr : Singleton<Entity3DMgr>
         var isEnd = animCom.CmdIsEnd(cmd);
         return isEnd;
     }
+    public int GetEntityDefenseValue(int entityID)
+    {
+        var entity = GetEntity3DData(entityID);
+        var com = entity.GetEntityCom<EntityLifeComData>();
+        var defenseValue = com.GetDefenseValue();
+        return defenseValue;
+    }
+    public void SetEntityDefenseValue(int entityID, int defenseValue)
+    {
+        var entity = GetEntity3DData(entityID);
+        var com = entity.GetEntityCom<EntityLifeComData>();
+        com.SetDefenseValue(defenseValue);
+    }
+    public int GetEntityMaxDefenseValue(int entityID)
+    {
+        var entity = GetEntity3DData(entityID);
+        var com = entity.GetEntityCom<EntityLifeComData>();
+        var defenseValue = com.GetMaxDefenseValue();
+        return defenseValue;
+    }
+    public void SetEntityMaxDefenseValue(int entityID, int defenseValue)
+    {
+        var entity = GetEntity3DData(entityID);
+        var com = entity.GetEntityCom<EntityLifeComData>();
+        com.SetMaxDefenseValue(defenseValue);
+    }
+
     public float GetEntityVerticalVelocity(int entityID)
     {
         var entityData = GetEntity3DData(entityID);

@@ -85,10 +85,10 @@ public class ClipCfgEditorItem : ICfgEditorItem
                 {
                     EditorGUILayout.BeginHorizontal();
                     {
-                        EditorUtil.DrawAssetID<AnimationClip>(
+                        EditorUtil.DrawCfgField<AssetCfg>(
                             _SelectAssetID
                             , value => _SelectAssetID = value
-                            , assetCfg => ExcelUtil.GetCfg<AssetCfg>(assetCfg.nAssetID) == null);
+                            , 300);
                         if (_SelectAssetID > 0)
                         {
                             if (GUILayout.Button("Add", GUILayout.Width(100)))

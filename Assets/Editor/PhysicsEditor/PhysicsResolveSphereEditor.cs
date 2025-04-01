@@ -3,7 +3,12 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-public class PhysicsResolveSphereEditor : PhysicsResolveSphere, ISkillTypeEditor
+public interface ICustomSimulationEditor
+{
+    public void UpdateSimulation(Rect rect, float itemStartTime, float itemEndTime);
+    public void DestroySimulation();
+}
+public partial class PhysicsResolveSphereEditor : PhysicsResolveSphere, ISkillTypeEditor, ICustomSimulationEditor
 {
     public void InitEditor()
     {
@@ -31,5 +36,43 @@ public class PhysicsResolveSphereEditor : PhysicsResolveSphere, ISkillTypeEditor
 
         data.Insert(index, data.Count - index);
     }
-}
 
+
+}
+public partial class PhysicsResolveSphereEditor
+{
+    private GameObject _GO = null;
+    private Vector3 _CreatePos = Vector3.zero;
+    public void UpdateSimulation(Rect rect, float itemStartTime, float itemEndTime)
+    {
+        InitSimulation();
+
+        var localPos = _GO.transform.position - _CreatePos;
+        m_PosOffsetX = localPos.x;
+        m_PosOffsetY = localPos.y;
+        m_PosOffsetZ = localPos.z;
+
+        m_Radius = _GO.transform.localScale.x / 2;
+    }
+
+    public void InitSimulation()
+    {
+        if (_GO != null)
+            return;
+        var targetGO = SkillWindowEditor._PrefabObj;
+        var assetCfg = ExcelUtil.GetCfg<AssetCfg>((int)EnLoadTarget.Pre_DrawSphere);
+        var ass = AssetDatabase.LoadAssetAtPath<GameObject>(assetCfg.strPath);
+        _GO = GameObject.Instantiate(ass);
+        _CreatePos = targetGO.transform.position;
+        _GO.transform.position = _CreatePos + new Vector3(m_PosOffsetX, m_PosOffsetY, m_PosOffsetZ);
+        _GO.transform.localScale = m_Radius * 2 * Vector3.one;
+    }
+    public void DestroySimulation()
+    {
+        if (_GO == null)
+            return;
+
+        GameObject.DestroyImmediate(_GO);
+        _GO = null;
+    }
+}

@@ -22,6 +22,8 @@ public partial class BuffUtil
 			EnBuff.WaterLoopHit => ClassPoolMgr.Instance.Pull<EntityWaterLoopHitBuffData>(data),
 			EnBuff.ElectrifiedLoopHit => ClassPoolMgr.Instance.Pull<EntityElectrifiedLoopHitBuffData>(data),
 			EnBuff.AttackEffectLoop => ClassPoolMgr.Instance.Pull<EntityAttackEffectLoopBuffData>(data),
+			EnBuff.BattleElectrification => ClassPoolMgr.Instance.Pull<EntityBattleElectrificationBuffData>(data),
+			EnBuff.BattleElectrificationTrace => ClassPoolMgr.Instance.Pull<EntityBattleElectrificationTraceBuffData>(data),
 			_ => default,
 		};
 	}

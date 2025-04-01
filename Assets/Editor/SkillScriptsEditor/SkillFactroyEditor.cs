@@ -67,6 +67,7 @@ public static class SkillFactroyEditor
             EnBuff.AttackEffect => new EntityAttackEffectBuffDataEditor(),
             EnBuff.Electrified => new EntityElectrifiedBuffDataEditor(),
             EnBuff.Water => new EntityWaterBuffDataEditor(),
+            EnBuff.BattleElectrification => new EntityBattleElectrificationBuffDataEditor(),
             _ => null,
         };
         return buffData;
