@@ -163,8 +163,14 @@ public class ABBLoadMgr : Singleton<ABBLoadMgr>
     public async UniTask<T> LoadAsync<T>(EnLoadTarget loadTarget)
         where T : Object
     {
-        var assCfg = GameSchedule.Instance.GetAssetCfg0((int)loadTarget);
-        var loadData = GetLoadData((int)loadTarget);
+        var result = await LoadAsync<T>((int)loadTarget);
+        return result;
+    }
+    public async UniTask<T> LoadAsync<T>(int assetCfgID)
+        where T : Object
+    {
+        var assCfg = GameSchedule.Instance.GetAssetCfg0(assetCfgID);
+        var loadData = GetLoadData(assetCfgID);
         loadData.AddRef();
 
         if (loadData.IsStatus(EnLoadStatus.Loading))
@@ -178,7 +184,7 @@ public class ABBLoadMgr : Singleton<ABBLoadMgr>
             if (objID < 0)
             {
                 loadData.SetLoadStatus(EnLoadStatus.Failed);
-                ABBUtil.LogError($"load failed, assetID: {loadTarget}, path: {assCfg.strPath}");
+                ABBUtil.LogError($"load failed, assetID: {assetCfgID}, path: {assCfg.strPath}");
             }
             else
             {
@@ -243,7 +249,7 @@ public class ABBLoadMgr : Singleton<ABBLoadMgr>
         loadData.CancelRef();
         if (loadData.GetRefCount() == 0)
         {
-            if (loadData.IsStatus(EnLoadStatus.Success)) 
+            if (loadData.IsStatus(EnLoadStatus.Success))
             {
                 var objID = loadData.GetObjID();
                 // 对资源进行处理, 卸载资源，卸载 assetbundle

@@ -32,6 +32,9 @@ public partial class GameSchedule
 	private System.Collections.Generic.Dictionary<System.Int32, BuffCfg> m_DicBuffCfg0 = new();
 	private BuffTypeCfg[] m_BuffTypeCfg = null;
 	private System.Collections.Generic.Dictionary<System.Int32, BuffTypeCfg> m_DicBuffTypeCfg0 = new();
+	private TestCfg[] m_TestCfg = null;
+	private System.Collections.Generic.Dictionary<System.Int32, TestCfg> m_DicTestCfg0 = new();
+	private System.Collections.Generic.Dictionary<System.Int32, System.Collections.Generic.Dictionary<System.Int32, TestCfg>> m_DicTestCfg1 = new();
 	public void Initialization()
 	{
 		for (int i = 0; i < m_ClipCfg.Length; i++)
@@ -113,6 +116,13 @@ public partial class GameSchedule
 		{
 			var cfg = m_BuffTypeCfg[i];
 			m_DicBuffTypeCfg0.Add(cfg.nTypeID, cfg);
+		}
+		for (int i = 0; i < m_TestCfg.Length; i++)
+		{
+			var cfg = m_TestCfg[i];
+			m_DicTestCfg0.Add(cfg.nTestID, cfg);
+			if (!m_DicTestCfg1.TryGetValue(cfg.nTestID, out var value1_0)) { value1_0 = new(); m_DicTestCfg1.Add(cfg.nTestID, value1_0); }
+			value1_0.Add(cfg.nLevel, cfg);
 		}
 	}
 	public System.Int32 GetClipCfgCount()
@@ -306,5 +316,21 @@ public partial class GameSchedule
 	public BuffTypeCfg GetBuffTypeCfg0(System.Int32 nTypeID)
 	{
 		return m_DicBuffTypeCfg0[nTypeID];
+	}
+	public System.Int32 GetTestCfgCount()
+	{
+		return m_TestCfg.Length;
+	}
+	public TestCfg GetTestCfg(System.Int32 index)
+	{
+		return m_TestCfg[index];
+	}
+	public TestCfg GetTestCfg0(System.Int32 nTestID)
+	{
+		return m_DicTestCfg0[nTestID];
+	}
+	public TestCfg GetTestCfg1(System.Int32 nTestID, System.Int32 nLevel)
+	{
+		return m_DicTestCfg1[nTestID][nLevel];
 	}
 }

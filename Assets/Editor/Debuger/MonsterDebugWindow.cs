@@ -72,7 +72,7 @@ public class MonsterDebugWindow : EditorWindow
                 _Cmd = (EnEntityCmd)EditorGUILayout.EnumPopup(_Cmd, GUILayout.Width(100));
                 if (GUILayout.Button("Execute", GUILayout.Width(100)))
                 {
-                    MonsterMgr.Instance.ExecuteCmd(_ExecuteEntityID, _Cmd);
+                    Entity3DMgr.Instance.AddEntityCmd(_ExecuteEntityID, _Cmd);
                 }
             }
             EditorGUILayout.EndHorizontal();

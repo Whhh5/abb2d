@@ -64,6 +64,7 @@ public class UICharacterItem : UIWindowItem
 
     public override void OnUnload()
     {
+        _IconImg.UnloadSprite();
         UIMgr.Instance.RemoveBtnListener(_ClickBtn, _UICharacterItemData.OnClick);
         base.OnUnload();
         _UICharacterItemData = null;
@@ -83,6 +84,8 @@ public class UICharacterItem : UIWindowItem
         var characterCfg = GameSchedule.Instance.GetCharacterCfg0(_UICharacterItemData.CharacterID);
         var monsterCfg = GameSchedule.Instance.GetMonsterCfg0(characterCfg.nMonsterID);
         _NameTxt.text = monsterCfg.strName;
+
+        _IconImg.LoadSprite(monsterCfg.nIconAssetID);
     }
 
     public void SetSelectStatus()

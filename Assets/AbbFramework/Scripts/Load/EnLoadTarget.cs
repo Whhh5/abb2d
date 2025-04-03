@@ -114,6 +114,7 @@ public enum EnLoadTarget
 	Pre_EffectSwordLight1_3Hit = 111, // Assets/Abbresources/Effect/EffectSwordLight1_3Hit.prefab
 	Anim_Battle_parryleft = 112, // Assets/Resources/Anim/Battle_parryleft.FBX
 	Anim_Battle_parryright = 113, // Assets/Resources/Anim/Battle_parryright.FBX
+	Pre_PlayerEntity3 = 114, // Assets/Abbresources/Perfabs/Character/Player1/PlayerEntity3.prefab
 	Anim_Battle_run_Mir = 115, // Assets/Resources/Anim/Battle_run_Mir.FBX
 	Anim_Battle_runstop = 116, // Assets/Resources/Anim/Battle_runstop.FBX
 	Anim_Battle_runstop_Mir = 117, // Assets/Resources/Anim/Battle_runstop_Mir.FBX
@@ -179,7 +180,11 @@ public enum EnLoadTarget
 	Anim_Interactive_04 = 177, // Assets/Resources/Anim/Interactive_04.FBX
 	Anim_Interactive_05 = 178, // Assets/Resources/Anim/Interactive_05.FBX
 	Anim_Jump_fall_end_H = 179, // Assets/Resources/Anim/Jump_fall_end_H.FBX
+	Sp_Icon_BlurWarrior = 180, // Assets/Abbresources/Images/Icon_BlurWarrior.png
 	Anim_Jump_fall_end_L = 181, // Assets/Resources/Anim/Jump_fall_end_L.FBX
+	Sp_Icon_Pastor = 182, // Assets/Abbresources/Images/Icon_Pastor.png
+	Sp_Icon_Warrior = 183, // Assets/Abbresources/Images/Icon_Warrior.png
+	Anim_OriginFBX = 184, // Assets/Abbresources/Perfabs/Character/Player1/OriginFBX.FBX
 	Anim_Jump_run = 185, // Assets/Resources/Anim/Jump_run.FBX
 	Anim_Jump_run_fallground = 186, // Assets/Resources/Anim/Jump_run_fallground.FBX
 	Anim_Jump_run_fallground_mir = 187, // Assets/Resources/Anim/Jump_run_fallground_mir.FBX
